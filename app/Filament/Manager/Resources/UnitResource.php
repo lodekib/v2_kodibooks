@@ -69,6 +69,7 @@ class UnitResource extends Resource
                 TextColumn::make('unit_size')->size('sm')->suffix(' sq. m'),
                 TextColumn::make('status')->badge()->color(fn ($state) => $state == 'vacant' ? 'warning' : 'primary')->sortable()->searchable()
             ])
+            ->striped()
             ->filters([
                 //
             ])
