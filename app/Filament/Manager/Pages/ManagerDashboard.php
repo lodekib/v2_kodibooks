@@ -22,7 +22,9 @@ class ManagerDashboard extends BasePage
                         ->title('Welcome to Kodibooks !')->description('Your one stop solution for tenant management !.Lets get some walkthroughs to get you started')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
                     Step::make('.fi-avatar')
-                        ->title('Account ')->description('Manage your account here !')->icon('heroicon-s-user-circle')->iconColor('primary')->uncloseable()
+                        ->title('Account ')->description('dummy description')
+                        // ->description(view('livewire.biodata'))
+                        ->icon('heroicon-s-user-circle')->iconColor('primary')->uncloseable()
                 )
         ];
     }
