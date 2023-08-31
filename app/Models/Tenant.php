@@ -17,4 +17,5 @@ class Tenant extends Model
     {
         return $this->hasMany(Unit::class);
     }
+
 }
