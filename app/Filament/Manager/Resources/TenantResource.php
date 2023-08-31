@@ -90,6 +90,7 @@ class TenantResource extends Resource
                     'warning' => static fn ($state): bool => $state === 'inactive',
                 ])->badge(),
             ])
+            ->striped()
             ->filters([
                 //
             ])

@@ -68,6 +68,7 @@ class VendorResource extends Resource
                 TextColumn::make('vendor_particular')->size('sm')->searchable()->sortable(),
                 TextColumn::make('payment_method')->size('sm')->searchable()->sortable()
             ])
+            ->striped()
             ->filters([
                 //
             ])

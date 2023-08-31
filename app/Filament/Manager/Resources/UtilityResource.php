@@ -50,6 +50,7 @@ class UtilityResource extends Resource
                 TextColumn::make('utility_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('amount')->size('sm')->label('Amount (Ksh)')->formatStateUsing(fn ($state) => number_format($state))->prefix('Ksh ')
             ])
+            ->striped()
             ->filters([
                 //
             ])

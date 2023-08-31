@@ -65,6 +65,7 @@ class PropertyResource extends Resource
                 TextColumn::make('property_status')->color(fn ($state) => $state == 'good' ? 'primary' : 'danger')->searchable()->badge(),
                 TextColumn::make('property_location')->size('sm')->searchable()->sortable(),
             ])
+            ->striped()
             ->filters([
                 Filter::make('Good')->query(fn (Builder $query): Builder => $query->where('property_status', 'good')),
                 Filter::make('Maintenace')->query(fn (Builder $query): Builder => $query->where('property_status', 'maintenance')),
