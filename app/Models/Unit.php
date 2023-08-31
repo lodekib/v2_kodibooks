@@ -5,16 +5,16 @@ namespace App\Models;
 use App\Traits\HasManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Property extends Model
+class Unit extends Model
 {
     use HasFactory,HasManager;
 
     protected $guarded = [];
 
-    public function units():HasMany
+    public function property():BelongsTo
     {
-        return $this->hasMany(Unit::class);
+        return $this->belongsTo(Property::class);
     }
 }
