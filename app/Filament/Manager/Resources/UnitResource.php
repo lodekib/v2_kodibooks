@@ -24,7 +24,7 @@ class UnitResource extends Resource
 {
     protected static ?string $model = Unit::class;
     protected static ?string $navigationGroup = 'Assets';
-    protected static ?string $navigationIcon = 'heroicon-m-cube-transparent';
+    protected static ?string $navigationIcon = 'heroicon-s-cube-transparent';
 
     public static function getNavigationBadge(): ?string
     {
