@@ -4,16 +4,16 @@ namespace App\Filament\Manager\Resources\AllocationResource\Pages;
 
 use App\Filament\Manager\Resources\AllocationResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ManageRecords;
+use Filament\Resources\Pages\EditRecord;
 
-class ManageAllocations extends ManageRecords
+class EditAllocation extends EditRecord
 {
     protected static string $resource = AllocationResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\DeleteAction::make(),
         ];
     }
 }
