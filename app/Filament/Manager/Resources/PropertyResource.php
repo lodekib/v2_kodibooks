@@ -104,6 +104,8 @@ class PropertyResource extends Resource
         ];
     }
 
+    
+
     public static function getPages(): array
     {
         return [
