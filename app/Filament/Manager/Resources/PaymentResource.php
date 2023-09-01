@@ -19,6 +19,10 @@ use Filament\Tables\Table;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Blade;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class PaymentResource extends Resource
 {
@@ -78,7 +82,18 @@ class PaymentResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\EditAction::make()->color('gray'),
+                    Tables\Actions\Action::make('pdf')
+                        ->label('download')
+                        ->color('success')
+                        ->icon('heroicon-s-arrow-down-tray')
+                        ->action(function (Model $record) {
+                            return response()->streamDownload(function () use ($record) {
+                                echo Pdf::loadHtml(
+                                    Blade::render('pdf', ['record' => $record])
+                                )->stream();
+                            }, $record->number . '.pdf');
+                        }),
                 ])
             ])
             ->bulkActions([
