@@ -68,8 +68,8 @@ class PaymentResource extends Resource
                 TextColumn::make('balance')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state)),
                 TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
                     'unallocated' => 'success',
-                    'allocated' => 'gray',
-                    'partially_allocated' => 'warning'
+                    'fully allocated' => 'gray',
+                    'partially allocated' => 'warning'
                 }),
                 Tables\Columns\TextColumn::make('paid_date')->size('sm')->date()
             ])->striped()

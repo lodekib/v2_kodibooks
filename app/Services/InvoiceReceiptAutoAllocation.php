@@ -15,46 +15,34 @@ class InvoiceReceiptAutoAllocation
 
     public static  function handleNewInvoice($invoice)
     {
-
-
-        $statement_data = [
-            'tenant_id' => $invoice->tenant_id,
-            'tenant_name' => $invoice->tenant_name,
-            'description' => $invoice->invoice_type . " invoice",
-            'reference' => $invoice->invoice_number,
-            'debit' => $invoice->amount_invoiced,
-        ];
-
-
-
-        $receipts = Payment::where('tenant_name', $invoice->tenant_name)
+        $payments = Payment::where('tenant_name', $invoice->tenant_name)
             ->where('status', '!=', 'fully allocated')->withoutGlobalScopes([ManagerScope::class])
             ->oldest()->get();
 
-        if ($receipts->isNotEmpty()) {
-            foreach ($receipts as $receipt) {
-                if ($receipt->balance <= $invoice->balance) {
+        if ($payments->isNotEmpty()) {
+            foreach ($payments as $payment) {
+                if ($payment->balance <= $invoice->balance) {
                     // Fully allocate the receipt
-                    $update_receipt = Payment::find($receipt->id)->update([
+                    $update_receipt = Payment::find($payment->id)->update([
                         'status' => 'fully allocated',
                         'balance' => 0
                     ]);
 
                     if ($update_receipt) {
-                        Statement::where('reference', $receipt->receipt_number)->update([
+                        Statement::where('reference', $payment->receipt_number)->update([
                             'balance' => 0
                         ]);
                     }
 
-                    $invoice->balance -= $receipt->balance; // Update invoice balance
+                    $invoice->balance -= $payment->balance; // Update invoice balance
 
                     if ($invoice->balance == 0) {
                         $auto_allocation_data = [
                             'tenant_id' => $invoice->tenant_id,
                             'tenant_name' => $invoice->tenant_name,
-                            'receipt_number' => $receipt->receipt_number,
+                            'receipt_number' => $payment->receipt_number,
                             'invoice_number' => $invoice->invoice_number,
-                            'amount_allocated' => $receipt->balance
+                            'amount_allocated' => $payment->balance
                         ];
 
                         // The invoice has been fully paid
@@ -69,9 +57,9 @@ class InvoiceReceiptAutoAllocation
                         $auto_allocation_data = [
                             'tenant_id' => $invoice->tenant_id,
                             'tenant_name' => $invoice->tenant_name,
-                            'receipt_number' => $receipt->receipt_number,
+                            'receipt_number' => $payment->receipt_number,
                             'invoice_number' => $invoice->invoice_number,
-                            'amount_allocated' => $receipt->balance
+                            'amount_allocated' => $payment->balance
                         ];
 
                         $invoice->invoice_status = 'partially paid';
@@ -81,14 +69,14 @@ class InvoiceReceiptAutoAllocation
                     }
                 } else {
                     // Partially allocate the receipt
-                    $update_receipt = Payment::find($receipt->id)->update([
+                    $update_receipt = Payment::find($payment->id)->update([
                         'status' => 'partially allocated',
-                        'balance' => $receipt->balance - $invoice->balance
+                        'balance' => $payment->balance - $invoice->balance
                     ]);
 
                     if ($update_receipt) {
-                        Statement::where('reference', $receipt->receipt_number)->update([
-                            'balance' => $receipt->balance - $invoice->balance
+                        Statement::where('reference', $payment->receipt_number)->update([
+                            'balance' => $payment->balance - $invoice->balance
                         ]);
                     }
                     $invoice->balance = 0; // Invoice balance fully utilized
@@ -97,7 +85,7 @@ class InvoiceReceiptAutoAllocation
                     $auto_allocation_data = [
                         'tenant_id' => $invoice->tenant_id,
                         'tenant_name' => $invoice->tenant_name,
-                        'receipt_number' => $receipt->receipt_number,
+                        'receipt_number' => $payment->receipt_number,
                         'invoice_number' => $invoice->invoice_number,
                         'amount_allocated' => $invoice->balance
                     ];

@@ -44,7 +44,6 @@ class ListPayments extends ListRecords
                     return  $this->getModel()::create($new_data);
                 }
             })->mutateAfterCreate(function (Model $model) {
-                //TODO::OPTIMIZATIONS
                 $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
                     ->where('tenant_name', $model->tenant_name)
                     ->groupBy('tenant_name')
