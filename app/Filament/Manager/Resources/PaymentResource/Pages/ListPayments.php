@@ -3,8 +3,15 @@
 namespace App\Filament\Manager\Resources\PaymentResource\Pages;
 
 use App\Filament\Manager\Resources\PaymentResource;
+use App\Models\Statement;
+use App\Models\Tenant;
+use App\Services\InvoiceReceiptAutoAllocation;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Model;
+use Konnco\FilamentImport\Actions\ImportAction;
+use Konnco\FilamentImport\Actions\ImportField;
 
 class ListPayments extends ListRecords
 {
@@ -13,7 +20,50 @@ class ListPayments extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Record Payment')->icon('heroicon-s-credit-card'),
+            ImportAction::make()->uniqueField('receipt_number')->fields([
+                ImportField::make('tenant_name')->required()->rules('exists:tenants,full_names'),
+                ImportField::make('national_id')->required()->rules('exists:tenants,id_number'),
+                ImportField::make('receipt_number')->required(),
+                ImportField::make('reference_number')->required(),
+                ImportField::make('mode_of_payment')->required(),
+                ImportField::make('amount')->required(),
+                ImportField::make('balance')->required(),
+                ImportField::make('paid_date')->required()
+            ], columns: 4)->icon('heroicon-s-arrow-down-tray')->handleRecordCreation(function ($data) {
+                $tenant = Tenant::where('id_number', $data['national_id'])->pluck('id');
+                if ($tenant->isEmpty()) {
+                    Notification::make()->warning()->body('Please make sure the tenants already exist')->send();
+                } else {
+                    $new_data = array_merge($data, [
+                        'tenant_id' => $tenant[0],
+                        'tenant_identity' => $data['national_id'],
+                        'status' => 'unallocated'
+                    ]);
+
+                    return  $this->getModel()::create($new_data);
+                }
+            })->mutateAfterCreate(function (Model $model) {
+                //TODO::OPTIMIZATIONS
+                $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
+                    ->where('tenant_name', $model->tenant_name)
+                    ->groupBy('tenant_name')
+                    ->first();
+                // $total_debit = Statement::where('tenant_name', $model->tenant_name)->sum('debit');
+                // $total_credit = Statement::where('tenant_name', $model->tenant_name)->sum('credit');
+                $statement_data = [
+                    'tenant_id' => $model->tenant_id,
+                    'tenant_name' => $model->tenant_name,
+                    'description' => $model->mode_of_payment . "# " . $model->reference_number,
+                    'reference' => $model->reference_number,
+                    'credit' => $model->amount,
+                    'debit' => 0,
+                    'balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $model->balance) : $model->balance,
+                    'cummulative_balance' => $debit_credit != null ?  $debit_credit->total_debit - ($debit_credit->total_credit + $model->balance) : $model->balance
+                ];
+                $statement = Statement::create($statement_data);
+                InvoiceReceiptAutoAllocation::handleNewReceipt($model->tenant_name, $model);
+            }),
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Manager\Resources\PaymentResource\Pages;
 use App\Filament\Manager\Resources\PaymentResource;
 use App\Models\Statement;
 use App\Models\Tenant;
+use App\Services\InvoiceReceiptAutoAllocation;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -26,7 +27,7 @@ class CreatePayment extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $tenant_id = Tenant::where('full_names', $data['tenant_name'])->pluck('id');
+        $tenant = Tenant::where('full_names', $data['tenant_name'])->get(['id','full_names']);
         $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
             ->where('tenant_name', $data['tenant_name'])
             ->groupBy('tenant_name')
@@ -38,14 +39,14 @@ class CreatePayment extends CreateRecord
             $data,
             [
                 'status' => 'unallocated',
-                'tenant_id' => $tenant_id[0],
+                'tenant_id' => $tenant[0]->id,
                 'balance' => $data['amount'],
             ]
         );
         $payment  = $this->getModel()::create($payment_data);
         if ($payment) {
             $statement_data = [
-                'tenant_id' => $tenant_id['0'],
+                'tenant_id' => $tenant[0]->id,
                 'tenant_name' => $data['tenant_name'],
                 'description' => $data['mode_of_payment'],
                 'reference' => $payment->receipt_number,
@@ -54,8 +55,8 @@ class CreatePayment extends CreateRecord
                 'balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : $payment->balance,
                 'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : $payment->balance
             ];
-
             $statement = Statement::create($statement_data);
+            InvoiceReceiptAutoAllocation::handleNewReceipt($tenant, $payment, $statement);
         }
 
         return $payment;
