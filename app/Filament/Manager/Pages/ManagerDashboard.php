@@ -17,7 +17,7 @@ class ManagerDashboard extends BasePage
 
     public static function getNavigationIcon(): ?string
     {
-        return 'heroicon-m-bars-3';
+        return 'heroicon-s-bars-3';
     }
 
     public function tours(): array
