@@ -9,9 +9,16 @@ use JibayMcs\FilamentTour\Tour\HasTour;
 use JibayMcs\FilamentTour\Tour\Step;
 use JibayMcs\FilamentTour\Tour\Tour;
 
+
+
 class ManagerDashboard extends BasePage
 {
     use HasTour;
+
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-m-bars-3';
+    }
 
     public function tours(): array
     {

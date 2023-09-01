@@ -25,7 +25,7 @@ class UtilityResource extends Resource
 {
     protected static ?string $model = Utility::class;
     protected static ?string $navigationGroup = 'Utilities';
-    protected static ?string $navigationIcon = 'heroicon-o-bolt';
+    protected static ?string $navigationIcon = 'heroicon-m-bolt';
 
     public static function form(Form $form): Form
     {
