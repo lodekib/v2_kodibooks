@@ -29,7 +29,7 @@ class ManagerPanelProvider extends PanelProvider
         return $panel
             ->id('manager')
             ->path('manager')
-            ->login()->sidebarCollapsibleOnDesktop()->passwordReset()
+            ->login()->passwordReset()
             ->colors([
                 'primary' => Color::Green,
             ])
