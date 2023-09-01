@@ -12,6 +12,8 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -82,6 +84,7 @@ class PropertyResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make()
                 ])
             ])
             ->bulkActions([
@@ -108,5 +111,17 @@ class PropertyResource extends Resource
             'create' => Pages\CreateProperty::route('/create'),
             'edit' => Pages\EditProperty::route('/{record}/edit'),
         ];
+    }
+
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('name'),
+                TextEntry::make('email'),
+                TextEntry::make('notes')
+                    ->columnSpanFull(),
+            ]);
     }
 }
