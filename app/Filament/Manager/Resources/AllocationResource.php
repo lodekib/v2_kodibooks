@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -31,18 +32,17 @@ class AllocationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')->date()->label('Date')->size('sm'),
-                Tables\Columns\TextColumn::make('tenant_name')->size('sm')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('amount_allocated')->size('sm')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state)),
+                TextColumn::make('created_at')->date()->label('Date')->size('sm'),
+                TextColumn::make('tenant_name')->size('sm')->sortable()->searchable(),
+                TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),
+                TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),
+                TextColumn::make('amount_allocated')->size('sm')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state)),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -54,10 +54,19 @@ class AllocationResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageAllocations::route('/'),
+            'index' => Pages\ListAllocations::route('/'),
+            'create' => Pages\CreateAllocation::route('/create'),
+            'edit' => Pages\EditAllocation::route('/{record}/edit'),
         ];
     }
 }
