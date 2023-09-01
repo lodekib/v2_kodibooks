@@ -26,7 +26,7 @@ class TenantResource extends Resource
 {
     protected static ?string $model = Tenant::class;
     protected static ?string $navigationGroup = 'Assets';
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationIcon = 'heroicon-m-user-group';
 
     public static function getNavigationBadge(): ?string
     {
