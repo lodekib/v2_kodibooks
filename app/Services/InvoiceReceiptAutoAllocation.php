@@ -87,7 +87,7 @@ class InvoiceReceiptAutoAllocation
                         'tenant_name' => $invoice->tenant_name,
                         'receipt_number' => $payment->receipt_number,
                         'invoice_number' => $invoice->invoice_number,
-                        'amount_allocated' => $invoice->balance
+                        'amount_allocated' => $payment->amount - $payment->balance
                     ];
                     Allocation::create($auto_allocation_data);
 
