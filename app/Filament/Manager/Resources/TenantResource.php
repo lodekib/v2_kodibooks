@@ -25,6 +25,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Filament\Manager\Resources\TenantResource\RelationManagers;
+use App\Mail\InvoiceSent;
 use App\Models\ActiveUtility;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -196,9 +197,10 @@ class TenantResource extends Resource
                             $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
-                                'tenant_identity' => $record->id_number,
+                                'national_id' => $record->id_number,
                                 'invoice_number' => $invoice_number,
                                 'invoice_type' => 'Rent',
+                                'invoice_status' => 'pending',
                                 'due_date' => $data['due_date'],
                                 'from' => $data['from'],
                                 'to' => $data['to'],
@@ -220,6 +222,7 @@ class TenantResource extends Resource
                                 'description' => 'Rent Invoice',
                                 'reference' => $final_invoice->invoice_number,
                                 'debit' => $final_invoice->balance,
+                                'credit' => 0,
                                 'balance' => $total_debit - ($total_credit - $final_invoice->balance),
                                 'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
                             ];
@@ -234,7 +237,7 @@ class TenantResource extends Resource
                             Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
                         ])
                     ]),
-                    BulkAction::make('Utility Invoice')->icon('heroicon-o-filter')->action(function (Collection $records, array $data, $livewire) {
+                    BulkAction::make('Utility Invoice')->icon('heroicon-o-funnel')->action(function (Collection $records, array $data, $livewire) {
                         $records->each(function (Tenant $record) use ($data, $livewire) {
                             $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
 
@@ -263,9 +266,10 @@ class TenantResource extends Resource
                             $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
-                                'tenant_identity' => $record->id_number,
+                                'national_id' => $record->id_number,
                                 'invoice_number' => $invoice_number,
                                 'invoice_type' => $livewire->tableFilters['Utility']['value'],
+                                'invoice_status' => 'pending',
                                 'due_date' => $data['due_date'],
                                 'from' => $data['from'],
                                 'to' => $data['to'],
@@ -287,6 +291,7 @@ class TenantResource extends Resource
                                 'description' => $livewire->tableFilters['Utility']['value'],
                                 'reference' => $final_invoice->invoice_number,
                                 'debit' => $final_invoice->balance,
+                                'credit' => 0,
                                 'balance' => $total_debit - ($total_credit - $final_invoice->balance),
                                 'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
                             ];
@@ -303,7 +308,7 @@ class TenantResource extends Resource
                             ])
                         ];
                     }),
-                    BulkAction::make('Standard Invoice')->icon('heroicon-o-template')->deselectRecordsAfterCompletion()->action(function (Collection $records, array $data) {
+                    BulkAction::make('Standard Invoice')->icon('heroicon-o-document-text')->deselectRecordsAfterCompletion()->action(function (Collection $records, array $data) {
                         $records->each(function (Tenant $record) use ($data) {
                             $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
                             $amount = $data['amount_invoiced'];
@@ -324,9 +329,10 @@ class TenantResource extends Resource
                             // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
-                                'tenant_identity' => $record->id_number,
+                                'national_id' => $record->id_number,
                                 'invoice_number' => $invoice_number,
                                 'invoice_type' => 'Standard',
+                                'invoice_status' => 'pending',
                                 'due_date' => $data['due_date'], 'from' => $data['from'],
                                 'to' => $data['to'], 'tenant_name' => $record->full_names,
                                 'property_name' => $record->property_name, 'unit_name' => $record->unit_name,
@@ -344,6 +350,7 @@ class TenantResource extends Resource
                                 'description' => 'Standard Invoice',
                                 'reference' => $final_invoice->invoice_number,
                                 'debit' => $final_invoice->balance,
+                                'credit' => 0,
                                 'balance' => $total_debit - ($total_credit - $final_invoice->balance),
                                 'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
                             ];
