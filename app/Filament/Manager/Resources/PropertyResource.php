@@ -12,8 +12,14 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -41,7 +47,7 @@ class PropertyResource extends Resource
             ->schema([
                 Fieldset::make()
                     ->schema([
-                        TextInput::make('property_name')->required()->unique(),
+                        TextInput::make('property_name')->required()->unique(ignoreRecord:true),
                         TextInput::make('number_of_units')->numeric()->minValue(1)->required(),
                         TextInput::make('property_size')->numeric()->minValue(1)->required()->prefix('sq . m'),
                         TextInput::make('property_cost')->prefix('Ksh')->required(),
@@ -83,8 +89,8 @@ class PropertyResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\ViewAction::make()
                 ])
             ])
             ->bulkActions([
@@ -100,11 +106,12 @@ class PropertyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\UnitsRelationManager::class,
+            RelationManagers\TenantsRelationManager::class
         ];
     }
 
-    
+
 
     public static function getPages(): array
     {
@@ -112,18 +119,33 @@ class PropertyResource extends Resource
             'index' => Pages\ListProperties::route('/'),
             'create' => Pages\CreateProperty::route('/create'),
             'edit' => Pages\EditProperty::route('/{record}/edit'),
+            'view' => Pages\ViewProperty::route('/{record}')
         ];
     }
-
 
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
             ->schema([
-                TextEntry::make('name'),
-                TextEntry::make('email'),
-                TextEntry::make('notes')
-                    ->columnSpanFull(),
+                Section::make()
+                    ->schema([
+                        Split::make([
+                            Grid::make(2)
+                                ->schema([
+                                    Group::make([
+                                        TextEntry::make('property_name'),
+                                        TextEntry::make('property_location'),
+                                    ]),
+                                    Group::make([
+                                        TextEntry::make('number_of_units'),
+                                        TextEntry::make('property_status')->badge()
+                                    ]),
+                                ]),
+                            ImageEntry::make('property_image')
+                                ->hiddenLabel()
+                                ->grow(false),
+                        ])->from('lg'),
+                    ])->collapsible(),
             ]);
     }
 }
