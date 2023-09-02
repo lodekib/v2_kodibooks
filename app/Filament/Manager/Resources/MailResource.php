@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Manager\Resources;
 
-use App\Filament\Resources\MailResource\Pages;
-use App\Filament\Resources\MailResource\RelationManagers;
+use App\Filament\Manager\Resources\MailResource\Pages;
+use App\Filament\Manager\Resources\MailResource\RelationManagers;
 use App\Models\Mail;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -20,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class MailResource extends Resource
 {
     protected static ?string $model = Mail::class;
-
+    protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationIcon = 'heroicon-s-envelope-open';
 
     public static function form(Form $form): Form
@@ -46,10 +45,8 @@ class MailResource extends Resource
                 //
             ])
             ->actions([
-                ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make(),
-                ])
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -57,7 +54,7 @@ class MailResource extends Resource
                 ]),
             ])
             ->emptyStateActions([
-                // Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make(),
             ]);
     }
 
