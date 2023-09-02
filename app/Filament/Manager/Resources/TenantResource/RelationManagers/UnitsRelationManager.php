@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Filament\Manager\Resources\PropertyResource\RelationManagers;
+namespace App\Filament\Manager\Resources\TenantResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -38,6 +39,7 @@ class UnitsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('created_at')->label('Date')->size('sm')->date(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
+                TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 IconColumn::make('unit_condition')->label('Condition')->icons([
                     'heroicon-o-check-circle' => 'good',
                     'heroicon-o-x-circle' => 'maintenance'
@@ -59,8 +61,10 @@ class UnitsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
