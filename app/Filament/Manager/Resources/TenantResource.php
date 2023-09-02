@@ -25,6 +25,12 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Filament\Manager\Resources\TenantResource\RelationManagers;
+use App\Models\ActiveUtility;
+use App\Models\Statement;
+use App\Models\Waterbill;
+use Filament\Forms\Components\Fieldset;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
 
 class TenantResource extends Resource
 {
@@ -75,19 +81,13 @@ class TenantResource extends Resource
                 TextColumn::make('email')->size('sm')->sortable()->searchable(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('rent')->size('sm')->prefix('Ksh ')->formatStateUsing(fn ($state) => number_format($state)),
-                TextColumn::make('deposit')->size('sm')->prefix('Ksh ')->formatStateUsing(fn ($state) => number_format($state)),
-                TextColumn::make('balance')->weight('bold')->color('danger')->prefix('Ksh '),
-                // ->color(function ($record) {
-                //     $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
-                //     $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
-                //     return $total_credit >= $total_debit ? 'primary' : 'warning';
-                // })
-                // ->prefix('Ksh ')->size('sm')->formatStateUsing(function ($record) {
-                //     $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
-                //     $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
-                //     return number_format($total_debit - $total_credit);
-                // }),
+                TextColumn::make('rent')->size('sm')->money('kes'),
+                TextColumn::make('deposit')->size('sm')->money('kes'),
+                TextColumn::make('balance')->size('sm')->formatStateUsing(function ($record) {
+                    $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
+                        ->where('tenant_name', $record->full_names)->groupBy('tenant_name')->first();
+                    return $debit_credit != null ? $debit_credit->total_debit - $debit_credit->total_credit : 0;
+                })->money('kes'),
                 TextColumn::make('entry_date')->size('sm'),
                 TextColumn::make('status')->colors([
                     'success' => static fn ($state): bool => $state === 'active',
@@ -100,10 +100,58 @@ class TenantResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    ActionGroup::make([
-                        ViewAction::make(),
-                        EditAction::make(),
-                    ])
+                    Action::make('Add water bill')->icon('heroicon-o-funnel')
+                        ->action(function (Tenant $record, array $data) {
+                            $new_data = [
+                                'tenant_id' => $record->id,
+                                'tenant_name' => $record->full_names,
+                                'property_name' => $record->property_name,
+                                'unit_name' => $record->unit_name,
+                                'previous_reading' => $data['previous_reading'],
+                                'current_reading' => $data['current_reading'],
+                                'date_added' => $data['date_added']
+
+                            ];
+
+                            if (Waterbill::create($new_data)) {
+                                Notification::make()->success()->body('Water bill added successfully !')->send();
+                            } else {
+                                Notification::make()->warning()->body('Unable to add water bill')->send();
+                            }
+                        })->form([
+                            Fieldset::make('')->schema(function (Tenant $record) {
+                                return [
+                                    TextInput::make('full_names')->disabled()->label('Tenant')->default($record->full_names),
+                                    TextInput::make('property')->label('Property')->disabled()->default($record->property_name),
+                                    TextInput::make('unit')->label('Unit')->disabled()->default($record->unit_name),
+                                    TextInput::make('previous_reading')->label('Previous reading ( m3 )')->disabled()->dehydrated()->default(function (Tenant $record) {
+                                        $tenant_exists = Waterbill::where('property_name', $record->property_name)
+                                            ->where('tenant_id', $record->id)
+                                            ->where('unit_name', $record->unit_name)->pluck('current_reading');
+
+                                        if ($tenant_exists->isEmpty()) {
+                                            return 0;
+                                        } else {
+                                            return $tenant_exists->first()->current_reading;
+                                        }
+                                    }),
+                                    TextInput::make('current_reading')->label('Current reading ( m3)')->required()->numeric(),
+                                    DatePicker::make('date_added')->label('Date')
+                                ];
+                            })->columns(3)
+                        ])->visible(function (Tenant $record) {
+                            $water_exists = false;
+                            $has_water_utility = ActiveUtility::where('property_name', $record->property_name)->get('active_utilities')->toArray();
+                            foreach ($has_water_utility  as $item) {
+                                if (in_array('Water', $item['active_utilities'])) {
+                                    $water_exists =  true;
+                                    break;
+                                }
+                            }
+                            return $water_exists;
+                        }),
+                    ViewAction::make(),
+                    EditAction::make(),
                 ])
             ])
             ->bulkActions([
