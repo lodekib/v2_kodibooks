@@ -27,7 +27,7 @@ class CreatePayment extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $tenant = Tenant::where('full_names', $data['tenant_name'])->get(['id','full_names']);
+        $tenant = Tenant::where('full_names', $data['tenant_name'])->get(['id', 'full_names']);
         $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
             ->where('tenant_name', $data['tenant_name'])
             ->groupBy('tenant_name')
@@ -44,6 +44,7 @@ class CreatePayment extends CreateRecord
             ]
         );
         $payment  = $this->getModel()::create($payment_data);
+
         if ($payment) {
             $statement_data = [
                 'tenant_id' => $tenant[0]->id,
@@ -52,8 +53,8 @@ class CreatePayment extends CreateRecord
                 'reference' => $payment->receipt_number,
                 'credit' => $payment->balance,
                 'debit' => 0,
-                'balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : $payment->balance,
-                'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : $payment->balance
+                'balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance,
+                'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance
             ];
             $statement = Statement::create($statement_data);
             InvoiceReceiptAutoAllocation::handleNewReceipt($tenant, $payment, $statement);

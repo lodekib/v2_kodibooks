@@ -25,6 +25,21 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Filament\Manager\Resources\TenantResource\RelationManagers;
+use App\Models\ActiveUtility;
+use App\Models\Invoice;
+use App\Models\Payment;
+use App\Models\Statement;
+use App\Models\Utility;
+use App\Models\Waterbill;
+use App\Services\InvoiceReceiptAutoAllocation;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Mail as Mailconfig;
 
 class TenantResource extends Resource
 {
@@ -75,19 +90,13 @@ class TenantResource extends Resource
                 TextColumn::make('email')->size('sm')->sortable()->searchable(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('rent')->size('sm')->prefix('Ksh ')->formatStateUsing(fn ($state) => number_format($state)),
-                TextColumn::make('deposit')->size('sm')->prefix('Ksh ')->formatStateUsing(fn ($state) => number_format($state)),
-                TextColumn::make('balance')->weight('bold')->color('danger')->prefix('Ksh '),
-                // ->color(function ($record) {
-                //     $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
-                //     $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
-                //     return $total_credit >= $total_debit ? 'primary' : 'warning';
-                // })
-                // ->prefix('Ksh ')->size('sm')->formatStateUsing(function ($record) {
-                //     $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
-                //     $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
-                //     return number_format($total_debit - $total_credit);
-                // }),
+                TextColumn::make('rent')->size('sm')->money('kes'),
+                TextColumn::make('deposit')->size('sm')->money('kes'),
+                TextColumn::make('balance')->size('sm')->formatStateUsing(function ($record) {
+                    $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
+                        ->where('tenant_name', $record->full_names)->groupBy('tenant_name')->first();
+                    return $debit_credit != null ? $debit_credit->total_debit - $debit_credit->total_credit : 0;
+                })->money('kes'),
                 TextColumn::make('entry_date')->size('sm'),
                 TextColumn::make('status')->colors([
                     'success' => static fn ($state): bool => $state === 'active',
@@ -100,14 +109,257 @@ class TenantResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    ActionGroup::make([
-                        ViewAction::make(),
-                        EditAction::make(),
-                    ])
+                    Action::make('Add water bill')->icon('heroicon-o-funnel')
+                        ->action(function (Tenant $record, array $data) {
+                            $new_data = [
+                                'tenant_id' => $record->id,
+                                'tenant_name' => $record->full_names,
+                                'property_name' => $record->property_name,
+                                'unit_name' => $record->unit_name,
+                                'previous_reading' => $data['previous_reading'],
+                                'current_reading' => $data['current_reading'],
+                                'date_added' => $data['date_added']
+
+                            ];
+
+                            if (Waterbill::create($new_data)) {
+                                Notification::make()->success()->body('Water bill added successfully !')->send();
+                            } else {
+                                Notification::make()->warning()->body('Unable to add water bill')->send();
+                            }
+                        })->form([
+                            Fieldset::make('')->schema(function (Tenant $record) {
+                                return [
+                                    TextInput::make('full_names')->disabled()->label('Tenant')->default($record->full_names),
+                                    TextInput::make('property')->label('Property')->disabled()->default($record->property_name),
+                                    TextInput::make('unit')->label('Unit')->disabled()->default($record->unit_name),
+                                    TextInput::make('previous_reading')->label('Previous reading ( m3 )')->disabled()->dehydrated()->default(function (Tenant $record) {
+                                        $tenant_exists = Waterbill::where('property_name', $record->property_name)
+                                            ->where('tenant_id', $record->id)
+                                            ->where('unit_name', $record->unit_name)->pluck('current_reading');
+
+                                        if ($tenant_exists->isEmpty()) {
+                                            return 0;
+                                        } else {
+                                            return $tenant_exists->first()->current_reading;
+                                        }
+                                    }),
+                                    TextInput::make('current_reading')->label('Current reading ( m3)')->required()->numeric(),
+                                    DatePicker::make('date_added')->label('Date')
+                                ];
+                            })->columns(3)
+                        ])->visible(function (Tenant $record) {
+                            $water_exists = false;
+                            $has_water_utility = ActiveUtility::where('property_name', $record->property_name)->get('active_utilities')->toArray();
+                            foreach ($has_water_utility  as $item) {
+                                if (in_array('Water', $item['active_utilities'])) {
+                                    $water_exists =  true;
+                                    break;
+                                }
+                            }
+                            return $water_exists;
+                        }),
+                    Action::make('Vacate tenant')->icon('heroicon-s-logout')->color('secondary')->action(function ($record) {
+
+                        $total_invoices =  Invoice::where('tenant_name', $record->full_names)->sum('balance');
+                        $total_receipts =  Payment::where('tenant_name', $record->full_names)->sum('balance');
+
+                        if (($total_invoices - $total_receipts) > 0) {
+                            Notification::make()->warning()->body('Tenant has pending arrears.')->send();
+                        } else {
+                            $record->status = 'vacated';
+                            $record->save();
+                            $unit = Unit::where('unit_name', $record->unit_name);
+                            $unit->first()->update(['status' => 'vacant']);
+                        }
+                    })->visible(fn ($record) => $record->status == 'active'),
+                    ViewAction::make(),
+                    EditAction::make(),
                 ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('Invoice Rent')->icon('heroicon-o-ticket')->action(function (Collection $records, array $data) {
+                        $records->each(function (Tenant $record) use ($data) {
+                            $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
+                            $new_data = array_merge(
+                                $data,
+                                [
+                                    'invoice_title' => 'Rent Invoice',
+                                    'invoice_number' => $invoice_number,
+                                    'amount' => $record->rent,
+                                    'quantity' => 1
+                                ]
+                            );
+                            // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
+                            // dump($invoice);
+                            $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
+                            $final_data = [
+                                'tenant_id' => $record->id,
+                                'tenant_identity' => $record->id_number,
+                                'invoice_number' => $invoice_number,
+                                'invoice_type' => 'Rent',
+                                'due_date' => $data['due_date'],
+                                'from' => $data['from'],
+                                'to' => $data['to'],
+                                'tenant_name' => $record->full_names,
+                                'property_name' => $record->property_name,
+                                'unit_name' => $record->unit_name,
+                                'invoice_description' => $data['invoice_details'],
+                                'amount_invoiced' =>  $record->rent,
+                                'balance' => $record->rent
+                            ];
+                            $final_invoice =  Invoice::create($final_data);
+                            //TODO::OPTIMIZATION NEEDED
+                            $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
+                            $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
+
+                            $statement_data = [
+                                'tenant_id' => $record->id,
+                                'tenant_name' => $record->full_names,
+                                'description' => 'Rent Invoice',
+                                'reference' => $final_invoice->invoice_number,
+                                'debit' => $final_invoice->balance,
+                                'balance' => $total_debit - ($total_credit - $final_invoice->balance),
+                                'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
+                            ];
+                            $statement = Statement::create($statement_data);
+                            InvoiceReceiptAutoAllocation::handleNewInvoice($record, $final_invoice);
+                        });
+                    })->form([
+                        Fieldset::make("Rent Invoice")->schema([
+                            DatePicker::make('due_date')->required()->maxDate(now()),
+                            DatePicker::make('from')->required(),
+                            DatePicker::make('to')->required(),
+                            Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
+                        ])
+                    ]),
+                    BulkAction::make('Utility Invoice')->icon('heroicon-o-filter')->action(function (Collection $records, array $data, $livewire) {
+                        $records->each(function (Tenant $record) use ($data, $livewire) {
+                            $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
+
+                            if ($livewire->tableFilters['Utility']['value'] == 'Water') {
+                                $tenant_water = Waterbill::where('property_name', $record->property_name)
+                                    ->where('unit_name', $record->unit_name)
+                                    ->where('tenant_name', $record->full_names)->get();
+                                if ($tenant_water->isNotEmpty()) {
+                                    $quantity = $tenant_water->first()->current_reading - $tenant_water->first()->previous_reading;
+                                    $get_amount = Utility::where('property_name', $record->property_name)->where('utility_name', 'Water')->get('amount');
+                                    $amount = $get_amount->first()->amount;
+                                }
+                            } else {
+                                $value  = Utility::where('property_name', $record->property_name)->where('utility_name', $livewire->tableFilters['Utility']['value'])->get();
+                                $amount =  $value->first()->amount;
+                                $quantity = 1;
+                            }
+                            $new_data = array_merge($data, [
+                                'invoice_title' => $livewire->tableFilters['Utility']['value'],
+                                'invoice_number' => $invoice_number,
+                                'amount' => $amount,
+                                'quantity' => $quantity
+                            ]);
+
+                            // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
+                            $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
+                            $final_data = [
+                                'tenant_id' => $record->id,
+                                'tenant_identity' => $record->id_number,
+                                'invoice_number' => $invoice_number,
+                                'invoice_type' => $livewire->tableFilters['Utility']['value'],
+                                'due_date' => $data['due_date'],
+                                'from' => $data['from'],
+                                'to' => $data['to'],
+                                'tenant_name' => $record->full_names,
+                                'property_name' => $record->property_name,
+                                'unit_name' => $record->unit_name,
+                                'invoice_description' => $data['invoice_details'],
+                                'amount_invoiced' =>  $livewire->tableFilters['Utility']['value'] == 'Water' ? $amount * $quantity : $amount,
+                                'balance' =>  $livewire->tableFilters['Utility']['value'] == 'Water' ? $amount * $quantity : $amount
+                            ];
+                            $final_invoice = Invoice::create($final_data);
+                            //TODO::OPTIMIZATION NEEDED
+                            $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
+                            $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
+
+                            $statement_data = [
+                                'tenant_id' => $record->id,
+                                'tenant_name' => $record->full_names,
+                                'description' => $livewire->tableFilters['Utility']['value'],
+                                'reference' => $final_invoice->invoice_number,
+                                'debit' => $final_invoice->balance,
+                                'balance' => $total_debit - ($total_credit - $final_invoice->balance),
+                                'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
+                            ];
+                            $statement = Statement::create($statement_data);
+                            InvoiceReceiptAutoAllocation::handleNewInvoice($record, $final_invoice);
+                        });
+                    })->visible(fn ($livewire) => $livewire->tableFilters['Utility']['value'] != null ? true : false)->form(function ($livewire) {
+                        return [
+                            Fieldset::make($livewire->tableFilters['Utility']['value'] . " Invoice")->schema([
+                                DatePicker::make('due_date')->required()->maxDate(now()),
+                                DatePicker::make('from')->required(),
+                                DatePicker::make('to')->required(),
+                                Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
+                            ])
+                        ];
+                    }),
+                    BulkAction::make('Standard Invoice')->icon('heroicon-o-template')->deselectRecordsAfterCompletion()->action(function (Collection $records, array $data) {
+                        $records->each(function (Tenant $record) use ($data) {
+                            $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
+                            $amount = $data['amount_invoiced'];
+                            $quantity = 1;
+                            $new_data = array_merge(
+                                $data,
+                                [
+                                    'invoice_number' => $invoice_number,
+                                    'amount' => $amount,
+                                    'quantity' => $quantity
+                                ]
+                            );
+                            // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
+                            //TODO::OPTIMIZATION NEEDED
+                            $mail_config = Mailconfig::where('manager_id', auth()->id());
+                            $get_mail_config = Mailconfig::find($mail_config->first()->id);
+                            $get_mail_config->mailer()->to($record)->send(new InvoiceSent($record, $new_data));
+                            // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
+                            $final_data = [
+                                'tenant_id' => $record->id,
+                                'tenant_identity' => $record->id_number,
+                                'invoice_number' => $invoice_number,
+                                'invoice_type' => 'Standard',
+                                'due_date' => $data['due_date'], 'from' => $data['from'],
+                                'to' => $data['to'], 'tenant_name' => $record->full_names,
+                                'property_name' => $record->property_name, 'unit_name' => $record->unit_name,
+                                'invoice_description' => $data['invoice_details'],
+                                'amount_invoiced' => isset($data['amount_invoiced'])  ? $data['amount_invoiced'] : $amount,
+                                'balance' => isset($data['amount_invoiced'])  ? $data['amount_invoiced'] : $amount
+                            ];
+                            $final_invoice =   Invoice::create($final_data);
+                            $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
+                            $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
+
+                            $statement_data = [
+                                'tenant_id' => $record->id,
+                                'tenant_name' => $record->full_names,
+                                'description' => 'Standard Invoice',
+                                'reference' => $final_invoice->invoice_number,
+                                'debit' => $final_invoice->balance,
+                                'balance' => $total_debit - ($total_credit - $final_invoice->balance),
+                                'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
+                            ];
+                            $statement = Statement::create($statement_data);
+                            InvoiceReceiptAutoAllocation::handleNewInvoice($record, $final_invoice);
+                        });
+                    })->form([
+                        Fieldset::make("Standard Invoice")->schema([
+                            TextInput::make('invoice_title')->required()->disabled()->default('Standard Invoice'),
+                            DatePicker::make('due_date')->required()->maxDate(now()),
+                            DatePicker::make('from')->required(),
+                            DatePicker::make('to')->required(),
+                            TextInput::make('amount_invoiced')->integer(),
+                            Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
+                        ])
+                    ]),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
@@ -141,7 +393,7 @@ class TenantResource extends Resource
                 Section::make()
                     ->schema([
                         Split::make([
-                            Grid::make(3)
+                            Grid::make(4)
                                 ->schema([
                                     Group::make([
                                         TextEntry::make('full_names'),
@@ -154,7 +406,13 @@ class TenantResource extends Resource
                                     Group::make([
                                         TextEntry::make('phone_number'),
                                         TextEntry::make('status')->badge()->color(fn ($state) => $state == 'active' ? 'success' : 'warning'),
+
                                     ]),
+                                    Group::make([
+                                        TextEntry::make('activeutility.active_utilities')->label('Active Utilities')->badge()->color('gray'),
+                                        TextEntry::make('units.unit_name')->label('Unit (s)'),
+
+                                    ])
                                 ]),
                         ])->from('lg'),
                     ])->collapsible(),
