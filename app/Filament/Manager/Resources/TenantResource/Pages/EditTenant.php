@@ -22,6 +22,11 @@ class EditTenant extends EditRecord
     {
         return $this->getRecord()->full_names;
     }
+
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
     
 
 }

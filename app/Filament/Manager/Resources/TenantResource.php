@@ -3,24 +3,28 @@
 namespace App\Filament\Manager\Resources;
 
 use App\Filament\Manager\Resources\TenantResource\Pages;
-use App\Filament\Manager\Resources\TenantResource\RelationManagers;
 use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Split;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Manager\Resources\TenantResource\RelationManagers;
 
 class TenantResource extends Resource
 {
@@ -96,7 +100,10 @@ class TenantResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
+                    ActionGroup::make([
+                        ViewAction::make(),
+                        EditAction::make(),
+                    ])
                 ])
             ])
             ->bulkActions([
@@ -112,7 +119,7 @@ class TenantResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\UnitsRelationManager::class
         ];
     }
 
@@ -122,6 +129,35 @@ class TenantResource extends Resource
             'index' => Pages\ListTenants::route('/'),
             'create' => Pages\CreateTenant::route('/create'),
             'edit' => Pages\EditTenant::route('/{record}/edit'),
+            'view' => Pages\ViewTenant::route('/{record}')
         ];
+    }
+
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        Split::make([
+                            Grid::make(3)
+                                ->schema([
+                                    Group::make([
+                                        TextEntry::make('full_names'),
+                                        TextEntry::make('property_name'),
+                                    ]),
+                                    Group::make([
+                                        TextEntry::make('email'),
+                                        TextEntry::make('entry_date')->date()
+                                    ]),
+                                    Group::make([
+                                        TextEntry::make('phone_number'),
+                                        TextEntry::make('status')->badge()->color(fn ($state) => $state == 'active' ? 'success' : 'warning'),
+                                    ]),
+                                ]),
+                        ])->from('lg'),
+                    ])->collapsible(),
+            ]);
     }
 }
