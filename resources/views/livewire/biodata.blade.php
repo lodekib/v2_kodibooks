@@ -1,4 +1,5 @@
-<div>
-    {{ $this->form }}
-    <button type="submit">Submit</button>
-</div>
+     <div>
+          <form wire:submit.prevent="create">
+               {{ $this->form }}
+          </form>
+     </div>

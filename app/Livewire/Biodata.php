@@ -2,12 +2,28 @@
 
 namespace App\Livewire;
 
+use App\Models\Manager;
+use App\Models\User;
+use App\Services\CardService;
+use App\Services\SMSService;
+use Closure;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 class Biodata extends Component implements HasForms
@@ -22,20 +38,176 @@ class Biodata extends Component implements HasForms
         $this->form->fill();
     }
 
-
-
     public function form(Form $form): Form
     {
-        return $form->schema([
-            Fieldset::make()->schema([
-                Radio::make('type')->options(['agent' => 'Agent', 'manager' => 'Manager'])->required()->reactive(),
-                TextInput::make('commision')->visible(fn ($get) => $get('type') == 'agent' ? true : false),
-            ]),
-        ])->statePath('data');
+        return $form
+            ->schema([
+                Wizard::make([
+                    Wizard\Step::make('')
+                        ->description('Personal information.')
+                        ->schema([
+                            Fieldset::make()->schema([
+                                Radio::make('type')->options(['agent' => 'Agent', 'manager' => 'Manager'])->required()->reactive(),
+                                TextInput::make('commission')->visible(fn ($get) => $get('type') == 'agent' ? true : false)->numeric()->minValue(0)->maxValue(100)
+                                    ->required(fn ($get) => $get('type') == 'agent' ? true : false),
+                                TextInput::make('contact_number')->label('Phone number')->helperText('Please provide your phone number')
+                                    ->mask('0000-000-000')->required()->unique(),
+                                TextInput::make('national_id')->numeric()->label('ID number')->helperText('Provide your national identity number')->required()->unique(),
+                                TextInput::make('residence')->label('Residence')->required(),
+                            ])->columns(4),
+                        ])->afterValidation(function (Get $get) {
+                            $smsservice = App::make(SMSService::class);
+                            $response = $smsservice->sendOTP($get('contact_number'));
+                            if ($response->getStatusCode() == 200 && $response->getData()->isExpired == true) {
+                                Notification::make()->success()
+                                    ->body('Check your phone for an otp token.The otp expires in 5 minutes.')->seconds(3)->send();
+                            }
+                        }),
+                    Wizard\Step::make('Otp')->description('Verify phone number')->schema([
+                        TextInput::make('otp')->helperText('Enter OTP sent to  your phone number.')->mask('00000')
+                            ->required()->rules([
+                                function () {
+                                    return function (string $attribute, $value, $fail) {
+                                        if ($value  !== Cache::get('otp')) {
+                                            $fail("The otp provided is invalid.");
+                                        }
+                                    };
+                                }
+                            ]),
+                    ]),
+                    Wizard\Step::make('Organization')->description('Organization details')
+                        ->schema([
+                            Fieldset::make()
+                                ->schema([
+                                    TextInput::make('org_brand')->label('Company / Organization name')->required()->unique(),
+                                    TextInput::make('org_address')->label('Organization address')->required(),
+                                    TextInput::make('org_email')->email()->label('Organization email')->required()->unique()->helperText('Provide email address of the organization')
+                                        ->rules([
+                                            function () {
+                                                return function (string $attribute, $value, Closure $fail) {
+                                                    $validator = new EmailValidator();
+                                                    $multipleValidations = new MultipleValidationWithAnd([new RFCValidation(), new DNSCheckValidation()]);
+                                                    if (!$validator->isValid($value, $multipleValidations)) {
+                                                        $fail("Please provide a valid organization email address");
+                                                    }
+                                                };
+                                            }
+
+                                        ]),
+                                    FileUpload::make('org_logo')->image()->label('Organization logo')->helperText('Provide organization logo if any.')
+                                ])
+                        ])->afterValidation(function ($get) {
+                            if (Mail::to($get('org_email'))->send(new VerifyOrgEmail())) {
+                                Notification::make()->success()->body('A code has been successfully sent to the email.')->send();
+                            }
+                        }),
+                    Wizard\Step::make('Verify')->description('Verify email')->schema([
+                        TextInput::make('otp_mail')->label('Verification token')->helperText('Enter the verification code sent to the organization email.')->mask('0000')
+                            ->required()->rules([
+                                function () {
+                                    return function (string $attribute, $value, $fail) {
+                                        if (intval($value) !== Cache::get('otp_mail')) {
+                                            $fail("The verification code  provided is invalid.");
+                                        }
+                                    };
+                                }
+                            ]),
+                    ]),
+                    Wizard\Step::make('Payment')->description('payment and billing')
+                        ->schema([
+                            Fieldset::make()->schema([
+                                Radio::make('payment_method')->options(['mpesa' => 'Mpesa', 'card' => 'Card'])->required()->reactive(),
+                                TextInput::make('card_number')->mask('0000-0000-0000-0000')->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)
+                                    ->required(fn ($get) => $get('payment_method') == 'card' ? true : false)->unique(),
+                                TextInput::make('cvc')->label('CVC')->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)->required(fn ($get) => $get('payment_method') == 'card' ? true : false)->unique(),
+                                DatePicker::make('expiry_date')->displayFormat('d/m/y')->minDate(now())->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)->required(fn ($get) => $get('payment_method') == 'card' ? true : false)
+                            ])
+                        ]),
+                ])->submitAction(new HtmlString('
+                <button type="submit" wire:loading.attr="disabled" class="filament-button filament-button-size-sm inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset dark:focus:ring-offset-0 min-h-[2rem] px-3 text-sm text-white shadow focus:ring-white border-transparent bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700">
+                    <svg class="animate-spin h-4 w-4 mr-1" wire:loading wire:target="create" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Submit
+                </button>
+                '))
+            ])
+            ->statePath('data');
     }
 
-    public function create(): void
+    public function create()
     {
-        dd($this->form->getState());
+        $new_data = array_merge(
+            $this->form->getState(),
+            [
+                'id' => auth()->id()
+            ]
+        );
+
+        if ($new_data['payment_method'] == 'card') {
+            $cardDate = explode("-", $new_data['expiry_date']);
+
+            $card_service = CardService::cardStripe($new_data, $cardDate[1], substr($cardDate[0], -2));
+
+            if ($card_service['status']) {
+                $manager =  Manager::create($new_data);
+
+                if ($manager) {
+                    User::whereId($manager->id)->update([
+                        "isVerified" => true
+                    ]);
+
+                    Notification::make()->success()->title("Profile data updated  !")
+                        ->body("Biodata has been updated successfully.Use the link  below to add a property")
+                        ->persistent()
+                        ->actions([
+                            Action::make('create property')->color('secondary')
+                                ->button()->url(route('manager.resources.properties.index')),
+                            Action::make('close')
+                                ->color('secondary')
+                                ->close(),
+                        ])->send();
+                }
+
+                return redirect()->to('/manager/properties');
+            } else {
+                Notification::make()
+                    ->warning()
+                    ->title('Card verification failed')
+                    ->body($card_service['message'] . 'Please check and try again.')
+                    ->send();
+
+                return back();
+            }
+        } else if ($new_data['payment_method'] == 'mpesa') {
+
+            $manager =  Manager::create($new_data);
+
+            if ($manager) {
+                User::whereId($manager->id)->update([
+                    "is_verified" => true
+                ]);
+
+                Notification::make()->success()->title("Profile data updated  !")
+                    ->body("Biodata has been updated successfully.Use the link  below to add a property")
+                    ->persistent()
+                    ->actions([
+                        Action::make('create property')->color('secondary')
+                            ->button()->url(route('manager.resources.properties.index')),
+                        Action::make('close')
+                            ->color('secondary')
+                            ->close(),
+                    ])->send();
+            }
+
+            return redirect()->to('/manager/properties');
+        }
+    }
+
+
+    public function render()
+    {
+        return view('livewire.biodata');
     }
 }
