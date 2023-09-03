@@ -18,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
@@ -61,7 +62,7 @@ class ManagerPanelProvider extends PanelProvider
                     shouldRegisterNavigation: true,
                     hasAvatars: true
                 )->enableTwoFactorAuthentication(force: false),
-                FilamentTourPlugin::make()->onlyVisibleOnce(false)
+                FilamentTourPlugin::make()->onlyVisibleOnce(true)
             ]);
     }
 }

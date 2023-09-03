@@ -2,11 +2,16 @@
 
 namespace App\Livewire;
 
+use App\Mail\VerifyOrgMail;
 use App\Models\Manager;
 use App\Models\User;
 use App\Services\CardService;
 use App\Services\SMSService;
 use Closure;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\DNSCheckValidation;
+use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -63,7 +68,7 @@ class Biodata extends Component implements HasForms
                                     ->body('Check your phone for an otp token.The otp expires in 5 minutes.')->seconds(3)->send();
                             }
                         }),
-                    Wizard\Step::make('Otp')->description('Verify phone number')->schema([
+                    Wizard\Step::make('')->description('Verify phone number')->schema([
                         TextInput::make('otp')->helperText('Enter OTP sent to  your phone number.')->mask('00000')
                             ->required()->rules([
                                 function () {
@@ -75,13 +80,13 @@ class Biodata extends Component implements HasForms
                                 }
                             ]),
                     ]),
-                    Wizard\Step::make('Organization')->description('Organization details')
+                    Wizard\Step::make('')->description('Organization details')
                         ->schema([
                             Fieldset::make()
                                 ->schema([
                                     TextInput::make('org_brand')->label('Company / Organization name')->required()->unique(),
                                     TextInput::make('org_address')->label('Organization address')->required(),
-                                    TextInput::make('org_email')->email()->label('Organization email')->required()->unique()->helperText('Provide email address of the organization')
+                                    TextInput::make('org_email')->email()->label('Organization email')->required()->unique()
                                         ->rules([
                                             function () {
                                                 return function (string $attribute, $value, Closure $fail) {
@@ -94,14 +99,14 @@ class Biodata extends Component implements HasForms
                                             }
 
                                         ]),
-                                    FileUpload::make('org_logo')->image()->label('Organization logo')->helperText('Provide organization logo if any.')
+                                    FileUpload::make('org_logo')->image()->label('Organization logo')
                                 ])
                         ])->afterValidation(function ($get) {
-                            if (Mail::to($get('org_email'))->send(new VerifyOrgEmail())) {
+                            if (Mail::to($get('org_email'))->send(new VerifyOrgMail())) {
                                 Notification::make()->success()->body('A code has been successfully sent to the email.')->send();
                             }
                         }),
-                    Wizard\Step::make('Verify')->description('Verify email')->schema([
+                    Wizard\Step::make('')->description('Verify email')->schema([
                         TextInput::make('otp_mail')->label('Verification token')->helperText('Enter the verification code sent to the organization email.')->mask('0000')
                             ->required()->rules([
                                 function () {
@@ -113,7 +118,7 @@ class Biodata extends Component implements HasForms
                                 }
                             ]),
                     ]),
-                    Wizard\Step::make('Payment')->description('payment and billing')
+                    Wizard\Step::make('')->description('payment and billing')
                         ->schema([
                             Fieldset::make()->schema([
                                 Radio::make('payment_method')->options(['mpesa' => 'Mpesa', 'card' => 'Card'])->required()->reactive(),

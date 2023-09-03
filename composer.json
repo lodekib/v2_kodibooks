@@ -15,6 +15,7 @@
         "cartalyst/stripe-laravel": "^15.0",
         "egulias/email-validator": "^4.0",
         "filament/filament": "^3.0-stable",
+        "flowframe/laravel-trend": "^0.1.5",
         "fouladgar/laravel-otp": "^4.0",
         "guzzlehttp/guzzle": "^7.2",
         "jeffgreco13/filament-breezy": "^2.1",
