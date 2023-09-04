@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('card_number')->nullable();
             $table->integer('cvc')->nullable();
             $table->date('expiry_date')->nullable();
-            $table->boolean('is_invoiced');
+            $table->boolean('is_invoiced')->default(false);
             $table->timestamps();
 
             $table->softDeletes();
