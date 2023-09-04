@@ -25,7 +25,7 @@ class Tenant extends Model
         return $this->belongsTo(Property::class);
     }
 
-    public function activeutility():HasOne
+    public function activeutility(): HasOne
     {
         return $this->hasOne(ActiveUtility::class);
     }

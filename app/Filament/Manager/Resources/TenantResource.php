@@ -41,6 +41,8 @@ use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Mail as Mailconfig;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 
 class TenantResource extends Resource
 {
@@ -106,7 +108,16 @@ class TenantResource extends Resource
             ])
             ->striped()
             ->filters([
-                //
+                SelectFilter::make('Utility')->options(Utility::pluck('utility_name', 'utility_name'))->query(function (Builder $query, array $data): Builder {
+                    $utility = $data['value'];
+                    if ($utility != null) {
+                        return $query->whereHas('activeutility', function (Builder $query) use ($utility) {
+                            $query->whereJsonContains('active_utilities', $utility);
+                        });
+                    } else {
+                        return Tenant::latest();
+                    }
+                })
             ])
             ->actions([
                 ActionGroup::make([
