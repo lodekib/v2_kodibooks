@@ -56,15 +56,14 @@ class Biodata extends Component implements HasForms
                                 TextInput::make('commission')->visible(fn ($get) => $get('type') == 'agent' ? true : false)->numeric()->minValue(0)->maxValue(100)
                                     ->required(fn ($get) => $get('type') == 'agent' ? true : false),
                                 TextInput::make('contact_number')->label('Phone number')->required()->unique(),
-                                TextInput::make('national_id')->numeric()->label('ID number')->helperText('Provide your national identity number')->required()->unique(),
+                                TextInput::make('national_id')->numeric()->label('ID number')->required()->unique(),
                                 TextInput::make('residence')->label('Residence')->required(),
                             ])->columns(4),
-                        ])->afterValidation(function ($get) {
+                        ])->afterValidation(function (Get $get) {
                             $smsservice = App::make(SMSService::class);
                             $response = $smsservice->sendOTP($get('contact_number'));
                             if ($response->getStatusCode() == 200 && $response->getData()->isExpired == true) {
-                                Notification::make()->success()
-                                    ->body('Check your phone for an otp token.The otp expires in 5 minutes.')->seconds(3)->send();
+                                Notification::make()->success()->body('Check your phone for an otp token.The otp expires in 5 minutes.')->seconds(2)->send();
                             }
                         }),
                     Wizard\Step::make('Phone')->icon('heroicon-o-device-phone-mobile')->schema([
@@ -98,9 +97,9 @@ class Biodata extends Component implements HasForms
                                             }
 
                                         ]),
-                                    FileUpload::make('org_logo')->image()->label('Organization logo')->helperText('Provide organization logo if any.')
+                                    FileUpload::make('org_logo')->image()->label('Organization logo')
                                 ])
-                        ])->afterValidation(function ($get) {
+                        ])->afterValidation(function (Get $get) {
                             if (Mail::to($get('org_email'))->send(new VerifyOrgMail())) {
                                 Notification::make()->success()->body('A code has been successfully sent to the email.')->send();
                             }
@@ -152,8 +151,9 @@ class Biodata extends Component implements HasForms
         if ($new_data['payment_method'] == 'card') {
             $cardDate = explode("-", $new_data['expiry_date']);
 
-            $card_service = CardService::cardStripe($new_data, $cardDate[1], substr($cardDate[0], -2));
 
+            $card_service = CardService::cardStripe($new_data, $cardDate[1], substr($cardDate[0], -2));
+            dd($card_service);
             if ($card_service['status']) {
                 $manager =  Manager::create($new_data);
 

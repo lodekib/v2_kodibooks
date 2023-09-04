@@ -125,7 +125,7 @@ class IncomeChart extends ApexChartWidget
 
         return [
             'chart' => [
-                'type' => 'line',
+                'type' => 'area',
                 'height' => 300,
                 'toolbar' => [
                     'show' => false,

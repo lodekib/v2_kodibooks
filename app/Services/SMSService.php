@@ -46,8 +46,6 @@ class SMSService {
         try {
             /** @var User $user */
             $user = $this->OTPService->validate($request->get('mobile'), $request->get('token'));
-
-            dd($user);
         } catch (InvalidOTPTokenException $exception) {
             return response()->json(['error' => $exception->getMessage()], $exception->getCode());
         } catch (Throwable $ex) {
