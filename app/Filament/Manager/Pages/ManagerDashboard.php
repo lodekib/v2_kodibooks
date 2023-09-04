@@ -25,10 +25,7 @@ class ManagerDashboard extends BasePage
         return [
             Tour::make('dashboard')
                 ->steps(
-                    Step::make()
-                        ->title('Welcome to Kodibooks !')->description('Your one stop solution for tenant management !.Lets get some walkthroughs to get you started')
-                        ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
-                    Step::make('.fi-avatar')
+                    Step::make('dashboard')
                         ->title('Are you a manager or agent ? ')
                         ->description(view('biodata.biodata'))
                         ->icon('heroicon-s-user-circle')->iconColor('primary')->uncloseable()

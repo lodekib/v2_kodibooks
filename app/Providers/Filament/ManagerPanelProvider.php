@@ -30,7 +30,7 @@ class ManagerPanelProvider extends PanelProvider
         return $panel
             ->id('manager')
             ->path('manager')
-            ->login()->passwordReset()
+            ->login()->passwordReset()->registration()
             ->colors([
                 'primary' => Color::Green,
             ])
@@ -41,7 +41,7 @@ class ManagerPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Manager/Widgets'), for: 'App\\Filament\\Manager\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+                // Widgets\AccountWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -62,7 +62,7 @@ class ManagerPanelProvider extends PanelProvider
                     shouldRegisterNavigation: true,
                     hasAvatars: true
                 )->enableTwoFactorAuthentication(force: false),
-                FilamentTourPlugin::make()->onlyVisibleOnce(true)
+                FilamentTourPlugin::make()->onlyVisibleOnce(false)
             ]);
     }
 }

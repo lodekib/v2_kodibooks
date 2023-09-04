@@ -63,4 +63,11 @@ class User extends Authenticatable implements FilamentUser, OTPNotifiable
 
         return $response;
     }
+
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(fn($user) => $user->assignRole('Manager'));
+    }
 }
