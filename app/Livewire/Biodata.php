@@ -38,6 +38,7 @@ class Biodata extends Component implements HasForms
 
     public ?array $data = [];
 
+
     public function mount(): void
     {
         $this->form->fill();
