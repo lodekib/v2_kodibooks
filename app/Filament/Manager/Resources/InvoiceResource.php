@@ -2,6 +2,8 @@
 
 namespace App\Filament\Manager\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use AlperenErsoy\FilamentExport\FilamentExport;
 use App\Filament\Manager\Resources\InvoiceResource\Pages;
 use App\Filament\Manager\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
@@ -50,7 +52,7 @@ class InvoiceResource extends Resource
             ])
             ->filters([
                 //
-            ])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),

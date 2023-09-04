@@ -2,6 +2,7 @@
 
 namespace App\Filament\Manager\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\PaymentResource\Pages;
 use App\Models\Payment;
 use App\Models\Property;
@@ -95,6 +96,8 @@ class PaymentResource extends Resource
                             }, $record->number . '.pdf');
                         }),
                 ])
+            ])->headerActions([
+                FilamentExportHeaderAction::make('Generate Reports')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

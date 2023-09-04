@@ -2,6 +2,7 @@
 
 namespace App\Filament\Manager\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\TenantResource\Pages;
 use App\Models\Property;
 use App\Models\Tenant;
@@ -118,7 +119,7 @@ class TenantResource extends Resource
                         return Tenant::latest();
                     }
                 })
-            ])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     Action::make('Add water bill')->icon('heroicon-o-funnel')

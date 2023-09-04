@@ -2,6 +2,7 @@
 
 namespace App\Filament\Manager\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\ExpenseResource\Pages;
 use App\Filament\Manager\Resources\ExpenseResource\RelationManagers;
 use App\Models\Expense;
@@ -151,7 +152,7 @@ class ExpenseResource extends Resource
             ])
             ->filters([
                 //
-            ])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     ActionsAction::make('Add Extra Expenses')->icon('heroicon-s-plus')->form([
