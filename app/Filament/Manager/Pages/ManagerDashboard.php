@@ -20,6 +20,7 @@ class ManagerDashboard extends BasePage
         return 'heroicon-s-bars-3';
     }
 
+
     public function tours(): array
     {
         return [
