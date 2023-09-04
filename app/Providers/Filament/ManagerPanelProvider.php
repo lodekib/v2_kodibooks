@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Manager\Pages\ManagerDashboard;
 use App\Http\Middleware\CheckRole;
+use Closure;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -62,7 +63,7 @@ class ManagerPanelProvider extends PanelProvider
                     shouldRegisterNavigation: true,
                     hasAvatars: true
                 )->enableTwoFactorAuthentication(force: false),
-                FilamentTourPlugin::make()->onlyVisibleOnce(false)
+                FilamentTourPlugin::make()->onlyVisibleOnce(fn(): bool => auth()->user()->is_verified)
             ]);
     }
 }

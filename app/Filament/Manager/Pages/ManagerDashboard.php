@@ -32,7 +32,7 @@ class ManagerDashboard extends BasePage
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
                     Step::make('dashboard')
                         ->title('')
-                        ->description(view('biodata.biodata'))->uncloseable()->onNextDispatch('open-modal'),
+                        ->description(view('biodata.biodata'))->uncloseable(),
                     Step::make()
                         ->title('Test !')->description('Your End')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
