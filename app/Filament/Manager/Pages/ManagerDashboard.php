@@ -3,6 +3,7 @@
 namespace App\Filament\Manager\Pages;
 
 use Filament\Pages\Dashboard as BasePage;
+use Illuminate\Support\Facades\Auth;
 use JibayMcs\FilamentTour\Highlight\HasHighlight;
 use JibayMcs\FilamentTour\Highlight\Highlight;
 use JibayMcs\FilamentTour\Tour\HasTour;
@@ -31,8 +32,7 @@ class ManagerDashboard extends BasePage
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
                     Step::make('dashboard')
                         ->title('')
-                        ->description(view('biodata.biodata'))->uncloseable(),
-                        // ->onNextDispatch(`$this->dispatch('open-modal')`
+                        ->description(view('biodata.biodata'))->uncloseable()->onNextDispatch('open-modal'),
                     Step::make()
                         ->title('Test !')->description('Your End')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),

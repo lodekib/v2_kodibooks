@@ -2,6 +2,7 @@
 
 namespace App\Filament\Manager\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\UnitResource\Pages;
 use App\Filament\Manager\Resources\UnitResource\RelationManagers;
 use App\Models\Property;
@@ -72,7 +73,7 @@ class UnitResource extends Resource
             ->striped()
             ->filters([
                 //
-            ])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
