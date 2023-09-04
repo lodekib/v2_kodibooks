@@ -9,5 +9,5 @@ class Manager extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $guarded = ['otp','otp_mail'];
 }

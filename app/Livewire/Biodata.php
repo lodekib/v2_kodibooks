@@ -144,9 +144,10 @@ class Biodata extends Component implements HasForms
         $new_data = array_merge(
             $this->form->getState(),
             [
-                'id' => auth()->id()
+                'id' => auth()->id(),
             ]
         );
+
 
         if ($new_data['payment_method'] == 'card') {
             $cardDate = explode("-", $new_data['expiry_date']);
@@ -162,19 +163,19 @@ class Biodata extends Component implements HasForms
                         "isVerified" => true
                     ]);
 
-                    Notification::make()->success()->title("Profile data updated  !")
-                        ->body("Biodata has been updated successfully.Use the link  below to add a property")
-                        ->persistent()
-                        ->actions([
-                            Action::make('create property')->color('secondary')
-                                ->button()->url(route('manager.resources.properties.index')),
-                            Action::make('close')
-                                ->color('secondary')
-                                ->close(),
-                        ])->send();
+                    // Notification::make()->success()->title("Profile data updated  !")
+                    //     ->body("Biodata has been updated successfully.Use the link  below to add a property")
+                    //     ->persistent()
+                    //     ->actions([
+                    //         Action::make('create property')->color('secondary')
+                    //             ->button()->url(route('manager.resources.properties.index')),
+                    //         Action::make('close')
+                    //             ->color('secondary')
+                    //             ->close(),
+                    //     ])->send();
                 }
 
-                // return redirect()->to('/manager/properties');
+                return redirect()->to('/manager/properties');
             } else {
                 Notification::make()
                     ->warning()
@@ -193,19 +194,19 @@ class Biodata extends Component implements HasForms
                     "is_verified" => true
                 ]);
 
-                Notification::make()->success()->title("Profile data updated  !")
-                    ->body("Biodata has been updated successfully.Use the link  below to add a property")
-                    ->persistent()
-                    ->actions([
-                        Action::make('create property')->color('secondary')
-                            ->button()->url(route('manager.resources.properties.index')),
-                        Action::make('close')
-                            ->color('secondary')
-                            ->close(),
-                    ])->send();
+                // Notification::make()->success()->title("Profile data updated  !")
+                //     ->body("Biodata has been updated successfully.Use the link  below to add a property")
+                //     ->persistent()
+                //     ->actions([
+                //         Action::make('create property')->color('secondary')
+                //             ->button()->url(route('manager.resources.properties.index')),
+                //         Action::make('close')
+                //             ->color('secondary')
+                //             ->close(),
+                //     ])->send();
             }
 
-            // return redirect()->to('/manager/properties');
+            return redirect()->to('/manager/properties');
         }
     }
 
