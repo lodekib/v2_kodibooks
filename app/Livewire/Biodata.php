@@ -48,19 +48,17 @@ class Biodata extends Component implements HasForms
         return $form
             ->schema([
                 Wizard::make([
-                    Wizard\Step::make('')
-                        ->description('Personal information.')
+                    Wizard\Step::make('Bio')->icon('heroicon-o-user-circle')
                         ->schema([
                             Fieldset::make()->schema([
                                 Radio::make('type')->options(['agent' => 'Agent', 'manager' => 'Manager'])->required()->reactive(),
                                 TextInput::make('commission')->visible(fn ($get) => $get('type') == 'agent' ? true : false)->numeric()->minValue(0)->maxValue(100)
                                     ->required(fn ($get) => $get('type') == 'agent' ? true : false),
-                                TextInput::make('contact_number')->label('Phone number')->helperText('Please provide your phone number')
-                                    ->mask('0000-000-000')->required()->unique(),
+                                TextInput::make('contact_number')->label('Phone number')->required()->unique(),
                                 TextInput::make('national_id')->numeric()->label('ID number')->helperText('Provide your national identity number')->required()->unique(),
                                 TextInput::make('residence')->label('Residence')->required(),
                             ])->columns(4),
-                        ])->afterValidation(function (Get $get) {
+                        ])->afterValidation(function ($get) {
                             $smsservice = App::make(SMSService::class);
                             $response = $smsservice->sendOTP($get('contact_number'));
                             if ($response->getStatusCode() == 200 && $response->getData()->isExpired == true) {
@@ -68,8 +66,8 @@ class Biodata extends Component implements HasForms
                                     ->body('Check your phone for an otp token.The otp expires in 5 minutes.')->seconds(3)->send();
                             }
                         }),
-                    Wizard\Step::make('')->description('Verify phone number')->schema([
-                        TextInput::make('otp')->helperText('Enter OTP sent to  your phone number.')->mask('00000')
+                    Wizard\Step::make('Phone')->icon('heroicon-o-device-phone-mobile')->schema([
+                        TextInput::make('otp')->helperText('Enter OTP sent to  your phone number.')
                             ->required()->rules([
                                 function () {
                                     return function (string $attribute, $value, $fail) {
@@ -80,7 +78,7 @@ class Biodata extends Component implements HasForms
                                 }
                             ]),
                     ]),
-                    Wizard\Step::make('')->description('Organization details')
+                    Wizard\Step::make('Organization')->icon('heroicon-o-globe-europe-africa')
                         ->schema([
                             Fieldset::make()
                                 ->schema([
@@ -99,15 +97,15 @@ class Biodata extends Component implements HasForms
                                             }
 
                                         ]),
-                                    FileUpload::make('org_logo')->image()->label('Organization logo')
+                                    FileUpload::make('org_logo')->image()->label('Organization logo')->helperText('Provide organization logo if any.')
                                 ])
                         ])->afterValidation(function ($get) {
                             if (Mail::to($get('org_email'))->send(new VerifyOrgMail())) {
                                 Notification::make()->success()->body('A code has been successfully sent to the email.')->send();
                             }
                         }),
-                    Wizard\Step::make('')->description('Verify email')->schema([
-                        TextInput::make('otp_mail')->label('Verification token')->helperText('Enter the verification code sent to the organization email.')->mask('0000')
+                    Wizard\Step::make('Email')->icon('heroicon-o-envelope-open')->schema([
+                        TextInput::make('otp_mail')->label('Verification token')->helperText('This may take 1 - 2 minutes.Please be patient')
                             ->required()->rules([
                                 function () {
                                     return function (string $attribute, $value, $fail) {
@@ -118,12 +116,12 @@ class Biodata extends Component implements HasForms
                                 }
                             ]),
                     ]),
-                    Wizard\Step::make('')->description('payment and billing')
+                    Wizard\Step::make('Payment')->icon('heroicon-o-banknotes')
                         ->schema([
                             Fieldset::make()->schema([
                                 Radio::make('payment_method')->options(['mpesa' => 'Mpesa', 'card' => 'Card'])->required()->reactive(),
-                                TextInput::make('card_number')->mask('0000-0000-0000-0000')->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)
-                                    ->required(fn ($get) => $get('payment_method') == 'card' ? true : false)->unique(),
+                                TextInput::make('card_number')->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)
+                                    ->required(fn (Get $get) => $get('payment_method') == 'card' ? true : false)->unique(),
                                 TextInput::make('cvc')->label('CVC')->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)->required(fn ($get) => $get('payment_method') == 'card' ? true : false)->unique(),
                                 DatePicker::make('expiry_date')->displayFormat('d/m/y')->minDate(now())->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)->required(fn ($get) => $get('payment_method') == 'card' ? true : false)
                             ])
@@ -175,7 +173,7 @@ class Biodata extends Component implements HasForms
                         ])->send();
                 }
 
-                return redirect()->to('/manager/properties');
+                // return redirect()->to('/manager/properties');
             } else {
                 Notification::make()
                     ->warning()
@@ -206,7 +204,7 @@ class Biodata extends Component implements HasForms
                     ])->send();
             }
 
-            return redirect()->to('/manager/properties');
+            // return redirect()->to('/manager/properties');
         }
     }
 
