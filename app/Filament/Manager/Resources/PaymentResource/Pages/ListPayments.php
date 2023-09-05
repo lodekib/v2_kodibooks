@@ -32,7 +32,11 @@ class ListPayments extends ListRecords
                 ImportField::make('amount')->required(),
                 ImportField::make('balance')->required(),
                 ImportField::make('paid_date')->required()
-            ], columns: 4)->icon('heroicon-s-arrow-down-tray')->handleRecordCreation(function ($data) {
+            ], columns: 4)->icon('heroicon-s-arrow-down-tray')->mutateBeforeCreate(function($row){
+                $date = strtotime($row['paid_date']);
+                $row['paid_date'] = date($date);
+            })
+            ->handleRecordCreation(function ($data) {
                 $tenant = Tenant::where('id_number', $data['national_id'])->pluck('id');
                 if ($tenant->isEmpty()) {
                     Notification::make()->warning()->body('Please make sure the tenants already exist')->send();

@@ -30,7 +30,7 @@ class ManagerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('manager')
-            ->path('manager')
+            ->path('')
             ->login()->passwordReset()->registration()
             ->colors([
                 'primary' => Color::Green,
@@ -63,7 +63,7 @@ class ManagerPanelProvider extends PanelProvider
                     shouldRegisterNavigation: true,
                     hasAvatars: true
                 )->enableTwoFactorAuthentication(force: false),
-                FilamentTourPlugin::make()->onlyVisibleOnce(fn(): bool => auth()->user()->is_verified)
+                FilamentTourPlugin::make()->onlyVisibleOnce(false)
             ]);
     }
 }
