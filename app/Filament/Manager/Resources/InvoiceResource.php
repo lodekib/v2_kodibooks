@@ -7,8 +7,18 @@ use AlperenErsoy\FilamentExport\FilamentExport;
 use App\Filament\Manager\Resources\InvoiceResource\Pages;
 use App\Filament\Manager\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
+use App\Models\Property;
+use App\Models\Tenant;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -29,7 +39,25 @@ class InvoiceResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Section::make()->schema([
+                    Select::make('property_name')->options(Property::pluck('property_name', 'property_name'))->reactive()->required(),
+                    Select::make('unit_name')->options(function (Get $get) {
+                        $property_name = $get('property_name');
+                        if ($property_name != null) {
+                            $property = Property::where('property_name', $property_name)->first();
+                            return $property->units()->where('status', 'occupied')->pluck('unit_name', 'unit_name');
+                        } else {
+                            return [];
+                        }
+                    })->required(),
+                    TextInput::make('invoice_number')->required(),
+                    TextInput::make('amount_invoiced')->numeric()->required(),
+                    DatePicker::make('due_date')->required(),
+                    DatePicker::make('from')->required(),
+                    DatePicker::make('to')->required(),
+                    Radio::make('invoice_type')->options(['Standard' => 'Standard','Rent' => 'Rent'])->required()->inline(),
+                    Textarea::make('invoice_description')->required()
+                ])->columns(3)
             ]);
     }
 
