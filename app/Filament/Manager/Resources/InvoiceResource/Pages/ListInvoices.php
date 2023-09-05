@@ -7,6 +7,7 @@ use App\Models\Statement;
 use App\Models\Tenant;
 use App\Services\InvoiceReceiptAutoAllocation;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Model;
 use Konnco\FilamentImport\Actions\ImportAction;
@@ -21,7 +22,8 @@ class ListInvoices extends ListRecords
   protected function getHeaderActions(): array
   {
     return [
-      // Actions\CreateAction::make(),
+      Actions\CreateAction::make()->icon('heroicon-o-newspaper'),
+      Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.invoice')),
       ImportAction::make()->label('Import Invoices')->uniqueField('invoice_number')->icon('heroicon-o-arrow-down-tray')->fields([
         ImportField::make('property_name')->required()->rules('exists:properties,property_name'),
         ImportField::make('unit_name')->required()->rules('exists:units,unit_name'),
@@ -33,13 +35,13 @@ class ListInvoices extends ListRecords
         ImportField::make('from'),
         ImportField::make('to'),
         ImportField::make('amount_invoiced')->required(),
-        ImportField::make('balance')->required(),
         ImportField::make('invoice_description')
       ], columns: 4)->handleRecordCreation(function ($data) {
         $tenant = Tenant::where('id_number', $data['national_id'])->pluck('id');
         $new_data = array_merge($data, [
           'tenant_id' => $tenant[0],
-          'invoice_status' => ($data['amount_invoiced'] == $data['balance']) ? "pending" : (($data['balance'] == 0) ? "fully_paid" : "partially_paid")
+          'invoice_status' => 'pending',
+          'balance' => $data['amount_invoiced']
         ]);
         return $this->getModel()::create($new_data);
       })->mutateAfterCreate(function (Model $model) {

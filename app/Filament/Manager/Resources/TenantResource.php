@@ -120,7 +120,7 @@ class TenantResource extends Resource
                         return Tenant::latest();
                     }
                 })
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     Action::make('Add water bill')->icon('heroicon-o-funnel')

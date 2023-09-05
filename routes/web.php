@@ -18,7 +18,7 @@ Route::get('manager/payments/sample-csv-download', function () {
 })->name('template.payment');
 Route::get('manager/invoices/sample-csv-download', function () {
     $headers =  array('Content-Type' => 'text/csv');
-    return Response::download('invoice_csv_template/invoice.csv', 'invoice.csv', $headers);
+    return Response::download('invoices_csv_template/invoice.csv', 'invoice.csv', $headers);
 })->name('template.invoice');
 Route::get('manager/tenants/sample-csv-download', function () {
     $headers = array('Content-Type' => 'text/csv');
