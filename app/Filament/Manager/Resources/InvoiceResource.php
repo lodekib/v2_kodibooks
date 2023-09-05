@@ -44,7 +44,7 @@ class InvoiceResource extends Resource
                 TextColumn::make('invoice_status')->color(fn (string $state): string => match ($state) {
                     'pending' => 'warning',
                     'partially_paid' => 'gray',
-                    'fully paid' => 'success'
+                    'fully_paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
                 TextColumn::make('due_date')->date()->size('sm'),
                 TextColumn::make('amount_invoiced')->size('sm')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state)),

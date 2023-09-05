@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Manager\Pages\ManagerDashboard;
 use App\Http\Middleware\CheckRole;
+use Closure;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -29,7 +30,7 @@ class ManagerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('manager')
-            ->path('manager')
+            ->path('')
             ->login()->passwordReset()->registration()
             ->colors([
                 'primary' => Color::Green,
