@@ -45,7 +45,7 @@ class InvoiceResource extends Resource
                 TextColumn::make('invoice_status')->color(fn (string $state): string => match ($state) {
                     'pending' => 'warning',
                     'partially_paid' => 'gray',
-                    'fully_paid' => 'success'
+                    'fully paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
                 TextColumn::make('due_date')->date()->size('sm'),
                 TextColumn::make('amount_invoiced')->size('sm')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state)),
@@ -53,7 +53,7 @@ class InvoiceResource extends Resource
             ])
             ->filters([
                 //
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
