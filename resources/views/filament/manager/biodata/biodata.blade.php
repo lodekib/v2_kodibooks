@@ -5,10 +5,10 @@
     <x-slot name="description">
         Thank you for choosing Kodibooks. Please provide information about you and your organization.
     </x-slot>
-    <x-slot name="trigger">
+    <!-- <x-slot name="trigger">
         <x-filament::button>
             Test
-        </x-filament::button> </x-slot>
+        </x-filament::button> </x-slot> -->
 
 
     <livewire:biodata />

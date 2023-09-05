@@ -1,0 +1,3 @@
+"id","manager_id","tenant_id","property_name","tenant_name","unit_name","national_id","receipt_number","reference_number","mode_of_payment","amount","balance","status","paid_date","created_at","updated_at","deleted_at"
+"31","6","13","Demakyd Apartment","Tenant Jimmy","AOY1627","13456782","CH859#","ch#97","Cheque","5600","5600","unallocated","2023-08-31","2023-09-05 11:30:50","2023-09-05 11:30:50",NULL
+"32","6","13","Demakyd Apartment","Tenant Jimmy","AOY1627","13456782","Cash","Cash#","Cash","3000","3000","unallocated","2023-08-29","2023-09-05 11:41:32","2023-09-05 11:41:32",NULL

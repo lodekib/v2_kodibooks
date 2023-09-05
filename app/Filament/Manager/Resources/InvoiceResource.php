@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class InvoiceResource extends Resource
 {
+    protected static ?string $recordTitleAttribute = 'invoice_number';
     protected static ?string $model = Invoice::class;
     protected static ?string $navigationGroup = 'Payments';
     protected static ?string $navigationIcon = 'heroicon-s-newspaper';

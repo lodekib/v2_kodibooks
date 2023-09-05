@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ExpenseResource extends Resource
 {
+    protected static ?string $recordTitleAttribute = 'expense_type';
     protected static ?string $model = Expense::class;
     protected static ?string $navigationGroup = 'Expenses';
     protected static ?string $navigationIcon = 'heroicon-s-briefcase';

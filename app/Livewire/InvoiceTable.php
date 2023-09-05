@@ -32,7 +32,7 @@ class InvoiceTable extends Component implements HasForms, HasTable
                 TextColumn::make('invoice_status')->badge()->color(fn (string $state): string => match ($state) {
                     'pending' => 'warning',
                     'partially_paid' => 'gray',
-                    'fully paid' => 'success'
+                    'fully_paid' => 'success'
                 })->searchable()->sortable(),
                 TextColumn::make('due_date')->date()->size('sm'),
                 TextColumn::make('amount_invoiced')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Invoiced')->money('kes')),

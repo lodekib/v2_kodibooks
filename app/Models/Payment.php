@@ -10,5 +10,5 @@ class Payment extends Model
 {
     use HasFactory, HasManager;
 
-    protected $guarded = ['property_name'];
+    protected $guarded = [];
 }

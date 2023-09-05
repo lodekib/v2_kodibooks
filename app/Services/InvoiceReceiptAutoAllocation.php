@@ -102,7 +102,6 @@ class InvoiceReceiptAutoAllocation
     {
 
         $pending_invoices =  Invoice::where('tenant_name', $tenant_name)->where('invoice_status', '!=', 'fully paid')->oldest()->get();
-
         if ($pending_invoices->isNotEmpty()) {
             foreach ($pending_invoices as $pending_invoice) {
                 if ($pending_invoice->balance <= $payment->balance) {

@@ -47,6 +47,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class TenantResource extends Resource
 {
+    protected static ?string $recordTitleAttribute = 'full_names';
     protected static ?string $model = Tenant::class;
     protected static ?string $navigationGroup = 'Assets';
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
