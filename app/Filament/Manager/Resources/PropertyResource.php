@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PropertyResource extends Resource
 {
+    protected static ?string $recordTitleAttribute = 'property_name';
     protected static ?string $model = Property::class;
     protected static ?string $navigationGroup = 'Assets';
     protected static ?string $navigationIcon = 'heroicon-s-building-office-2';

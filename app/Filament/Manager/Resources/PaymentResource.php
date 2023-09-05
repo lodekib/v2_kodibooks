@@ -23,10 +23,11 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Filament\Tables\Actions\Action;
 
 class PaymentResource extends Resource
 {
+    protected static ?string $recordTitleAttribute = 'receipt_number';
     protected static ?string $model = Payment::class;
     protected static ?string $navigationGroup = 'Payments';
     protected static ?string $navigationIcon = 'heroicon-s-banknotes';
@@ -37,7 +38,7 @@ class PaymentResource extends Resource
             ->schema([
                 Fieldset::make()->schema([
                     Select::make('property_name')->options(Property::pluck('property_name', 'property_name'))->reactive()->reactive(),
-                    Select::make('unit')->options(function (Get $get) {
+                    Select::make('unit_name')->options(function (Get $get) {
                         $property = $get('property_name');
                         if ($property) {
                             return Unit::where('property_name', $property)->where('status', 'occupied')->pluck('unit_name', 'unit_name');
@@ -92,12 +93,12 @@ class PaymentResource extends Resource
                             return response()->streamDownload(function () use ($record) {
                                 echo Pdf::loadHtml(
                                     Blade::render('pdf', ['record' => $record])
-                                )->stream();
+                                )->download();
                             }, $record->number . '.pdf');
                         }),
                 ])
             ])->headerActions([
-                FilamentExportHeaderAction::make('Generate Reports')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+                FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

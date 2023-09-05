@@ -4,6 +4,7 @@ namespace App\Filament\Manager\Resources\TenantResource\Pages;
 
 use App\Filament\Manager\Resources\TenantResource;
 use App\Models\Property;
+use App\Models\Unit;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Konnco\FilamentImport\Actions\ImportAction;
@@ -31,11 +32,16 @@ class ListTenants extends ListRecords
                 ImportField::make('surplus'),
                 ImportField::make('entry_date'),
             ], columns: 4)->icon('heroicon-o-arrow-down-tray')
-            ->handleRecordCreation(function ($data) {
-                $property =  Property::where('property_name', $data['property_name'])->pluck('id');
-                $new_data = array_merge($data, ['property_id' => $property[0]]);
-                return  $this->getModel()::create($new_data);
-            }),
+                ->handleRecordCreation(function ($data) {
+                    $property =  Property::where('property_name', $data['property_name'])->pluck('id');
+                    $new_data = array_merge($data, ['property_id' => $property[0]]);
+                    $tenant =  $this->getModel()::create($new_data);
+
+                    if ($tenant) {
+                        Unit::where('unit_name', $data['unit_name'])->update(['status' => 'occupied']);
+                    }
+                    return $tenant;
+                }),
         ];
     }
 }
