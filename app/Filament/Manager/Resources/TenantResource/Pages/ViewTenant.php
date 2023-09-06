@@ -7,7 +7,6 @@ use App\Models\ActiveUtility;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Utility;
-use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewTenant extends ViewRecord

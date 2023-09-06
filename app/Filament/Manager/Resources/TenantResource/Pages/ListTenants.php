@@ -35,7 +35,7 @@ class ListTenants extends ListRecords
             ], columns: 4)->icon('heroicon-o-arrow-down-tray')
                 ->handleRecordCreation(function ($data) {
                     $property =  Property::where('property_name', $data['property_name'])->pluck('id');
-                    $new_data = array_merge($data, ['property_id' => $property[0]]);
+                    $new_data = array_merge($data, ['property_id' => $property[0],'balance' => 0]);
                     $tenant =  $this->getModel()::create($new_data);
 
                     if ($tenant) {

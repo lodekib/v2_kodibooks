@@ -22,7 +22,7 @@ Route::get('manager/invoices/sample-csv-download', function () {
 })->name('template.invoice');
 Route::get('manager/tenants/sample-csv-download', function () {
     $headers = array('Content-Type' => 'text/csv');
-    return Response::download('tenant_csv_template/tenant.csv', 'tenant.csv', $headers);
+    return Response::download('tenants_csv_template/tenant.csv', 'tenant.csv', $headers);
 })->name('template.tenant');
 Route::get('manager/properties/sample-csv-download', function () {
     $headers = array('Content-Type' => 'text/csv');

@@ -175,7 +175,7 @@ class Biodata extends Component implements HasForms
                     //     ])->send();
                 }
 
-                return redirect()->to('/manager/properties');
+                return redirect()->to('/properties');
             } else {
                 Notification::make()
                     ->warning()
@@ -206,7 +206,7 @@ class Biodata extends Component implements HasForms
                 //     ])->send();
             }
 
-            return redirect()->to('/manager/properties');
+            return redirect()->to('/properties');
         }
     }
 
