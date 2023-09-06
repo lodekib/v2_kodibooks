@@ -1,0 +1,4 @@
+id,manager_id,full_names,email,phone_number,id_number,property_id,property_name,unit_name,arrears,surplus,rent,deposit,balance,is_paid,is_water_invoiced,is_garbage_invoice,is_rent_invoiced,entry_date,status,created_at,updated_at,deleted_at
+1,2,Kinsley Cornell,kingsley@gmail.com,776857434,97895848,1,Demakyd Apartment,MK00123,0,0,10000,10000,20000,0,0,0,0,2023-07-20,active,2023-07-19 09:02:53,2023-07-28 18:42:41,NULL
+3,2,Tenant Jimmy,jimmy@gmail.com,776857436,13456782,2,Demakyd Apartment,AOY1627,0,0,17500,11000,28500,0,0,0,0,2023-07-28,active,2023-07-28 16:56:37,2023-07-28 16:56:37,NULL
+4,2,Tenant Jimmy,info@inspirehub.co.ke,776857437,76849382,2,Demakyd Apartment,QT677,0,0,23000,23000,46000,0,0,0,0,2023-08-15,active,2023-08-15 17:02:38,2023-08-15 17:02:38,NULL

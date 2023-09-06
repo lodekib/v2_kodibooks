@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81e7cba7c857f4d53855aa1d1814fd54",
+    "content-hash": "623d2065fc87ff0f7f94bf1f7b91bcd1",
     "packages": [
         {
             "name": "africastalking/africastalking",
@@ -2891,16 +2891,16 @@
         },
         {
             "name": "jibaymcs/filament-tour",
-            "version": "3.x-dev",
+            "version": "v3.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JibayMcs/filament-tour.git",
-                "reference": "4e2f39ce1081f8f178cf7433ff2bc0cb0998331c"
+                "reference": "49c88c26a0c59c682bd4a93cbc56f82b71a4d909"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JibayMcs/filament-tour/zipball/4e2f39ce1081f8f178cf7433ff2bc0cb0998331c",
-                "reference": "4e2f39ce1081f8f178cf7433ff2bc0cb0998331c",
+                "url": "https://api.github.com/repos/JibayMcs/filament-tour/zipball/49c88c26a0c59c682bd4a93cbc56f82b71a4d909",
+                "reference": "49c88c26a0c59c682bd4a93cbc56f82b71a4d909",
                 "shasum": ""
             },
             "require": {
@@ -2920,7 +2920,6 @@
                 "phpstan/phpstan-deprecation-rules": "^1.0",
                 "phpstan/phpstan-phpunit": "^1.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -2965,7 +2964,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-24T07:16:20+00:00"
+            "time": "2023-09-05T19:55:06+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
@@ -11887,7 +11886,6 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "alperenersoy/filament-export": 10,
-        "jibaymcs/filament-tour": 20,
         "konnco/filament-import": 10
     },
     "prefer-stable": true,

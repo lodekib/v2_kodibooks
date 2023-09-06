@@ -6,6 +6,7 @@ use App\Filament\Manager\Resources\TenantResource;
 use App\Models\Property;
 use App\Models\Unit;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Konnco\FilamentImport\Actions\ImportAction;
 use Konnco\FilamentImport\Actions\ImportField;
@@ -18,6 +19,7 @@ class ListTenants extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.tenant')),
             ImportAction::make()->uniqueField('id_number')->fields([
                 ImportField::make('full_names')->required(),
                 ImportField::make('email')->required(),
@@ -27,7 +29,6 @@ class ListTenants extends ListRecords
                 ImportField::make('unit_name')->rules('exists:units,unit_name'),
                 ImportField::make('rent'),
                 ImportField::make('deposit'),
-                ImportField::make('balance'),
                 ImportField::make('arrears'),
                 ImportField::make('surplus'),
                 ImportField::make('entry_date'),

@@ -4,6 +4,7 @@ namespace App\Filament\Manager\Resources\PropertyResource\Pages;
 
 use App\Filament\Manager\Resources\PropertyResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Konnco\FilamentImport\Actions\ImportAction;
 use Konnco\FilamentImport\Actions\ImportField;
@@ -16,6 +17,7 @@ class ListProperties extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.property')),
             ImportAction::make()->uniqueField('property_name')->fields([
                 ImportField::make('property_name')->required(),
                 ImportField::make('number_of_units')->required(),

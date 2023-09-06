@@ -5,6 +5,7 @@ namespace App\Filament\Manager\Resources\UnitResource\Pages;
 use App\Filament\Manager\Resources\UnitResource;
 use App\Models\Property;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Str;
@@ -20,6 +21,7 @@ class ListUnits extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.unit')),
             ImportAction::make()->uniqueField('unit_name')->fields([
                 ImportField::make('unit_name')->label('unit_name')->required(),
                 Select::make('property_name')->options(Property::pluck('property_name', 'property_name'))->required(),
