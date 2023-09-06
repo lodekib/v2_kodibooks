@@ -57,7 +57,7 @@ class PropertyResource extends Resource
                             'good' => 'Good',
                         ]),
                         TextInput::make('property_location')->required(),
-                        FileUpload::make('property_image')->image(),
+                        FileUpload::make('property_image')->image()->previewable(),
                     ])->columns(3),
             ]);
     }

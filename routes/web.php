@@ -26,5 +26,5 @@ Route::get('manager/tenants/sample-csv-download', function () {
 })->name('template.tenant');
 Route::get('manager/properties/sample-csv-download', function () {
     $headers = array('Content-Type' => 'text/csv');
-    return Response::download('property_csv_template/property.csv', 'property.csv', $headers);
+    return Response::download('properties_csv_template/property.csv', 'property.csv', $headers);
 })->name('template.property');

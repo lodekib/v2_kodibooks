@@ -21,8 +21,7 @@ class ListProperties extends ListRecords
             ImportAction::make()->uniqueField('property_name')->fields([
                 ImportField::make('property_name')->required(),
                 ImportField::make('number_of_units')->required(),
-                ImportField::make('property_size')->required(),
-                ImportField::make('property_image'),
+                ImportField::make('property_size'),
                 ImportField::make('property_cost'),
                 ImportField::make('property_location')->required()
             ], columns: 2)->icon('heroicon-o-arrow-down-tray')->mutateBeforeCreate(function ($row) {

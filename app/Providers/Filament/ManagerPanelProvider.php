@@ -63,7 +63,7 @@ class ManagerPanelProvider extends PanelProvider
                     shouldRegisterNavigation: true,
                     hasAvatars: true
                 )->enableTwoFactorAuthentication(force: false),
-                FilamentTourPlugin::make()->onlyVisibleOnce(false)
+                FilamentTourPlugin::make()
             ]);
     }
 }
