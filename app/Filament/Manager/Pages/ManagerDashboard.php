@@ -37,7 +37,7 @@ class ManagerDashboard extends BasePage
                     Step::make()
                         ->title('Test !')->description('Your End')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
-                )->alwaysShow()
+                )->alwaysShow(true)
         ];
     }
 }

@@ -411,7 +411,7 @@ class TenantResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make()
+               InfoSection::make()
                     ->schema([
                         Split::make([
                             Grid::make(4)
