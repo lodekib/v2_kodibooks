@@ -25,19 +25,19 @@ class ManagerDashboard extends BasePage
     public function tours(): array
     {
         return [
-            Tour::make('dashboard')
+            Tour::make('dashboard')->route('filament.manager.pages.manager-dashboard')
                 ->steps(
                     Step::make()
                         ->title('Welcome to Kodibooks !')->description('Your one stop solution for tenant management !.Lets get some walkthroughs to get you started')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
                     Step::make('dashboard')
                         ->title('')
-                        ->description(view('filament.manager.biodata.biodata'))->uncloseable(),
-                        // ->onNextDispatch('open-modal',id: 'biodata'),
+                        ->description(view('filament.manager.biodata.biodata'))->uncloseable()
+                        ->dispatchOnNext('open-modal', id: 'biodata'),
                     Step::make()
                         ->title('Test !')->description('Your End')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
-                )
+                )->alwaysShow()
         ];
     }
 }

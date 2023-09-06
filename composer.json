@@ -20,7 +20,7 @@
         "fouladgar/laravel-otp": "^4.0",
         "guzzlehttp/guzzle": "^7.2",
         "jeffgreco13/filament-breezy": "^2.1",
-        "jibaymcs/filament-tour": "^3.x-dev",
+        "jibaymcs/filament-tour": "^3.1",
         "konnco/filament-import": "v2.0.0-beta",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",

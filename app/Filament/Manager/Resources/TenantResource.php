@@ -14,7 +14,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -42,6 +41,8 @@ use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Mail as Mailconfig;
+use Filament\Forms\Components\Section;
+use Filament\Infolists\Components\Section as InfoSection;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -98,11 +99,11 @@ class TenantResource extends Resource
                 TextColumn::make('rent')->size('sm')->money('kes'),
                 TextColumn::make('deposit')->size('sm')->money('kes'),
                 TextColumn::make('balance')->size('sm')->formatStateUsing(function ($record) {
-                    $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
-                        ->where('tenant_name', $record->full_names)->groupBy('tenant_name')->first();
-                    return $debit_credit != null ? $debit_credit->total_debit - $debit_credit->total_credit : 0;
+                    $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
+                    $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
+                    return  $total_debit - $total_credit;
                 })->money('kes'),
-                TextColumn::make('entry_date')->size('sm'),
+                TextColumn::make('entry_date')->size('sm')->date(),
                 TextColumn::make('status')->colors([
                     'success' => static fn ($state): bool => $state === 'active',
                     'warning' => static fn ($state): bool => $state === 'inactive',
