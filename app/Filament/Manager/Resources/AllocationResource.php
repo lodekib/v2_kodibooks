@@ -37,7 +37,7 @@ class AllocationResource extends Resource
                 TextColumn::make('tenant_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),
-                TextColumn::make('amount_allocated')->size('sm')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state)),
+                TextColumn::make('amount_allocated')->size('sm')->money('kes'),
             ])
             ->filters([
                 //
