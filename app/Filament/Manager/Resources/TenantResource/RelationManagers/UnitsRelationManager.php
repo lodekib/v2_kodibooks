@@ -3,6 +3,7 @@
 namespace App\Filament\Manager\Resources\TenantResource\RelationManagers;
 
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -26,9 +27,7 @@ class UnitsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('unit_name')
-                    ->required()
-                    ->maxLength(255),
+                TextInput::make('unit_name')->required()->maxLength(255),
             ]);
     }
 
@@ -58,7 +57,9 @@ class UnitsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->action(function ($data) {
+                    dd($data);
+                }),
             ])
             ->actions([
                 ActionGroup::make([
@@ -72,7 +73,9 @@ class UnitsRelationManager extends RelationManager
                 ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->action(function($data){
+                    // dd($data);
+                }),
             ]);
     }
 }

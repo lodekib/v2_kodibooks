@@ -31,19 +31,22 @@ class ListInvoices extends ListRecords
         ImportField::make('national_id')->required()->rules('exists:tenants,id_number'),
         ImportField::make('invoice_number')->required(),
         ImportField::make('invoice_type')->required(),
-        ImportField::make('due_date'),
+        ImportField::make('invoice_date')->required(),
         ImportField::make('from'),
         ImportField::make('to'),
         ImportField::make('amount_invoiced')->required(),
+        ImportField::make('due_date'),
         ImportField::make('invoice_description')
       ], columns: 4)->handleRecordCreation(function ($data) {
         $tenant = Tenant::where('id_number', $data['national_id'])->pluck('id');
-        $new_data = array_merge($data, [
+        $invoice_data = array_merge($data, [
           'tenant_id' => $tenant[0],
           'invoice_status' => 'pending',
-          'balance' => $data['amount_invoiced']
+          'balance' => $data['amount_invoiced'],
+          'created_at' => $data['invoice_date']
         ]);
-        return $this->getModel()::create($new_data);
+        dd($invoice_data);
+        return $this->getModel()::create($invoice_data);
       })->mutateAfterCreate(function (Model $model) {
 
         $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')

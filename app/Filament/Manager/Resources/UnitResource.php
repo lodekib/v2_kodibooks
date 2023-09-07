@@ -66,8 +66,8 @@ class UnitResource extends Resource
                         'warning' => 'maintenance',
                     ]),
                 TextColumn::make('unit_type')->size('sm')->sortable()->searchable()->badge(),
-                TextColumn::make('rent')->size('sm')->prefix('Ksh '),
-                TextColumn::make('deposit')->size('sm')->prefix('Ksh '),
+                TextColumn::make('rent')->size('sm')->money('kes'),
+                TextColumn::make('deposit')->size('sm')->money('kes'),
                 TextColumn::make('unit_size')->size('sm')->suffix(' sq. m'),
                 TextColumn::make('status')->badge()->color(fn ($state) => $state == 'vacant' ? 'warning' : 'primary')->sortable()->searchable()
             ])

@@ -148,7 +148,7 @@ class ExpenseResource extends Resource
                 TextColumn::make('unit_name')->label('Unit (s)')->sortable()->searchable(),
                 TextColumn::make('type')->size('sm')->sortable()->searchable()->size('sm'),
                 TextColumn::make('description')->size('sm')->sortable()->searchable(),
-                TextColumn::make('amount')->size('sm')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state))->color('warning'),
+                TextColumn::make('amount')->size('sm')->money('kes')->color('warning'),
                 TextColumn::make('incurred_date')->size('sm')->date()
             ])
             ->filters([

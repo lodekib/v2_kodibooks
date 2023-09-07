@@ -34,7 +34,7 @@ class ManagerPanelProvider extends PanelProvider
             ->login()->passwordReset()->registration()
             ->colors([
                 'primary' => Color::Green,
-            ])
+            ])->favicon(asset('assets/kodibooks.png'))
             ->discoverResources(in: app_path('Filament/Manager/Resources'), for: 'App\\Filament\\Manager\\Resources')
             ->discoverPages(in: app_path('Filament/Manager/Pages'), for: 'App\\Filament\\Manager\\Pages')
             ->pages([

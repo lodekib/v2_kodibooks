@@ -5,6 +5,7 @@ namespace App\Filament\Manager\Resources\TenantResource\Pages;
 use App\Filament\Manager\Resources\TenantResource;
 use App\Models\Property;
 use App\Models\Unit;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
@@ -22,20 +23,26 @@ class ListTenants extends ListRecords
             Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.tenant')),
             ImportAction::make()->uniqueField('id_number')->fields([
                 ImportField::make('full_names')->required(),
-                ImportField::make('email')->required(),
+                ImportField::make('email'),
                 ImportField::make('phone_number')->required(),
                 ImportField::make('id_number')->required(),
                 ImportField::make('property_name')->required()->rules('exists:properties,property_name'),
                 ImportField::make('unit_name')->rules('exists:units,unit_name'),
-                ImportField::make('rent'),
-                ImportField::make('deposit'),
-                ImportField::make('arrears'),
-                ImportField::make('surplus'),
                 ImportField::make('entry_date'),
             ], columns: 4)->icon('heroicon-o-arrow-down-tray')
                 ->handleRecordCreation(function ($data) {
                     $property =  Property::where('property_name', $data['property_name'])->pluck('id');
-                    $new_data = array_merge($data, ['property_id' => $property[0],'balance' => 0]);
+                    $unit = Unit::where('unit_name', $data['unit_name'])->get(['rent', 'deposit'])->first();
+
+                    $new_data = array_merge($data, [
+                        'property_id' => $property[0],
+                        'balance' => 0,
+                        'rent' => $unit->rent,
+                        'deposit' => $unit->deposit,
+                        'arrears' => 0,
+                        'surplus' => 0,
+                        'entry_date' =>  array_key_exists('entry_date',$data) ? date('Y-m-d', strtotime($data['entry_date'])) : Carbon::now()->format('Y-m-d')
+                    ]);
                     $tenant =  $this->getModel()::create($new_data);
 
                     if ($tenant) {

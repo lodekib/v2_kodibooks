@@ -76,8 +76,8 @@ class InvoiceResource extends Resource
                     'fully paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
                 TextColumn::make('due_date')->date()->size('sm'),
-                TextColumn::make('amount_invoiced')->size('sm')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state)),
-                TextColumn::make('balance')->size('sm')->formatStateUsing(fn ($state) => 'Ksh ' . number_format($state))
+                TextColumn::make('amount_invoiced')->size('sm')->money('kes'),
+                TextColumn::make('balance')->size('sm')->money('kes')
             ])
             ->filters([
                 //

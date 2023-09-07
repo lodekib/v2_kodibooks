@@ -69,8 +69,7 @@ class PropertyResource extends Resource
                 TextColumn::make('created_at')->label('Date')->date()->size('sm')->sortable(),
                 TextColumn::make('property_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('property_size')->size('sm')->suffix(' sq. m'),
-                TextColumn::make('property_cost')->size('sm')->weight('bold')->prefix('Ksh ')->color('primary')
-                    ->formatStateUsing(fn ($state) => number_format($state)),
+                TextColumn::make('property_cost')->size('sm')->money('kes'),
                 TextColumn::make('number_of_units')->size('sm'),
                 TextColumn::make('property_status')->color(fn ($state) => $state == 'good' ? 'primary' : 'danger')->searchable()->badge(),
                 TextColumn::make('property_location')->size('sm')->searchable()->sortable(),
