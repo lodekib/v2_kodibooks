@@ -1,2 +1,2 @@
-tenant_name,property_name,unit_name,national_id,invoice_number,invoice_type,invoice_description,amount_invoiced,due_date,from,to
-Tenant Jimmy,Demakyd Apartment,AOY1627,13456782,DEM-7895902,Standard,sample,1000,2023-09-05,2023-08-04,2023-09-05
+tenant_name,property_name,unit_name,national_id,invoice_number,invoice_type,invoice_description,amount_invoiced,balance,due_date,from,to,invoice_date
+Taylor Otwell,Demakyd Property,AOY1627,76847674,INVD758,Standard,Standard sample,3400,3400,2023-09-06,2023-08-06,2023-09-07,2023-09-07 07:47:10
