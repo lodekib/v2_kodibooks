@@ -2,6 +2,7 @@
 
 namespace App\Filament\Manager\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\AllocationResource\Pages;
 use App\Filament\Manager\Resources\AllocationResource\RelationManagers;
 use App\Models\Allocation;
@@ -41,7 +42,7 @@ class AllocationResource extends Resource
             ])
             ->filters([
                 //
-            ])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 // Tables\Actions\EditAction::make(),
             ])

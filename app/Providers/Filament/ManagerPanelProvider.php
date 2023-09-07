@@ -30,7 +30,7 @@ class ManagerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('manager')
-            ->path('')
+            ->path('')->sidebarCollapsibleOnDesktop()->collapsedSidebarWidth('80px')
             ->login()->passwordReset()->registration()
             ->colors([
                 'primary' => Color::Green,

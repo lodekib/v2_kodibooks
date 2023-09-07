@@ -70,14 +70,14 @@ class PaymentResource extends Resource
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->sortable()->searchable(),
                 TextColumn::make('mode_of_payment')->size('sm')->searchable()->sortable(),
-                TextColumn::make('amount')->money('kes'),
-                TextColumn::make('balance')->money('kes'),
+                TextColumn::make('amount')->money('kes')->searchable(),
+                TextColumn::make('balance')->money('kes')->searchable(),
                 TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
                     'unallocated' => 'success',
                     'fully allocated' => 'gray',
                     'partially allocated' => 'warning'
-                }),
-                Tables\Columns\TextColumn::make('paid_date')->size('sm')->date()
+                })->searchable(),
+                Tables\Columns\TextColumn::make('paid_date')->size('sm')->date()->searchable()
             ])->striped()
             ->filters([
                 //

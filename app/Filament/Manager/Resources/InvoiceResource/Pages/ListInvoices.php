@@ -6,6 +6,7 @@ use App\Filament\Manager\Resources\InvoiceResource;
 use App\Models\Statement;
 use App\Models\Tenant;
 use App\Services\InvoiceReceiptAutoAllocation;
+use DateTime;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
@@ -43,9 +44,8 @@ class ListInvoices extends ListRecords
           'tenant_id' => $tenant[0],
           'invoice_status' => 'pending',
           'balance' => $data['amount_invoiced'],
-          'created_at' => $data['invoice_date']
+          'created_at' => DateTime::createFromFormat('d-m-Y', $data['invoice_date'])->format('Y-m-d H:i:s')
         ]);
-        dd($invoice_data);
         return $this->getModel()::create($invoice_data);
       })->mutateAfterCreate(function (Model $model) {
 
