@@ -10,5 +10,5 @@ class Invoice extends Model
 {
     use HasFactory,HasManager;
 
-    protected $guarded = [];
+    protected $guarded = ['invoice_date'];
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Manager\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\VendorResource\Pages;
 use App\Filament\Manager\Resources\VendorResource\RelationManagers;
 use App\Models\Vendor;
@@ -72,7 +73,7 @@ class VendorResource extends Resource
             ->striped()
             ->filters([
                 //
-            ])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
