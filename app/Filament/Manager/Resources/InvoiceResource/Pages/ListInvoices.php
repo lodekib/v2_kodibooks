@@ -44,6 +44,9 @@ class ListInvoices extends ListRecords
           'tenant_id' => $tenant[0],
           'invoice_status' => 'pending',
           'balance' => $data['amount_invoiced'],
+          'to' => DateTime::createFromFormat('d-m-Y',$data['to'])->format('Y-m-d'),
+          'from' =>DateTime::createFromFormat('d-m-Y',$data['from'])->format('Y-m-d'),
+          'due_date' =>DateTime::createFromFormat('d-m-Y',$data['from'])->format('Y-m-d'),
           'created_at' => DateTime::createFromFormat('d-m-Y', $data['invoice_date'])->format('Y-m-d H:i:s')
         ]);
         return $this->getModel()::create($invoice_data);
