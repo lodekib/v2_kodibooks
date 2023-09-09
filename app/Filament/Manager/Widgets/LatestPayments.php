@@ -20,7 +20,7 @@ class LatestPayments extends BaseWidget
 
         return $table
             ->query(
-                Payment::where('status', '!=', 'allocated')->latest()->withoutGlobalScopes([ManagerScope::class])
+                Payment::latest()->withoutGlobalScopes([ManagerScope::class])
             )
             ->columns([
                 TextColumn::make('created_at')->label('Date')->size('sm')->searchable()->date(),
@@ -32,7 +32,7 @@ class LatestPayments extends BaseWidget
                     'secondary' => static fn ($state): bool => $state === 'unallocated',
                     'warning' => static fn ($state): bool => $state === 'partially allocated',
                     'success' => static fn ($state): bool => $state === 'fully allocated',
-                ])->size('sm'),
+                ])->size('sm')->searchable()->sortable(),
                 TextColumn::make('balance')->money('kes'),
             ]);
     }

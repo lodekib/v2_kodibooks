@@ -95,7 +95,7 @@ class TenantResource extends Resource
                 TextColumn::make('full_names')->size('sm')->searchable()->sortable(),
                 TextColumn::make('email')->size('sm')->sortable()->searchable(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
+                TextColumn::make('units.unit_name')->size('sm')->searchable()->sortable()->badge()->color('gray')->inline()->limit(3),
                 TextColumn::make('rent')->size('sm')->money('kes'),
                 TextColumn::make('deposit')->size('sm')->money('kes'),
                 TextColumn::make('balance')->size('sm')->formatStateUsing(function ($record) {
@@ -121,7 +121,7 @@ class TenantResource extends Resource
                         return Tenant::latest();
                     }
                 })
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview()])
             ->actions([
                 ActionGroup::make([
                     Action::make('Add water bill')->icon('heroicon-o-funnel')
@@ -174,7 +174,7 @@ class TenantResource extends Resource
                             }
                             return $water_exists;
                         }),
-                    Action::make('Vacate tenant')->icon('heroicon-s-logout')->color('secondary')->action(function ($record) {
+                    Action::make('Vacate tenant')->icon('heroicon-o-arrow-left-on-rectangle')->color('gray')->action(function ($record) {
 
                         $total_invoices =  Invoice::where('tenant_name', $record->full_names)->sum('balance');
                         $total_receipts =  Payment::where('tenant_name', $record->full_names)->sum('balance');
@@ -431,7 +431,7 @@ class TenantResource extends Resource
                                     ]),
                                     Group::make([
                                         TextEntry::make('activeutility.active_utilities')->label('Active Utilities')->badge()->color('gray'),
-                                        TextEntry::make('units.unit_name')->label('Unit (s)'),
+                                        TextEntry::make('units.unit_name')->label('Unit (s)')->badge()->color('gray'),
 
                                     ])
                                 ]),

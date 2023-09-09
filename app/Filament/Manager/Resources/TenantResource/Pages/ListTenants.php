@@ -41,12 +41,16 @@ class ListTenants extends ListRecords
                         'deposit' => $unit->deposit,
                         'arrears' => 0,
                         'surplus' => 0,
+                        'status' => 'active',
                         'entry_date' =>  array_key_exists('entry_date',$data) ? date('Y-m-d', strtotime($data['entry_date'])) : Carbon::now()->format('Y-m-d')
                     ]);
                     $tenant =  $this->getModel()::create($new_data);
 
                     if ($tenant) {
-                        Unit::where('unit_name', $data['unit_name'])->update(['status' => 'occupied']);
+                        Unit::where('unit_name', $data['unit_name'])->update([
+                            'status' => 'occupied',
+                            'tenant_id' => $tenant->id
+                        ]);
                     }
                     return $tenant;
                 }),

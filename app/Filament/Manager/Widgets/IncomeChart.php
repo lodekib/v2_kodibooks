@@ -25,7 +25,7 @@ class IncomeChart extends ApexChartWidget
     protected static ?string $heading = 'IncomeChart';
 
     public ?string $filter = 'today';
-
+  
 
     protected static ?int $sort = 3;
 
