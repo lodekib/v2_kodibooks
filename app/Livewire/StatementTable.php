@@ -23,7 +23,7 @@ class StatementTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Statement::where('tenant_name', $this->record->full_names)->oldest())
+            ->query(Statement::where('tenant_name', $this->record->full_names)->oldest())->poll('2s')
             ->columns([
                 TextColumn::make('created_at')->size('sm')->date()->label('Date'),
                 TextColumn::make('reference')->sortable()->searchable()->size('sm'),
