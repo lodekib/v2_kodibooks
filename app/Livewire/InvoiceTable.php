@@ -58,7 +58,7 @@ class InvoiceTable extends Component implements HasForms, HasTable
                 // ...
             ])
             ->headerActions([
-                CreateAction::make()->action(function (array $data): void {
+                CreateAction::make()->label('Invoice tenant')->action(function (array $data): void {
                     $invoice_number = strtoupper(substr($this->record->property_name, 0, 3)) . "-" . time();
 
                     if ($data['invoice_type'] == 'Water') {
