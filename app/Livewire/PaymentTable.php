@@ -36,7 +36,7 @@ class PaymentTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Payment::where('tenant_name', $this->record->full_names)->latest())
+            ->query(Payment::where('tenant_name', $this->record->full_names)->latest())->poll('2s')
             ->columns([
                 TextColumn::make('paid_date')->date()->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),

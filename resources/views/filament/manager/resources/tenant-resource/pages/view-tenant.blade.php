@@ -11,22 +11,16 @@
         @endif
     </div>
 
-    <div x-data="{ activeTab: 'Units' }">
-
+    <div x-data="{ activeTab: 'Statement' }">
         <x-filament::tabs label="tenant info tabs">
-            <x-filament::tabs.item alpine-active="activeTab === 'Units'" x-on:click="activeTab = 'Units'" icon="heroicon-s-cube-transparent">
-                Units
+            <x-filament::tabs.item alpine-active="activeTab === 'Statement'" x-on:click="activeTab = 'Statement'" icon="heroicon-s-clipboard-document">
+                Statement
             </x-filament::tabs.item>
-            <x-filament::tabs.item alpine-active="activeTab === 'Invoices'" x-on:click="activeTab = 'Invoices'" icon="heroicon-s-newspaper">
-                Invoices
-            </x-filament::tabs.item>
-
             <x-filament::tabs.item alpine-active="activeTab === 'Payments'" x-on:click="activeTab = 'Payments'" icon="heroicon-s-banknotes">
                 Payments
             </x-filament::tabs.item>
-
-            <x-filament::tabs.item alpine-active="activeTab === 'Statement'" x-on:click="activeTab = 'Statement'" icon="heroicon-s-clipboard-document">
-                Statement
+            <x-filament::tabs.item alpine-active="activeTab === 'Invoices'" x-on:click="activeTab = 'Invoices'" icon="heroicon-s-newspaper">
+                Invoices
             </x-filament::tabs.item>
             <x-filament::tabs.item alpine-active="activeTab === 'Utilities'" x-on:click="activeTab = 'Utilities'" icon="heroicon-s-bolt">
                 Utilities
@@ -36,6 +30,9 @@
                 Water
             </x-filament::tabs.item>
             @endif
+            <x-filament::tabs.item alpine-active="activeTab === 'Units'" x-on:click="activeTab = 'Units'" icon="heroicon-s-cube-transparent">
+                Units
+            </x-filament::tabs.item>
         </x-filament::tabs>
 
         <div x-show="activeTab === 'Units'" class="py-6">
