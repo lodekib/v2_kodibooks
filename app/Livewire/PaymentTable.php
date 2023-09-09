@@ -3,8 +3,22 @@
 namespace App\Livewire;
 
 use App\Models\Payment;
+use App\Models\Property;
+use App\Models\Statement;
+use App\Models\Tenant;
+use App\Models\Unit;
+use App\Services\InvoiceReceiptAutoAllocation;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -38,6 +52,66 @@ class PaymentTable extends Component implements HasForms, HasTable
             ])
             ->filters([
                 // ...
+            ])->headerActions([
+                CreateAction::make()->label('Add a payment')
+                    ->form([
+                        Fieldset::make()->schema([
+                            Select::make('unit_name')->options($this->record->units()->pluck('unit_name', 'unit_name'))->afterStateUpdated(function ($state, Set $set) {
+                                $property = Unit::where('unit_name', $state)->pluck('property_name');
+                                $set('property_name', $property[0]);
+                            })->required()->reactive(),
+                            TextInput::make('property_name')->disabled()->dehydrated(),
+                            Select::make('mode_of_payment')->options([
+                                'Cash' => 'Cash', 'Pesalink' => 'Pesalink', 'Cheque' => 'Cheque',
+                                'Paypal' => 'Paypal', 'Agent' => 'Agent'
+                            ])->required(),
+                            TextInput::make('receipt_number')->required(),
+                            TextInput::make('amount')->prefix('Ksh')->required(),
+                            TextInput::make('reference_number')->required(),
+                            DatePicker::make('paid_date')->required()->maxDate(now())
+                        ])->columns(3)
+                    ])->action(function (array $data) {
+                        //TODO::OPTIMIZATIONS NEEDED
+                        $total_debit = Statement::where('tenant_name', $this->record->full_names)->sum('debit');
+                        $total_credit = Statement::where('tenant_name', $this->record->full_names)->sum('credit');
+
+                        $receipt_data = [
+                            'tenant_id' => $this->record->id,
+                            'tenant_name' => $this->record->full_names,
+                            'national_id' => $this->record->id_number,
+                            'property_name' => $data['property_name'],
+                            'unit_name' => $data['unit_name'],
+                            'reference_number' => $data['reference_number'],
+                            'receipt_number' => $data['receipt_number'],
+                            'mode_of_payment' => $data['mode_of_payment'],
+                            'amount' => $data['amount'],
+                            'balance' => $data['amount'],
+                            'paid_date' => $data['paid_date'],
+                            'status' => 'unallocated'
+                        ];
+                        $receipt = Payment::create($receipt_data);
+
+                        if ($receipt) {
+                            $statement_data = [
+                                'tenant_id' => $this->record->id,
+                                'tenant_name' => $this->record->full_names,
+                                'description' => $data['mode_of_payment'] . "# " . $data['reference_number'],
+                                'reference' => $receipt->receipt_number,
+                                'credit' => $receipt->balance,
+                                'debit' => 0,
+                                'balance' => $total_debit - ($total_credit + $receipt->balance),
+                                'cummulative_balance' => $total_debit - ($total_credit + $receipt->balance)
+                            ];
+
+                            $statement = Statement::create($statement_data);
+
+                            InvoiceReceiptAutoAllocation::handleNewReceipt($this->record, $receipt, $statement);
+
+                            Notification::make()->success()->body("Payment added successfully !")->send();
+                        } else {
+                            Notification::make()->warning()->body('Unable to add payment !')->send();
+                        }
+                    })
             ])
             ->actions([
                 // ...
