@@ -72,7 +72,7 @@ class InvoiceResource extends Resource
                 TextColumn::make('invoice_type')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_status')->color(fn (string $state): string => match ($state) {
                     'pending' => 'warning',
-                    'partially_paid' => 'gray',
+                    'partially paid' => 'gray',
                     'fully paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
                 TextColumn::make('due_date')->date()->size('sm'),
@@ -81,7 +81,7 @@ class InvoiceResource extends Resource
             ])
             ->filters([
                 //
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview()])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),

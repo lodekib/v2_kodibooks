@@ -2,9 +2,16 @@
 
 namespace App\Filament\Manager\Resources\TenantResource\RelationManagers;
 
+use App\Models\Property;
+use App\Models\Unit;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -12,6 +19,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UnitsRelationManager extends RelationManager
@@ -27,7 +35,18 @@ class UnitsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('unit_name')->required()->maxLength(255),
+                Select::make('unit_name')->options(Unit::where('status', 'vacant')->pluck('unit_name', 'unit_name'))->reactive()
+                    ->afterStateUpdated(function ($state, Set $set) {
+                        if ($state != null) {
+                            $unit_data = Unit::where('unit_name', $state)->get(['unit_type', 'rent', 'deposit'])->first();
+                            $set('unit_type', $unit_data->unit_type);
+                            $set('rent', $unit_data->rent);
+                            $set('deposit', $unit_data->deposit);
+                        }
+                    }),
+                TextInput::make('unit_type')->disabled(),
+                TextInput::make('rent')->prefix('Ksh')->disabled(),
+                TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->disabled(),
             ]);
     }
 
@@ -57,9 +76,38 @@ class UnitsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->action(function ($data) {
-                    dd($data);
-                }),
+                Tables\Actions\Action::make('Add a Unit')->form([
+                    Fieldset::make()->schema([
+                        Select::make('property_name')->options(Property::pluck('property_name', 'property_name'))->reactive(),
+                        Select::make('unit_name')->options(function (Get $get) {
+                            $prop = $get('property_name');
+                            if ($prop != null) {
+                                $property = Property::where('property_name', $prop)->first();
+                                return $property->units()->where('status', 'vacant')->pluck('unit_name', 'unit_name');
+                            } else {
+                                return [];
+                            }
+                        })->reactive()
+                            ->afterStateUpdated(function ($state, Set $set) {
+                                if ($state != null) {
+                                    $unit_data = Unit::where('unit_name', $state)->get(['unit_type', 'rent', 'deposit'])->first();
+                                    $set('unit_type', $unit_data->unit_type);
+                                    $set('rent', $unit_data->rent);
+                                    $set('deposit', $unit_data->deposit);
+                                }
+                            }),
+                        TextInput::make('unit_type')->disabled(),
+                        TextInput::make('rent')->prefix('Ksh')->disabled(),
+                        TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->disabled(),
+                    ])->columns(3)
+                ])->action(function (array $data) {
+                    $unit = Unit::where('unit_name',$data['unit_name'])->where('property_name',$data['property_name'])->update(['tenant_id' => $this->ownerRecord->id,'status' => 'occupied']);
+                    if($unit){
+                        Notification::make()->success()->body("{$unit} added successfully")->send();
+                    }else{
+                        Notification::make()->warning()->body("Unable to add {$unit} to tenant")->send();
+                    }
+                })
             ])
             ->actions([
                 ActionGroup::make([
@@ -73,9 +121,7 @@ class UnitsRelationManager extends RelationManager
                 ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make()->action(function($data){
-                    // dd($data);
-                }),
+                Tables\Actions\CreateAction::make(),
             ]);
     }
 }

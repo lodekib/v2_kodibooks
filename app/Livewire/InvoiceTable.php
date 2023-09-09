@@ -47,7 +47,7 @@ class InvoiceTable extends Component implements HasForms, HasTable
                 TextColumn::make('invoice_type')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_status')->badge()->color(fn (string $state): string => match ($state) {
                     'pending' => 'warning',
-                    'partially_paid' => 'gray',
+                    'partially paid' => 'gray',
                     'fully paid' => 'success'
                 })->searchable()->sortable(),
                 TextColumn::make('due_date')->date()->size('sm'),

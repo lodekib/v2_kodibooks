@@ -24,8 +24,9 @@ class PaymentTable extends Component implements HasForms, HasTable
         return $table
             ->query(Payment::where('tenant_name', $this->record->full_names)->latest())
             ->columns([
-                TextColumn::make('created_at')->date()->label('Date')->size('sm'),
+                TextColumn::make('paid_date')->date()->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),
+                TextColumn::make('reference_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('mode_of_payment')->size('sm')->label('Payment')->sortable()->searchable(),
                 TextColumn::make('amount')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Payments')->money('kes'))->money('kes'),
                 TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
@@ -34,7 +35,6 @@ class PaymentTable extends Component implements HasForms, HasTable
                     'partially allocated' => 'warning'
                 }),
                 TextColumn::make('balance')->size('sm')->sortable()->money('kes')->summarize(Sum::make()->label('Total Balance')->money('kes'))->money('kes'),
-                TextColumn::make('paid_date')->date()->size('sm')->searchable()
             ])
             ->filters([
                 // ...

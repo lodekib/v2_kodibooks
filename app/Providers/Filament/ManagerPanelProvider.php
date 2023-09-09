@@ -57,7 +57,8 @@ class ManagerPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->plugins([
+            ])->navigationGroups(['Assets','Payments','Expenses','Utilities','Settings'])
+            ->plugins([
                 BreezyCore::make()->myProfile(
                     shouldRegisterUserMenu: true,
                     shouldRegisterNavigation: true,

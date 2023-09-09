@@ -73,7 +73,7 @@ class VendorResource extends Resource
             ->striped()
             ->filters([
                 //
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview()])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
