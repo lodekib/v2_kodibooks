@@ -19,6 +19,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -152,10 +154,17 @@ class InvoiceTable extends Component implements HasForms, HasTable
                                 if ($state == 'Water') {
                                     $tenant_water = Waterbill::where('property_name', $this->record->property_name)
                                         ->where('unit_name', $this->record->unit_name)
-                                        ->where('tenant_name', $this->record->full_names)->get();
-                                    $quantity = $tenant_water->first()->current_reading - $tenant_water->first()->previous_reading;
-                                    $get_amount = Utility::where('property_name', $this->record->property_name)->where('utility_name', 'Water')->get('amount');
-                                    $set('amount_invoiced', number_format($get_amount->first()->amount * $quantity));
+                                        ->where('tenant_name', $this->record->full_names)->get(['current_reading', 'previous_reading']);
+                                    if ($tenant_water->first() != null) {
+                                        $quantity = $tenant_water->first()->current_reading - $tenant_water->first()->previous_reading;
+                                        $get_amount = Utility::where('property_name', $this->record->property_name)->where('utility_name', 'Water')->pluck('amount');
+                                        $set('amount_invoiced', number_format($get_amount[0] * $quantity));
+                                    } else {
+                                        Notification::make()->body('Please add water reading before invoicing')->warning()
+                                            ->color('warning')->persistent()->actions([
+                                                Action::make('Add reading')->color('gray')->button()
+                                            ])->send();
+                                    }
                                 } else if ($state == 'Standard') {
                                     $set('amount_invoiced', '');
                                 } else if ($state == 'Rent') {

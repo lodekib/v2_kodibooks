@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\DeleteAction;
 
 class PaymentResource extends Resource
 {
@@ -86,23 +87,24 @@ class PaymentResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\EditAction::make()->color('gray'),
                     Tables\Actions\Action::make('pdf')
-                        ->label('download')
+                        ->label('Download')
                         ->color('success')
                         ->icon('heroicon-s-arrow-down-tray')
                         ->action(function (Model $record) {
                             return response()->streamDownload(function () use ($record) {
                                 echo Pdf::loadHtml(
                                     Blade::render('pdf', ['record' => $record])
-                                )->download();
+                                )->stream();
                             }, $record->number . '.pdf');
                         }),
+                        DeleteAction::make()
                 ])
             ])->headerActions([
                 FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([

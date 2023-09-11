@@ -170,13 +170,12 @@ class ExpenseResource extends Resource
                         Notification::make()->success()->body('Extra expenses have been added successfully .')->send();
                     }),
                     EditAction::make(),
-                    // ViewAction::make(),
                     DeleteAction::make()
                 ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
