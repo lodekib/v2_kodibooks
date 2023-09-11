@@ -43,6 +43,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Mail as Mailconfig;
 use Filament\Forms\Components\Section;
 use Filament\Infolists\Components\Section as InfoSection;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -190,6 +191,7 @@ class TenantResource extends Resource
                     })->visible(fn ($record) => $record->status == 'active'),
                     ViewAction::make(),
                     EditAction::make(),
+                    DeleteAction::make()
                 ])
             ])
             ->bulkActions([

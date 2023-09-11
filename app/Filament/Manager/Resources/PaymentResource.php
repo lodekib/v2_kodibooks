@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\DeleteAction;
 
 class PaymentResource extends Resource
 {
@@ -96,6 +97,7 @@ class PaymentResource extends Resource
                                 )->stream();
                             }, $record->number . '.pdf');
                         }),
+                        DeleteAction::make()
                 ])
             ])->headerActions([
                 FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview(),

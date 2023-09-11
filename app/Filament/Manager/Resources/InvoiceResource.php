@@ -85,6 +85,7 @@ class InvoiceResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make()
                 ])
             ])
             ->bulkActions([
