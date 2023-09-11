@@ -86,14 +86,14 @@ class PaymentResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\EditAction::make()->color('gray'),
                     Tables\Actions\Action::make('pdf')
-                        ->label('download')
+                        ->label('Download')
                         ->color('success')
                         ->icon('heroicon-s-arrow-down-tray')
                         ->action(function (Model $record) {
                             return response()->streamDownload(function () use ($record) {
                                 echo Pdf::loadHtml(
                                     Blade::render('pdf', ['record' => $record])
-                                )->download();
+                                )->stream();
                             }, $record->number . '.pdf');
                         }),
                 ])
@@ -102,7 +102,7 @@ class PaymentResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([

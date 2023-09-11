@@ -381,7 +381,7 @@ class TenantResource extends Resource
                             Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
                         ])
                     ]),
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
