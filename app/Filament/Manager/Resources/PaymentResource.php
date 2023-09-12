@@ -6,6 +6,7 @@ use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\PaymentResource\Pages;
 use App\Models\Payment;
 use App\Models\Property;
+use App\Models\Statement;
 use App\Models\Tenant;
 use App\Models\Unit;
 use Filament\Forms;
@@ -23,6 +24,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
 
@@ -93,11 +95,15 @@ class PaymentResource extends Resource
                         ->action(function (Model $record) {
                             return response()->streamDownload(function () use ($record) {
                                 echo Pdf::loadHtml(
-                                    Blade::render('pdf', ['record' => $record])
+                                    Blade::render('pdfs/payment', ['record' => $record])
                                 )->stream();
-                            }, $record->number . '.pdf');
+                            }, $record->id . '.pdf');
                         }),
-                        DeleteAction::make()
+                    DeleteAction::make()->action(function ($record) {
+                        Statement::where('reference', $record->reference_number)->delete();
+                        $record->delete();
+                        Notification::make()->success()->color('success')->body('Payment deleted successfully !')->send();
+                    })
                 ])
             ])->headerActions([
                 FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview(),
