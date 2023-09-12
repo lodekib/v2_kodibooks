@@ -7,6 +7,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -31,7 +32,7 @@ class StatementTable extends Component implements HasForms, HasTable
                 TextColumn::make('debit')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Debit')->money('kes')),
                 TextColumn::make('credit')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Credit')->money('kes')),
                 TextColumn::make('balance')->size('sm')->money('kes'),
-                TextColumn::make('cummulative_balance')->label('Opening balance')->size('sm')->money('kes')
+                TextColumn::make('cummulative_balance')->label('Opening balance')->size('sm')->money('kes'),
             ])
             ->filters([
                 // ...

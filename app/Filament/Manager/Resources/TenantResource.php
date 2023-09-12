@@ -98,12 +98,9 @@ class TenantResource extends Resource
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('units.unit_name')->size('sm')->searchable()->sortable()->badge()->color('gray')->inline()->limit(3),
                 TextColumn::make('rent')->size('sm')->money('kes'),
-                TextColumn::make('deposit')->size('sm')->money('kes'),
-                TextColumn::make('balance')->size('sm')->formatStateUsing(function ($record) {
-                    $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
-                    $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
-                    return  $total_debit - $total_credit;
-                })->money('kes'),
+                TextColumn::make('balance')->size('sm')->formatStateUsing(fn($record) =>
+                  __('KES '.number_format(Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance ,2,'.',','))
+                )->color('danger'),
                 TextColumn::make('entry_date')->size('sm')->date(),
                 TextColumn::make('status')->colors([
                     'success' => static fn ($state): bool => $state === 'active',
