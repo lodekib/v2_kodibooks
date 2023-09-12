@@ -8,6 +8,7 @@ use App\Filament\Manager\Resources\InvoiceResource\Pages;
 use App\Filament\Manager\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
 use App\Models\Property;
+use App\Models\Statement;
 use App\Models\Tenant;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -55,7 +57,7 @@ class InvoiceResource extends Resource
                     DatePicker::make('due_date')->required(),
                     DatePicker::make('from')->required(),
                     DatePicker::make('to')->required(),
-                    Radio::make('invoice_type')->options(['Standard' => 'Standard','Rent' => 'Rent'])->required()->inline(),
+                    Radio::make('invoice_type')->options(['Standard' => 'Standard', 'Rent' => 'Rent'])->required()->inline(),
                     Textarea::make('invoice_description')->required()
                 ])->columns(3)
             ]);
@@ -67,6 +69,7 @@ class InvoiceResource extends Resource
             ->columns([
                 TextColumn::make('created_at')->date()->label('Date')->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
+                TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_type')->size('sm')->searchable()->sortable(),
@@ -76,7 +79,7 @@ class InvoiceResource extends Resource
                     'fully paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
                 TextColumn::make('due_date')->date()->size('sm'),
-                TextColumn::make('amount_invoiced')->size('sm')->money('kes'),
+                TextColumn::make('amount_invoiced')->size('sm')->money('kes')->searchable(),
                 TextColumn::make('balance')->size('sm')->money('kes')
             ])
             ->filters([
@@ -85,7 +88,11 @@ class InvoiceResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make()
+                    Tables\Actions\DeleteAction::make()->action(function ($record) {
+                        Statement::where('reference', $record->invoice_number)->delete();
+                        $record->delete();
+                        Notification::make()->success()->color('success')->body('Invoice deleted successfully')->send();
+                    })
                 ])
             ])
             ->bulkActions([
