@@ -4,6 +4,7 @@ namespace App\Filament\Manager\Resources;
 
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\PaymentResource\Pages;
+use App\Filament\Manager\Resources\PaymentResource\RelationManagers;
 use App\Models\Payment;
 use App\Models\Property;
 use App\Models\Statement;
@@ -121,7 +122,7 @@ class PaymentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\AllocationsRelationManager::class
         ];
     }
 
