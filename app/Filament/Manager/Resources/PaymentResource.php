@@ -68,6 +68,7 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('paid_date')->size('sm')->date()->searchable(),
                 TextColumn::make('created_at')->date()->size('sm')->sortable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->sortable()->searchable(),
@@ -79,7 +80,6 @@ class PaymentResource extends Resource
                     'fully allocated' => 'gray',
                     'partially allocated' => 'warning'
                 })->searchable(),
-                Tables\Columns\TextColumn::make('paid_date')->size('sm')->date()->searchable()
             ])->striped()
             ->filters([
                 //
