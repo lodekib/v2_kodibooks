@@ -54,9 +54,9 @@ class InvoiceResource extends Resource
                         }
                     })->required(),
                     TextInput::make('invoice_number')->required(),
-                    TextInput::make('amount_invoiced')->numeric()->required(),
+                    TextInput::make('amount_invoiced')->numeric()->required()->minValue(0),
                     DatePicker::make('due_date')->required(),
-                    DatePicker::make('from')->required(),
+                    DatePicker::make('from')->required()->maxDate(now()),
                     DatePicker::make('to')->required(),
                     Radio::make('invoice_type')->options(['Standard' => 'Standard', 'Rent' => 'Rent'])->required()->inline(),
                     Textarea::make('invoice_description')->required()
@@ -75,9 +75,7 @@ class InvoiceResource extends Resource
                 TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_type')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_status')->color(fn (string $state): string => match ($state) {
-                    'pending' => 'warning',
-                    'partially paid' => 'gray',
-                    'fully paid' => 'success'
+                    'pending' => 'warning','partially paid' => 'gray','fully paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
                 TextColumn::make('due_date')->date()->size('sm'),
                 TextColumn::make('amount_invoiced')->size('sm')->money('kes')->searchable(),

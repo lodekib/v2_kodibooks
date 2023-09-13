@@ -36,8 +36,8 @@ class UtilityResource extends Resource
                 Repeater::make('utilities')->schema([
                     Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
                     Radio::make('utility_type')->options(['fixed' => 'Fixed', 'custom' => 'Custom'])->required(),
-                    TextInput::make('utility_name')->label('Utility'),
-                    TextInput::make('amount')->required()->numeric()->label('Amount (Ksh)'),
+                    TextInput::make('utility_name')->label('Utility')->required()->autocapitalize('words'),
+                    TextInput::make('amount')->required()->label('Amount (Ksh)')->integer()->minValue(5),
                 ])->columns(4)->columnSpanFull()->collapsible()->maxItems(3)->minItems(1)->addActionLabel('Another  utility')
             ]);
     }
@@ -50,7 +50,7 @@ class UtilityResource extends Resource
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('utility_type')->size('sm')->searchable()->sortable()->badge(),
                 TextColumn::make('utility_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('amount')->size('sm')->label('Amount (Ksh)')->money('kes')
+                TextColumn::make('amount')->size('sm')->label('Amount')->money('kes')
             ])
             ->striped()
             ->filters([

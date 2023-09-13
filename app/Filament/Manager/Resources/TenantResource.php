@@ -79,10 +79,10 @@ class TenantResource extends Resource
                     }),
                 ])->columns(3),
                 Section::make('')->description('Payments & invoicing.')->schema([
-                    TextInput::make('rent')->prefix('Ksh')->required(),
-                    TextInput::make('deposit')->prefix('Ksh')->lte('rent')->required(),
-                    TextInput::make('arrears')->prefix('Ksh')->required()->default(0),
-                    TextInput::make('surplus')->prefix('Ksh')->required()->default(0),
+                    TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(0),
+                    TextInput::make('deposit')->prefix('Ksh')->lte('rent')->required()->numeric()->minValue(0),
+                    TextInput::make('arrears')->prefix('Ksh')->required()->default(0)->integer()->minValue(0),
+                    TextInput::make('surplus')->prefix('Ksh')->required()->default(0)->integer()->minValue(0),
                     DatePicker::make('entry_date')->required()
                 ])->columns(3),
             ]);
