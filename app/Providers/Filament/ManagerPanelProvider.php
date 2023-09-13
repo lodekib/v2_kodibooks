@@ -33,7 +33,7 @@ class ManagerPanelProvider extends PanelProvider
             ->path('')->sidebarCollapsibleOnDesktop()->collapsedSidebarWidth('80px')
             ->login()->passwordReset()->registration()
             ->colors([
-                'primary' => Color::Green,
+                'primary' => Color::hex('#4ade80'),
             ])->favicon(asset('assets/kodibooks.png'))
             ->discoverResources(in: app_path('Filament/Manager/Resources'), for: 'App\\Filament\\Manager\\Resources')
             ->discoverPages(in: app_path('Filament/Manager/Pages'), for: 'App\\Filament\\Manager\\Pages')

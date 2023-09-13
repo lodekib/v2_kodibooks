@@ -160,7 +160,7 @@ class ExpenseResource extends Resource
                         Repeater::make('attached_expenses')->label('Extra expense')->schema([
                             TextInput::make('expense')->required(),
                             TextInput::make('description')->required(),
-                            TextInput::make('amount')->prefix('Ksh')->required(),
+                            TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(0),
                         ])->columns(3)
                     ])->action(function (array $data, $record) {
                         foreach ($data['attached_expenses'] as $datum) {
