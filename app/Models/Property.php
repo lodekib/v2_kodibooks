@@ -22,4 +22,14 @@ class Property extends Model
     {
         return $this->hasMany(Tenant::class);
     }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'property_name', 'property_name');
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'property_name', 'property_name');
+    }
 }

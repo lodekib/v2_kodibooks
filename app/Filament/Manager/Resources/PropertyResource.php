@@ -5,7 +5,11 @@ namespace App\Filament\Manager\Resources;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\PropertyResource\Pages;
 use App\Filament\Manager\Resources\PropertyResource\RelationManagers;
+use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\Property;
+use App\Models\Tenant;
+use App\Models\Unit;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
@@ -20,6 +24,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -49,11 +54,11 @@ class PropertyResource extends Resource
             ->schema([
                 Fieldset::make()
                     ->schema([
-                        TextInput::make('property_name')->required()->unique(ignoreRecord:true),
+                        TextInput::make('property_name')->required()->unique(ignoreRecord: true),
                         TextInput::make('number_of_units')->numeric()->minValue(0)->required(),
                         TextInput::make('property_size')->numeric()->minValue(1)->required()->prefix('sq . m'),
                         TextInput::make('property_cost')->prefix('Ksh')->required()->integer()->minValue(0),
-                        Select::make('property_status')->options(['good' => 'Good','maintenance' => 'Maintenance',]),
+                        Select::make('property_status')->options(['good' => 'Good', 'maintenance' => 'Maintenance',]),
                         TextInput::make('property_location')->required(),
                         FileUpload::make('property_image')->image()->previewable(),
                     ])->columns(3),
@@ -89,7 +94,23 @@ class PropertyResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make()
+                    Tables\Actions\DeleteAction::make()->action(function ($record) {
+                        $record->units->each(function (Unit $unit) {
+                            $unit->update(['status' => 'stale/' . $unit->status]);
+                        });
+                        $record->tenants->each(function (Tenant $tenant) {
+                            $tenant->update(['status' => 'stale']);
+                        });
+                        $record->payments->each(function (Payment $payment) {
+                            $payment->update(['status' => 'stale/' . $payment->status]);
+                        });
+                        $record->invoices->each(function (Invoice $invoice) {
+                            $invoice->update(['invoice_status' => 'stale/' . $invoice->invoice_status]);
+                        });
+                        $record->delete();
+
+                        Notification::make()->success()->color('success')->body('Successfully deleted the property.')->send();
+                    })
                 ])
             ])
             ->bulkActions([

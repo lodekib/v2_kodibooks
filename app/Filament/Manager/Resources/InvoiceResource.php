@@ -75,7 +75,9 @@ class InvoiceResource extends Resource
                 TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_type')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_status')->color(fn (string $state): string => match ($state) {
-                    'pending' => 'warning','partially paid' => 'gray','fully paid' => 'success'
+                    'pending' => 'warning',
+                    'partially paid' => 'gray',
+                    'fully paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
                 TextColumn::make('due_date')->date()->size('sm'),
                 TextColumn::make('amount_invoiced')->size('sm')->money('kes')->searchable(),
@@ -88,8 +90,8 @@ class InvoiceResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make()->action(function ($record) {
-                        Statement::where('reference', $record->invoice_number)->delete();
-                        $record->delete();
+                        $record->update(['invoice_status' => 'stale/' . $record->invoice_status]);
+                        // Statement::where('reference', $record->invoice_number)->delete();
                         Notification::make()->success()->color('success')->body('Invoice deleted successfully')->send();
                     })
                 ])

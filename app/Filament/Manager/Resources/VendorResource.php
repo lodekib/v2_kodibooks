@@ -39,7 +39,7 @@ class VendorResource extends Resource
                         'telecommunication' => 'Telecommunucation'
                     ])->helperText('Area of specialization')->required(),
                     TextInput::make('contact_person')->label('Vendor name')->helperText('Name of vendor')->required(),
-                    TextInput::make('contact_number')->integer(),
+                    TextInput::make('contact_number')->integer()->required(),
                     TextInput::make('email')->email()->unique()->required(),
                     Select::make('vendor_type')->options([
                         'supplier' => 'Supplier',
@@ -65,6 +65,7 @@ class VendorResource extends Resource
                 TextColumn::make('company_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('industry')->size('sm')->searchable()->sortable(),
                 TextColumn::make('contact_person')->size('sm')->searchable(),
+                TextColumn::make('contact_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('email')->size('sm')->searchable(),
                 TextColumn::make('vendor_type')->size('sm')->searchable()->sortable(),
                 TextColumn::make('vendor_particular')->size('sm')->searchable()->sortable(),
