@@ -98,8 +98,9 @@ class TenantResource extends Resource
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('units.unit_name')->size('sm')->searchable()->sortable()->badge()->color('gray')->inline()->limit(3),
                 TextColumn::make('rent')->size('sm')->money('kes'),
-                TextColumn::make('balance')->size('sm')->formatStateUsing(fn($record) =>
-                  __('KES '.number_format(Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance ,2,'.',','))
+                TextColumn::make('balance')->size('sm')->formatStateUsing(
+                    fn ($record) =>
+                    __('KES ' . number_format(Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance, 2, '.', ','))
                 )->color('danger'),
                 TextColumn::make('entry_date')->size('sm')->date(),
                 TextColumn::make('status')->colors([
@@ -188,7 +189,18 @@ class TenantResource extends Resource
                     })->visible(fn ($record) => $record->status == 'active'),
                     ViewAction::make(),
                     EditAction::make(),
-                    DeleteAction::make()
+                    DeleteAction::make()->action(function ($record) {
+                        $record->update(['status' => 'stale']);
+                        Unit::where('unit_name', $record->unit_name)->update(['status' => 'vacant']);
+                        $record->payments->each(function (Payment $payment) {
+                            $payment->update(['status' => 'stale/' . $payment->status]);
+                        });
+                        $record->invoices->each(function (Invoice $invoice) {
+                            $invoice->update(['invoice_status' => 'stale/' . $invoice->invoice_status]);
+                        });
+                        $record->activeutility->delete();
+                        Notification::make()->success()->color('success')->body('Successfully deleted the tenant !')->send();
+                    })
                 ])
             ])
             ->bulkActions([
@@ -410,7 +422,7 @@ class TenantResource extends Resource
     {
         return $infolist
             ->schema([
-               InfoSection::make()
+                InfoSection::make()
                     ->schema([
                         Split::make([
                             Grid::make(4)

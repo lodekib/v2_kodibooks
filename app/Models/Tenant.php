@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasManager;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,13 @@ class Tenant extends Model
     use HasFactory, HasManager;
 
     protected $guarded = [];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('nonestale', function (Builder $builder) {
+            $builder->where('status', '!=', 'stale');
+        });
+    }
 
     public function units(): HasMany
     {
@@ -28,5 +36,15 @@ class Tenant extends Model
     public function activeutility(): HasOne
     {
         return $this->hasOne(ActiveUtility::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 }

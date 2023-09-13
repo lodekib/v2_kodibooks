@@ -54,7 +54,8 @@ class PaymentResource extends Resource
                     })->required()->reactive(),
                     TextInput::make('tenant_name')->disabled()->dehydrated(),
                     TextInput::make('national_id')->disabled()->dehydrated(),
-                    Select::make('mode_of_payment')->options([ 'Cash' => 'Cash', 'Pesalink' => 'Pesalink', 'Cheque' => 'Cheque','Paypal' => 'Paypal', 'Agent' => 'Agent'
+                    Select::make('mode_of_payment')->options([
+                        'Cash' => 'Cash', 'Pesalink' => 'Pesalink', 'Cheque' => 'Cheque', 'Paypal' => 'Paypal', 'Agent' => 'Agent'
                     ])->required(),
                     TextInput::make('receipt_number')->required(),
                     TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(0),
@@ -78,11 +79,10 @@ class PaymentResource extends Resource
                 TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
                     'unallocated' => 'success',
                     'fully allocated' => 'gray',
-                    'partially allocated' => 'warning'
+                    'partially allocated' => 'warning',
                 })->searchable(),
             ])->striped()
             ->filters([
-                //
             ])
             ->actions([
                 ActionGroup::make([
@@ -99,8 +99,7 @@ class PaymentResource extends Resource
                             }, $record->id . '.pdf');
                         }),
                     DeleteAction::make()->action(function ($record) {
-                        Statement::where('reference', $record->reference_number)->delete();
-                        $record->delete();
+                        $record->update(['status' => 'stale/' . $record->status]);
                         Notification::make()->success()->color('success')->body('Payment deleted successfully !')->send();
                     })
                 ])
@@ -109,7 +108,6 @@ class PaymentResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
