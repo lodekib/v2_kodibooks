@@ -24,6 +24,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action as ActionsAction;
@@ -186,7 +187,7 @@ class ExpenseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ExtraexpensesRelationManager::class
         ];
     }
 

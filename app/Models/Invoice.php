@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Invoice extends Model
 {
@@ -34,6 +35,11 @@ class Invoice extends Model
 
     public function property(): BelongsTo
     {
-        return $this->belongsTo(Property::class,'property_name','property_name');
+        return $this->belongsTo(Property::class, 'property_name', 'property_name');
+    }
+
+    public function statement(): HasOne
+    {
+        return $this->hasOne(Statement::class, 'reference', 'invoice_number');
     }
 }
