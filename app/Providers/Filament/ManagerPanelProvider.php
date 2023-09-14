@@ -29,11 +29,12 @@ class ManagerPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('manager')
+            ->id('manager')->spa()
             ->path('')->sidebarCollapsibleOnDesktop()->collapsedSidebarWidth('80px')
             ->login()->passwordReset()->registration()
             ->colors([
-                'primary' => Color::hex('#4ade80'),
+                'primary' => Color::hex
+                ('#4ade80'),
             ])->favicon(asset('assets/kodibooks.png'))
             ->discoverResources(in: app_path('Filament/Manager/Resources'), for: 'App\\Filament\\Manager\\Resources')
             ->discoverPages(in: app_path('Filament/Manager/Pages'), for: 'App\\Filament\\Manager\\Pages')

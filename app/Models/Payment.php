@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use NunoMaduro\Collision\Adapters\Phpunit\State;
 
 class Payment extends Model
 {
@@ -40,5 +42,8 @@ class Payment extends Model
         return $this->belongsTo(Property::class, 'property_name', 'property_name');
     }
 
-
+    public function statement(): HasOne
+    {
+        return $this->hasOne(Statement::class, 'reference', 'receipt_number');
+    }
 }
