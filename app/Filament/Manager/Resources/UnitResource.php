@@ -48,7 +48,7 @@ class UnitResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
+        return $table->groups(['status'])
             ->columns([
                 TextColumn::make('created_at')->label('Date')->size('sm')->date(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
