@@ -10,25 +10,19 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class IncomeChart extends ApexChartWidget
 {
-    /**
-     * Chart Id
-     *
-     * @var string
-     */
+
     protected static string $chartId = 'incomeChart';
     protected static ?string $pollingInterval = '2s';
+    public string $dateColumn = 'paid_date';
+    public string $dateAlias = 'date';
+
 
     protected static bool $isLazy = false;
 
-    /**
-     * Widget Title
-     *
-     * @var string|null
-     */
     protected static ?string $heading = 'IncomeChart';
 
     public ?string $filter = 'today';
-  
+
 
     protected static ?int $sort = 3;
 
@@ -46,14 +40,6 @@ class IncomeChart extends ApexChartWidget
         ];
     }
 
-
-
-    /**
-     * Chart options (series, labels, types, size, animations...)
-     * https://apexcharts.com/docs/options
-     *
-     * @return array
-     */
     protected function getOptions(): array
     {
         $currentFilter = $this->filter;

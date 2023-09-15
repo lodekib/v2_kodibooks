@@ -34,7 +34,8 @@ class ExpenseChart extends ApexChartWidget
 
         $currentFilter = $this->filter;
 
-        $data = Trend::query(Expense::where('property_name', $currentFilter))->between(
+        $data = Trend::query(
+            Expense::where('property_name', $currentFilter))->between(
             start: now()->startOfMonth(),
             end: now()->endOfMonth()
         )->perDay()->sum('amount');

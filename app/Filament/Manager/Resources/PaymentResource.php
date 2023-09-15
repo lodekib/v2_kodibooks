@@ -70,7 +70,6 @@ class PaymentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('paid_date')->size('sm')->date()->searchable(),
-                TextColumn::make('created_at')->date()->size('sm')->sortable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->sortable()->searchable(),
                 TextColumn::make('mode_of_payment')->size('sm')->searchable()->sortable(),
