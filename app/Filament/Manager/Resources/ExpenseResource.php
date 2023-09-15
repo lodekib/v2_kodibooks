@@ -31,6 +31,7 @@ use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -149,8 +150,9 @@ class ExpenseResource extends Resource
                 TextColumn::make('unit_name')->label('Unit (s)')->sortable()->searchable(),
                 TextColumn::make('type')->size('sm')->sortable()->searchable()->size('sm'),
                 TextColumn::make('description')->size('sm')->sortable()->searchable(),
-                TextColumn::make('amount')->size('sm')->money('kes')->color('warning'),
-                TextColumn::make('incurred_date')->size('sm')->date()
+                TextColumn::make('incurred_date')->size('sm')->date(),
+                TextColumn::make('extraexpenses_sum_amount')->label('Extra Expenses')->sum('extraexpenses', 'amount')->size('sm')->searchable()->sortable()->color('warning')->money('kes'),
+                TextColumn::make('amount')->size('sm')->money('kes')->searchable()->sortable()->color('warning')->summarize(Sum::make()->label('Total Expenses')->money('kes')),
             ])
             ->filters([
                 //
@@ -168,7 +170,7 @@ class ExpenseResource extends Resource
                             $new_data = array_merge($datum, ['manager_id' => $record->manager_id, 'expense_id' => $record->id]);
                             Extraexpense::create($new_data);
                         }
-                        Notification::make()->success()->body('Extra expenses have been added successfully .')->send();
+                        Notification::make()->success()->color('success')->body('Extra expenses have been added successfully .')->send();
                     }),
                     EditAction::make(),
                     DeleteAction::make()
