@@ -37,7 +37,7 @@ class StatsOverview extends BaseWidget
             ))
                 ->description(' This month ')->url(route('filament.manager.resources.expenses.index'))
                 ->chart(Expense::where('amount', '!=', null)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->pluck('amount')->toArray())
-                ->color('secondary'),
+                ->color('gray'),
             Stat::make('Arrears', 'KSH. ' . number_format(Invoice::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('balance')))
                 ->description(' This month of ' . Carbon::now()->format('F'))
                 ->chart(Invoice::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->pluck('balance')->toArray())
