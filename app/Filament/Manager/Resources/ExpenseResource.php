@@ -168,7 +168,7 @@ class ExpenseResource extends Resource
                             $new_data = array_merge($datum, ['manager_id' => $record->manager_id, 'expense_id' => $record->id]);
                             Extraexpense::create($new_data);
                         }
-                        Notification::make()->success()->body('Extra expenses have been added successfully .')->send();
+                        Notification::make()->success()->color('success')->body('Extra expenses have been added successfully .')->send();
                     }),
                     EditAction::make(),
                     DeleteAction::make()

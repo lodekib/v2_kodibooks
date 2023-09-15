@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\AvatarProviders\BoringAvatarsProvider;
 use App\Filament\Manager\Pages\ManagerDashboard;
 use App\Http\Middleware\CheckRole;
 use Closure;

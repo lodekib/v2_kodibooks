@@ -14,13 +14,11 @@ use Illuminate\Support\Facades\Auth;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Fouladgar\OTP\Contracts\OTPNotifiable;
 use Fouladgar\OTP\Concerns\HasOTPNotify;
-
-
-
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable implements FilamentUser, OTPNotifiable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasSuperAdmin, TwoFactorAuthenticatable,HasOTPNotify;
+    use HasApiTokens, HasFactory, Notifiable, HasSuperAdmin, TwoFactorAuthenticatable, HasOTPNotify;
 
     /**
      * The attributes that are mass assignable.
@@ -53,6 +51,11 @@ class User extends Authenticatable implements FilamentUser, OTPNotifiable
         'password' => 'hashed',
     ];
 
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url ? Storage::url($this->avatar_url) : null ;
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         $response = false;
@@ -68,6 +71,6 @@ class User extends Authenticatable implements FilamentUser, OTPNotifiable
     protected static function boot()
     {
         parent::boot();
-        static::created(fn($user) => $user->assignRole('Manager'));
+        static::created(fn ($user) => $user->assignRole('Manager'));
     }
 }
