@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Filament\Manager\Widgets;
+
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use App\Models\Property;
@@ -9,11 +10,12 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class ExpenseChart extends ApexChartWidget
 {
-    
-    protected static ?string $pollingInterval = '10s';
+
+    protected static ?string $pollingInterval = '2s';
     protected static ?int $sort = 4;
     protected static string $chartId = 'expenses';
     protected static ?string $heading = 'Expenses ';
+    protected static bool $isLazy = false;
 
 
 
@@ -32,13 +34,13 @@ class ExpenseChart extends ApexChartWidget
 
         $currentFilter = $this->filter;
 
-        $data = Trend::query(Expense::where('property_name',$currentFilter))->between(
+        $data = Trend::query(Expense::where('property_name', $currentFilter))->between(
             start: now()->startOfMonth(),
             end: now()->endOfMonth()
         )->perDay()->sum('amount');
         $xlabels = $data->map(fn (TrendValue $value) => $value->date);
 
-        $dataset = $data->map(fn(TrendValue $value) => $value->aggregate);
+        $dataset = $data->map(fn (TrendValue $value) => $value->aggregate);
 
         return [
             'chart' => [
@@ -50,7 +52,7 @@ class ExpenseChart extends ApexChartWidget
             ],
             'series' => [
                 [
-                    'name' => 'Income',
+                    'name' => 'Expense',
                     'data' => $dataset,
                     'type' => 'column',
                 ],

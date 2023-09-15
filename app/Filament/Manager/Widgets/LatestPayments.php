@@ -12,13 +12,13 @@ class LatestPayments extends BaseWidget
 
 {
     protected static ?int $sort = 5;
-
+    protected static bool $isLazy = false;
     protected int | string | array $columnSpan = 'full';
     
     public function table(Table $table): Table
     {
 
-        return $table
+        return $table->poll('2s')
             ->query(
                 Payment::latest()->withoutGlobalScopes([ManagerScope::class])
             )

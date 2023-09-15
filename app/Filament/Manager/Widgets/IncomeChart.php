@@ -16,6 +16,9 @@ class IncomeChart extends ApexChartWidget
      * @var string
      */
     protected static string $chartId = 'incomeChart';
+    protected static ?string $pollingInterval = '2s';
+
+    protected static bool $isLazy = false;
 
     /**
      * Widget Title
