@@ -30,14 +30,17 @@ class ManagerDashboard extends BasePage
                     Step::make()
                         ->title('Welcome to Kodibooks !')->description('Your one stop solution for tenant management !.Lets get some walkthroughs to get you started')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
-                    Step::make('dashboard')
-                        ->title('')
-                        ->description(view('filament.manager.biodata.biodata'))->uncloseable()
-                        ->dispatchOnNext('open-modal', id: 'biodata'),
-                    Step::make()
+                    // Step::make('dashboard')
+                    //     ->title('Yelp')
+                    //     ->description(view('filament.manager.biodata.biodata'))->uncloseable()
+                    //     ->dispatchOnNext('open-modal', id: 'biodata'),
+                    Step::make('.fi-sidebar-item')
                         ->title('Test !')->description('Your End')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
-                )->alwaysShow(false)->ignoreRoutes()
+                    Step::make('.fi-sidebar-item')
+                        ->title('Test !')->description('Your End')
+                        ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
+                )->alwaysShow(fn (): bool => auth()->check() && auth()->user()->is_verified ? true : false)->ignoreRoutes()
         ];
     }
 }
