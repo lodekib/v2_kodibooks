@@ -13,19 +13,12 @@ class IncomeChart extends ApexChartWidget
 
     protected static string $chartId = 'incomeChart';
     protected static ?string $pollingInterval = '2s';
-    public string $dateColumn = 'paid_date';
-    public string $dateAlias = 'date';
-
-
     protected static bool $isLazy = false;
-
     protected static ?string $heading = 'IncomeChart';
-
     public ?string $filter = 'today';
-
-
     protected static ?int $sort = 3;
 
+  
     protected function getFilter(): ?string
     {
         return now()->year;
@@ -44,7 +37,7 @@ class IncomeChart extends ApexChartWidget
     {
         $currentFilter = $this->filter;
         if ($currentFilter === 'today') {
-            $data = Trend::model(Payment::class)
+            $data = Trend::model(Payment::class)->dateColumn('paid_date')
                 ->between(
                     start: now()->startOfDay(),
                     end: now()->endOfDay()
