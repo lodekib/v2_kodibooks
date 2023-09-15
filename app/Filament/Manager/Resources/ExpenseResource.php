@@ -10,6 +10,7 @@ use App\Models\Expensetype;
 use App\Models\Extraexpense;
 use App\Models\Property;
 use App\Models\Unit;
+use App\Models\Vendor;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
@@ -23,6 +24,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
@@ -159,6 +161,23 @@ class ExpenseResource extends Resource
             ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview()])
             ->actions([
                 ActionGroup::make([
+                    ActionsAction::make('Assign Vendor')->icon('heroicon-o-wrench')->color('primary')->form([
+                        Section::make()->schema([
+                            Select::make('company_name')->options(Vendor::pluck('company_name', 'company_name'))->afterStateUpdated(function (Set $set, $state) {
+                                if ($state != null) {
+                                    $company = Vendor::where('company_name', $state)->get(['industry', 'contact_person', 'contact_number'])->first();
+                                    $set('industry', $company->industry);
+                                    $set('contact_person', $company->contact_person);
+                                    $set('contact_number', $company->contact_number);
+                                }
+                            })->reactive(),
+                            TextInput::make('industry')->disabled()->dehydrated(),
+                            TextInput::make('contact_person')->disabled()->dehydrated(),
+                            TextInput::make('contact_number')->disabled()->dehydrated()
+                        ])->columns(3)
+                    ])->action(function (array $data) {
+                        dd($data);
+                    }),
                     ActionsAction::make('Add Extra Expenses')->icon('heroicon-s-plus')->form([
                         Repeater::make('attached_expenses')->label('Extra expense')->schema([
                             TextInput::make('expense')->required(),

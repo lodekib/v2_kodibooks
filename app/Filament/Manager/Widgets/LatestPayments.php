@@ -18,7 +18,7 @@ class LatestPayments extends BaseWidget
     public function table(Table $table): Table
     {
 
-        return $table->poll('2s')
+        return $table->poll('2s')->groups(['mode_of_payment'])
             ->query(
                 Payment::latest()->withoutGlobalScopes([ManagerScope::class])
             )
