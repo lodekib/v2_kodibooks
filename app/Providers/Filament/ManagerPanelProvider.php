@@ -9,6 +9,8 @@ use Closure;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -31,11 +33,11 @@ class ManagerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('manager')->spa()
-            ->path('')->sidebarCollapsibleOnDesktop()->collapsedSidebarWidth('80px')
+            ->path('')->sidebarCollapsibleOnDesktop()
+            ->collapsedSidebarWidth('80px')
             ->login()->passwordReset()->registration()
             ->colors([
-                'primary' => Color::hex
-                ('#4ade80'),
+                'primary' => Color::hex('#4ade80'),
             ])->favicon(asset('assets/kodibooks.png'))
             ->discoverResources(in: app_path('Filament/Manager/Resources'), for: 'App\\Filament\\Manager\\Resources')
             ->discoverPages(in: app_path('Filament/Manager/Pages'), for: 'App\\Filament\\Manager\\Pages')
@@ -59,7 +61,25 @@ class ManagerPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->navigationGroups(['Assets','Payments','Expenses','Utilities','Settings'])
+            ])->navigationGroups([
+                'Assets', 'Payments', 'Expenses', 'Utilities', 'Settings',
+            ])->navigationItems([
+                NavigationItem::make('Old tenants')
+                    ->url('')
+                    ->icon('heroicon-s-user-minus')
+                    ->group('Archives')->isActiveWhen(fn () => request()->routeIs(''))
+                    ->sort(3),
+                NavigationItem::make('Stale Invoices')
+                    ->url('')
+                    ->icon('heroicon-s-archive-box')
+                    ->group('Archives')->isActiveWhen(fn () => request()->routeIs(''))
+                    ->sort(3),
+                NavigationItem::make('Past Payments')
+                    ->url('')
+                    ->icon('heroicon-s-document-minus')
+                    ->group('Archives')->isActiveWhen(fn () => request()->routeIs(''))
+                    ->sort(3),
+            ])
             ->plugins([
                 BreezyCore::make()->myProfile(
                     shouldRegisterUserMenu: true,
