@@ -438,7 +438,6 @@ class TenantResource extends Resource
                                     Group::make([
                                         TextEntry::make('phone_number'),
                                         TextEntry::make('status')->badge()->color(fn ($state) => $state == 'active' ? 'success' : 'warning'),
-
                                     ]),
                                     Group::make([
                                         TextEntry::make('activeutility.active_utilities')->label('Active Utilities')->badge()->color('gray'),

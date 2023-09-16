@@ -37,9 +37,6 @@ class ManagerDashboard extends BasePage
                     Step::make('.fi-sidebar-item')
                         ->title('Test !')->description('Your End')
                         ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
-                    Step::make('.fi-sidebar-item')
-                        ->title('Test !')->description('Your End')
-                        ->icon('heroicon-s-cake')->iconColor('primary')->uncloseable(),
                 )->alwaysShow(fn (): bool => auth()->check() && auth()->user()->is_verified ? true : false)->ignoreRoutes()
         ];
     }

@@ -176,7 +176,7 @@ class ExpenseResource extends Resource
                             TextInput::make('contact_number')->disabled()->dehydrated()
                         ])->columns(3)
                     ])->action(function (array $data) {
-                        dd($data);
+                        // dd($data);
                     }),
                     ActionsAction::make('Add Extra Expenses')->icon('heroicon-s-plus')->form([
                         Repeater::make('attached_expenses')->label('Extra expense')->schema([
