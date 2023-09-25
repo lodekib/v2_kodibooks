@@ -22,7 +22,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
@@ -63,22 +62,6 @@ class ManagerPanelProvider extends PanelProvider
                 Authenticate::class,
             ])->navigationGroups([
                 'Assets', 'Payments', 'Expenses', 'Utilities', 'Settings',
-            ])->navigationItems([
-                NavigationItem::make('Old tenants')
-                    ->url('')
-                    ->icon('heroicon-s-user-minus')
-                    ->group('Archives')->isActiveWhen(fn () => request()->routeIs(''))
-                    ->sort(3),
-                NavigationItem::make('Stale Invoices')
-                    ->url('')
-                    ->icon('heroicon-s-archive-box')
-                    ->group('Archives')->isActiveWhen(fn () => request()->routeIs(''))
-                    ->sort(3),
-                NavigationItem::make('Past Payments')
-                    ->url('')
-                    ->icon('heroicon-s-document-minus')
-                    ->group('Archives')->isActiveWhen(fn () => request()->routeIs(''))
-                    ->sort(3),
             ])
             ->plugins([
                 BreezyCore::make()->myProfile(

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MpesaC2BController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UtilityController;
 use Illuminate\Support\Facades\Response;
@@ -7,6 +8,10 @@ use Illuminate\Support\Facades\Response;
 Route::middleware('auth')->group(function () {
     Route::post('/utilities/update/{tenant}', [UtilityController::class, 'updateUtility'])->name('utilities.update');
 });
+
+Route::post('register-urls', [MpesaC2BController::class, 'registerURLS']);
+Route::post('validation',[MpesaC2BController::class,'validation'])->name('c2b.validate');
+Route::post('confirmation',[MpesaC2BController::class,'consfirmation'])->name('c2b.confirm');
 
 Route::get('manager/units/sample-csv-download', function () {
     $headers = array('Content-Type' => 'text/csv');
