@@ -34,7 +34,7 @@ class ManagerDashboard extends BasePage
                     Step::make('dashboard')
                         ->title('Verification')
                         ->description(view('filament.manager.biodata.biodata'))->uncloseable()
-                        // ->dispatchOnNext('open-modal', id: 'biodata'),
+                        ->dispatchOnNext('open-modal', id: 'biodata'),
                 )->alwaysShow(fn (): bool => auth()->check() && !auth()->user()->is_verified ? true : false)->ignoreRoutes()
         ];
     }
