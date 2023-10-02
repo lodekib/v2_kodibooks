@@ -15,9 +15,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->job(new RentInvoice())->everyMinute();
-        // $schedule->job(new GarbageInvoice())->monthlyOn(28,'00:00');
-        // $schedule->job(new WaterInvoice())->monthlyOn(28,'00:00');
+        $schedule->job(new RentInvoice())->lastDayOfMonth();
+        $schedule->job(new GarbageInvoice())->lastDayOfMonth();
+        $schedule->job(new WaterInvoice())->lastDayOfMonth();
     }
 
     /**
