@@ -85,18 +85,18 @@ class PaymentResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\EditAction::make()->color('gray'),
                     Tables\Actions\Action::make('pdf')
-                        ->label('Download')
-                        ->color('success')
+                        ->label('Download Receipt')
+                        ->color('primary')
                         ->icon('heroicon-s-arrow-down-tray')
                         ->action(function (Model $record) {
                             return response()->streamDownload(function () use ($record) {
                                 echo Pdf::loadHtml(
                                     Blade::render('pdfs/payment', ['record' => $record])
                                 )->stream();
-                            }, $record->id . '.pdf');
+                            }, $record->property_name .'-'.$record->tenant_name. '.pdf');
                         }),
+                    Tables\Actions\EditAction::make()->color('gray'),
                     DeleteAction::make()->action(function ($record) {
                         $record->update(['status' => 'stale/' . $record->status]);
                         Notification::make()->success()->color('success')->body('Payment deleted successfully !')->send();

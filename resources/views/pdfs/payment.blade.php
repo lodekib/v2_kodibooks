@@ -30,6 +30,6 @@
 
         <!-- Total Amount Section -->
         <div class="text-right">
-            <p class="text-lg font-semibold">Total Amount: ${{ $record->amount }}</p>
+            <p class="text-lg font-semibold">Total Amount: {{ $record->amount }}</p>
         </div>
     </div>
