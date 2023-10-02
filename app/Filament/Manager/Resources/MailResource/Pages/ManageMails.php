@@ -21,7 +21,7 @@ class ManageMails extends ManageRecords
                     usort($mxRecords, function ($a, $b) {
                         return $a['pri'] - $b['pri'];
                     });
-                    $new_data = array_merge($data, ['smtp_host' => 'smtp' . $mxRecords[0]['host']]);
+                    $new_data = array_merge($data, ['smtp_host' => 'smtp.' . $mxRecords[0]['host']]);
                 }
                 $this->getModel()::create($new_data);
             }),
