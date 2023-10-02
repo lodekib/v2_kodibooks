@@ -41,6 +41,7 @@ use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Mail as Mailconfig;
+use App\Models\Scopes\ManagerScope;
 use Filament\Forms\Components\Section;
 use Filament\Infolists\Components\Section as InfoSection;
 use Filament\Tables\Actions\DeleteAction;
@@ -219,7 +220,9 @@ class TenantResource extends Resource
                             );
                             // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
                             // dump($invoice);
-                            $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
+                            // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
+                            $mail_config = Mail::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
+                            $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
                                 'national_id' => $record->id_number,
@@ -288,7 +291,9 @@ class TenantResource extends Resource
                             ]);
 
                             // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
-                            $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
+                            // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
+                            $mail_config = Mail::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
+                            $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
                                 'national_id' => $record->id_number,
@@ -351,7 +356,6 @@ class TenantResource extends Resource
                             $mail_config = Mailconfig::where('manager_id', auth()->id());
                             $get_mail_config = Mailconfig::find($mail_config->first()->id);
                             $get_mail_config->mailer()->to($record)->send(new InvoiceSent($record, $new_data));
-                            // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
                                 'national_id' => $record->id_number,
