@@ -14,14 +14,21 @@ class ManageMails extends ManageRecords
     {
         return [
             Actions\CreateAction::make()->action(function (array $data) {
+                $smtp_host_prefix = 'smtp.';
                 $domain = explode('@', $data['smtp_username'])[1];
+                if (strpos($data['smtp_username'], '@') !== false) {
+                    $domain = explode('@', $data['smtp_username'])[1];
+                    if (strpos($domain, 'co.ke') !== false) {
+                        $smtp_host_prefix = 'mail.';
+                    }
+                }
                 $mxRecords = dns_get_record($domain, DNS_MX);
                 if ($mxRecords && is_array($mxRecords)) {
                     //sort them according to priority
                     usort($mxRecords, function ($a, $b) {
                         return $a['pri'] - $b['pri'];
                     });
-                    $new_data = array_merge($data, ['smtp_host' => 'smtp.' . $mxRecords[0]['host']]);
+                    $new_data = array_merge($data, ['smtp_host' => $smtp_host_prefix . $mxRecords[0]['host']]);
                 }
                 $this->getModel()::create($new_data);
             }),
