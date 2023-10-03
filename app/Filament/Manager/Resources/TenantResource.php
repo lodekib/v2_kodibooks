@@ -69,7 +69,7 @@ class TenantResource extends Resource
                     TextInput::make('full_names')->required(),
                     TextInput::make('email')->required()->unique(),
                     TextInput::make('phone_number')->required()->integer(),
-                    TextInput::make('id_number')->required()->unique()->integer(),
+                    TextInput::make('id_number')->required()->unique(ignoreRecord:true)->integer(),
                     Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
                     Select::make('unit_name')->options(function (callable $get) {
                         return Unit::where('status', 'vacant')->where('property_name', $get('property_name'))->pluck('unit_name', 'unit_name');
@@ -221,7 +221,7 @@ class TenantResource extends Resource
                             // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
                             // dump($invoice);
                             // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
-                            $mail_config = Mail::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
+                            $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
                             $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
@@ -292,7 +292,7 @@ class TenantResource extends Resource
 
                             // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
                             // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
-                            $mail_config = Mail::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
+                            $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
                             $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
@@ -388,7 +388,7 @@ class TenantResource extends Resource
                         });
                     })->form([
                         Fieldset::make("Standard Invoice")->schema([
-                            TextInput::make('invoice_title')->required()->disabled()->default('Standard Invoice'),
+                            TextInput::make('invoice_title')->required()->disabled()->default('Standard Invoice')->dehydrated(),
                             DatePicker::make('due_date')->required()->maxDate(now()),
                             DatePicker::make('from')->required(),
                             DatePicker::make('to')->required(),

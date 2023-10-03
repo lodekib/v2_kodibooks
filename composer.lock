@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "823e59d13eb79cc7e9d5f4c4d6eb9827",
+    "content-hash": "bb14ba4a5f7efe321291f10a8d7f5fc4",
     "packages": [
         {
             "name": "africastalking/africastalking",
@@ -2958,16 +2958,16 @@
         },
         {
             "name": "jibaymcs/filament-tour",
-            "version": "v3.1.0.0",
+            "version": "v3.1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JibayMcs/filament-tour.git",
-                "reference": "49c88c26a0c59c682bd4a93cbc56f82b71a4d909"
+                "reference": "3dc57d09f6844408aa4079deb91e2faac5ebbd1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JibayMcs/filament-tour/zipball/49c88c26a0c59c682bd4a93cbc56f82b71a4d909",
-                "reference": "49c88c26a0c59c682bd4a93cbc56f82b71a4d909",
+                "url": "https://api.github.com/repos/JibayMcs/filament-tour/zipball/3dc57d09f6844408aa4079deb91e2faac5ebbd1e",
+                "reference": "3dc57d09f6844408aa4079deb91e2faac5ebbd1e",
                 "shasum": ""
             },
             "require": {
@@ -3031,7 +3031,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-05T19:55:06+00:00"
+            "time": "2023-09-20T07:30:26+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
