@@ -55,8 +55,8 @@ class PropertyResource extends Resource
                 Fieldset::make()
                     ->schema([
                         TextInput::make('property_name')->required()->unique(ignoreRecord: true),
-                        TextInput::make('number_of_units')->numeric()->minValue(0)->required(),
-                        TextInput::make('property_size')->numeric()->minValue(1)->required()->prefix('sq . m'),
+                        TextInput::make('number_of_units')->integer()->minValue(1)->required(),
+                        TextInput::make('property_size')->integer()->minValue(1)->required()->prefix('sq . m'),
                         TextInput::make('property_cost')->prefix('Ksh')->required()->integer()->minValue(0),
                         Select::make('property_status')->options(['good' => 'Good', 'maintenance' => 'Maintenance',]),
                         TextInput::make('property_location')->required(),

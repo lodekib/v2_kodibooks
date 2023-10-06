@@ -54,7 +54,7 @@ class InvoiceResource extends Resource
                         }
                     })->required(),
                     TextInput::make('invoice_number')->required(),
-                    TextInput::make('amount_invoiced')->numeric()->required()->minValue(0),
+                    TextInput::make('amount_invoiced')->integer()->required()->minValue(1),
                     DatePicker::make('due_date')->required(),
                     DatePicker::make('from')->required()->maxDate(now()),
                     DatePicker::make('to')->required(),

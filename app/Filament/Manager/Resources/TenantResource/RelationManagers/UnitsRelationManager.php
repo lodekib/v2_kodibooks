@@ -99,9 +99,9 @@ class UnitsRelationManager extends RelationManager
                                     $set('deposit', $unit_data->deposit);
                                 }
                             }),
-                        TextInput::make('unit_type')->disabled(),
-                        TextInput::make('rent')->prefix('Ksh')->disabled(),
-                        TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->disabled(),
+                        TextInput::make('unit_type')->disabled()->required(),
+                        TextInput::make('rent')->prefix('Ksh')->disabled()->integer()->minValue(1)->required(),
+                        TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->disabled()->integer(),
                     ])->columns(3)
                 ])->action(function (array $data) {
                     $unit = Unit::where('unit_name', $data['unit_name'])->where('property_name', $data['property_name'])->update(['tenant_id' => $this->ownerRecord->id, 'status' => 'occupied']);

@@ -27,10 +27,10 @@ class MailResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('smtp_username')->label('Username')->required(),
+                TextInput::make('smtp_username')->label('Username Mail')->required()->email(),
                 TextInput::make('smtp_password')->label('Password')->required()->password()->prefixIcon('heroicon-o-key'),
-                TextInput::make('smtp_from_address')->required()->email(),
-                TextInput::make('smtp_from_name')->required(),
+                TextInput::make('smtp_from_address')->label('From Email Address')->required()->email(),
+                TextInput::make('smtp_from_name')->required()->label('From Name'),
             ]);
     }
 
