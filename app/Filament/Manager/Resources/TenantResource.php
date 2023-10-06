@@ -69,7 +69,7 @@ class TenantResource extends Resource
                     TextInput::make('full_names')->required(),
                     TextInput::make('email')->required()->unique(),
                     TextInput::make('phone_number')->required()->integer(),
-                    TextInput::make('id_number')->required()->unique(ignoreRecord:true)->integer(),
+                    TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer(),
                     Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
                     Select::make('unit_name')->options(function (callable $get) {
                         return Unit::where('status', 'vacant')->where('property_name', $get('property_name'))->pluck('unit_name', 'unit_name');
@@ -93,7 +93,7 @@ class TenantResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('created_at')->label('Date')->date()->size('sm')->sortable(),
+                TextColumn::make('created_at')->label('Date')->date()->size('sm')->searchable(),
                 TextColumn::make('full_names')->size('sm')->searchable()->sortable(),
                 TextColumn::make('email')->size('sm')->sortable()->searchable(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
@@ -102,7 +102,7 @@ class TenantResource extends Resource
                 TextColumn::make('balance')->size('sm')->formatStateUsing(
                     fn ($record) =>
                     __('KES ' . number_format(Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance, 2, '.', ','))
-                )->color('danger'),
+                )->color(fn ($record) => Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance > 0 ? 'danger' : 'success'),
                 TextColumn::make('entry_date')->size('sm')->date(),
                 TextColumn::make('status')->colors([
                     'success' => static fn ($state): bool => $state === 'active',
@@ -218,9 +218,6 @@ class TenantResource extends Resource
                                     'quantity' => 1
                                 ]
                             );
-                            // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
-                            // dump($invoice);
-                            // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
                             $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
                             $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
@@ -240,7 +237,6 @@ class TenantResource extends Resource
                                 'balance' => $record->rent
                             ];
                             $final_invoice =  Invoice::create($final_data);
-                            //TODO::OPTIMIZATION NEEDED
                             $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
                             $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
 
@@ -289,9 +285,6 @@ class TenantResource extends Resource
                                 'amount' => $amount,
                                 'quantity' => $quantity
                             ]);
-
-                            // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
-                            // $mail = Mail::to($record->email)->send(new InvoiceSent($record, $new_data));
                             $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
                             $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
@@ -311,7 +304,6 @@ class TenantResource extends Resource
                                 'balance' =>  $livewire->tableFilters['Utility']['value'] == 'Water' ? $amount * $quantity : $amount
                             ];
                             $final_invoice = Invoice::create($final_data);
-                            //TODO::OPTIMIZATION NEEDED
                             $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
                             $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
 
@@ -351,8 +343,6 @@ class TenantResource extends Resource
                                     'quantity' => $quantity
                                 ]
                             );
-                            // $invoice =  InvoiceTenant::invoiceTenant($record, $new_data);
-                            //TODO::OPTIMIZATION NEEDED
                             $mail_config = Mailconfig::where('manager_id', auth()->id());
                             $get_mail_config = Mailconfig::find($mail_config->first()->id);
                             $get_mail_config->mailer()->to($record)->send(new InvoiceSent($record, $new_data));
@@ -384,7 +374,7 @@ class TenantResource extends Resource
                                 'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
                             ];
                             $statement = Statement::create($statement_data);
-                            InvoiceReceiptAutoAllocation::handleNewInvoice($record, $final_invoice);
+                            InvoiceReceiptAutoAllocation::handleNewInvoice($final_invoice);
                         });
                     })->form([
                         Fieldset::make("Standard Invoice")->schema([
@@ -400,7 +390,7 @@ class TenantResource extends Resource
                 ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ]);
     }
 
@@ -429,7 +419,7 @@ class TenantResource extends Resource
                 InfoSection::make()
                     ->schema([
                         Split::make([
-                            Grid::make(4)
+                            Grid::make(5)
                                 ->schema([
                                     Group::make([
                                         TextEntry::make('full_names'),
@@ -446,7 +436,12 @@ class TenantResource extends Resource
                                     Group::make([
                                         TextEntry::make('activeutility.active_utilities')->label('Active Utilities')->badge()->color('gray'),
                                         TextEntry::make('units.unit_name')->label('Unit (s)')->badge()->color('gray'),
-
+                                    ]),
+                                    Group::make([
+                                        TextEntry::make('balance')->formatStateUsing(
+                                            fn ($record) =>
+                                            __('KES ' . number_format(Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance, 2, '.', ','))
+                                        )->color(fn ($record) => Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance > 0 ? 'danger' : 'success')->weight('normal')
                                     ])
                                 ]),
                         ])->from('lg'),

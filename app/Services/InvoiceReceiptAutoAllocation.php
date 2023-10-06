@@ -13,7 +13,7 @@ class InvoiceReceiptAutoAllocation
 {
 
 
-    public static  function handleNewInvoice($invoice)
+    public static  function   handleNewInvoice($invoice)
     {
         $payments = Payment::where('tenant_name', $invoice->tenant_name)
             ->where('status', '!=', 'fully allocated')->withoutGlobalScopes([ManagerScope::class])
