@@ -146,13 +146,13 @@ class ExpenseResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('created_at')->date()->size('sm')->label('Date'),
+                TextColumn::make('index')->rowIndex(),
+                TextColumn::make('incurred_date')->size('sm')->date(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('expense_type')->size('sm')->sortable()->searchable(),
                 TextColumn::make('unit_name')->label('Unit (s)')->sortable()->searchable(),
                 TextColumn::make('type')->size('sm')->sortable()->searchable()->size('sm'),
-                TextColumn::make('description')->size('sm')->sortable()->searchable(),
-                TextColumn::make('incurred_date')->size('sm')->date(),
+                TextColumn::make('description')->size('sm')->sortable()->searchable()->wrap(),
                 TextColumn::make('extraexpenses_sum_amount')->label('Extra Expenses')->sum('extraexpenses', 'amount')->size('sm')->searchable()->sortable()->color('warning')->money('kes'),
                 TextColumn::make('amount')->size('sm')->money('kes')->searchable()->sortable()->color('warning')->summarize(Sum::make()->label('Total Expenses')->money('kes')),
             ])

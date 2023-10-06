@@ -61,15 +61,15 @@ class VendorResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('created_at')->label('Date')->date()->size('sm')->sortable(),
+                TextColumn::make('index')->rowIndex(),
                 TextColumn::make('company_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('industry')->size('sm')->searchable()->sortable(),
-                TextColumn::make('contact_person')->size('sm')->searchable(),
+                TextColumn::make('contact_person')->size('sm')->searchable()->toggleable(isToggledHiddenByDefault:true),
                 TextColumn::make('contact_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('email')->size('sm')->searchable(),
                 TextColumn::make('vendor_type')->size('sm')->searchable()->sortable(),
                 TextColumn::make('vendor_particular')->size('sm')->searchable()->sortable(),
-                TextColumn::make('payment_method')->size('sm')->searchable()->sortable()
+                TextColumn::make('payment_method')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault:true)
             ])
             ->striped()
             ->filters([

@@ -19,6 +19,7 @@ class ManagerDashboard extends BasePage
     }
 
 
+
     public function tours(): array
     {
         return [
@@ -29,7 +30,7 @@ class ManagerDashboard extends BasePage
                     Step::make('li.fi-sidebar-group:nth-of-type(2) .fi-sidebar-item:nth-of-type(3)')->title('Units')->description('<p>After adding the properties, you can attach units<br>to the properties here')->icon('heroicon-s-cube')->iconColor('success')->uncloseable(),
                     Step::make('li.fi-sidebar-group:nth-of-type(2) .fi-sidebar-item:nth-of-type(2)')->title('Tenants')->description('<p>Add and manage tenants profiles from this section</p>')->icon('heroicon-s-users')->iconColor('success')->uncloseable(),
                     Step::make('li.fi-sidebar-group:nth-of-type(3)')->title('Payments')->description('<p>View the payments, invoices and allocations made from this section')->icon('heroicon-o-credit-card')->iconColor('success')->uncloseable(),
-                    Step::make('dashboard')->title('Verification')->description('We would like to know more about your organization')->uncloseable()->dispatchOnNext('open-modal',id:'biodata'),
+                    Step::make('dashboard')->title('Verification')->description('We would like to know more about your organization')->uncloseable()->dispatchOnNext('open-modal', id: 'biodata'),
                 )->alwaysShow(fn (): bool => auth()->check() && auth()->user()->is_verified ? true : false)->ignoreRoutes()->doneButtonLabel('Verify')
         ];
     }
