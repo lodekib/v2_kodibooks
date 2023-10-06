@@ -128,6 +128,7 @@ class TenantResource extends Resource
             ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview()])
             ->actions([
                 ActionGroup::make([
+                    ViewAction::make()->label('View Tenant'),
                     Action::make('Add water bill')->icon('heroicon-o-funnel')
                         ->action(function (Tenant $record, array $data) {
                             $new_data = [
@@ -201,7 +202,6 @@ class TenantResource extends Resource
                             $unit->first()->update(['status' => 'vacant']);
                         }
                     })->visible(fn ($record) => $record->status == 'active'),
-                    ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make()->action(function ($record) {
                         $record->update(['status' => 'stale']);

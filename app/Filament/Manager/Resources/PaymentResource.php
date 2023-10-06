@@ -28,6 +28,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
+use Illuminate\Database\Eloquent\Builder;
 
 class PaymentResource extends Resource
 {
@@ -35,6 +36,11 @@ class PaymentResource extends Resource
     protected static ?string $model = Payment::class;
     protected static ?string $navigationGroup = 'Payments';
     protected static ?string $navigationIcon = 'heroicon-s-banknotes';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->latest();
+    }
 
     public static function form(Form $form): Form
     {
@@ -59,7 +65,7 @@ class PaymentResource extends Resource
                     ])->required()->reactive(),
                     TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(0),
                     TextInput::make('reference_number')->required()
-                    ->visible(fn(Get $get) => $get('mode_of_payment') != null && $get('mode_of_payment') == 'Cash' ? false : true),
+                        ->visible(fn (Get $get) => $get('mode_of_payment') != null && $get('mode_of_payment') == 'Cash' ? false : true),
                     Forms\Components\DatePicker::make('paid_date')->required()->maxDate(now())
                 ])->columns(3)
             ]);
@@ -81,8 +87,7 @@ class PaymentResource extends Resource
                     'partially allocated' => 'warning',
                 })->searchable(),
             ])->striped()
-            ->filters([
-            ])
+            ->filters([])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\Action::make('pdf')
@@ -94,7 +99,7 @@ class PaymentResource extends Resource
                                 echo Pdf::loadHtml(
                                     Blade::render('pdfs/payment', ['record' => $record])
                                 )->stream();
-                            }, $record->property_name .'-'.$record->tenant_name. '.pdf');
+                            }, $record->property_name . '-' . $record->tenant_name . '.pdf');
                         }),
                     Tables\Actions\EditAction::make()->color('gray'),
                     DeleteAction::make()->action(function ($record) {
@@ -106,8 +111,7 @@ class PaymentResource extends Resource
                 FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                ]),
+                Tables\Actions\BulkActionGroup::make([]),
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
