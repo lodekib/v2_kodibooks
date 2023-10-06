@@ -47,10 +47,10 @@ class TenantsRelationManager extends RelationManager
                         $set('rent', $unit->first()->rent);
                         $set('deposit', $unit->first()->deposit);
                     }),
-                    TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(0),
-                    TextInput::make('deposit')->prefix('Ksh')->lte('rent')->required()->numeric()->minValue(0),
-                    TextInput::make('arrears')->prefix('Ksh')->required()->default(0)->integer()->minValue(0),
-                    TextInput::make('surplus')->prefix('Ksh')->required()->default(0)->integer()->minValue(0),
+                    TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(1),
+                    TextInput::make('deposit')->prefix('Ksh')->lte('rent')->required()->integer()->minValue(1),
+                    TextInput::make('arrears')->prefix('Ksh')->required()->default(0)->integer(),
+                    TextInput::make('surplus')->prefix('Ksh')->required()->default(0)->integer(),
                     DatePicker::make('entry_date')->required()
                 ])->columns(4)
             ]);

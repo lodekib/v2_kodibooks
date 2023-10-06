@@ -67,7 +67,7 @@ class TenantResource extends Resource
             ->schema([
                 Section::make('')->description('Personal & housing details.')->schema([
                     TextInput::make('full_names')->required(),
-                    TextInput::make('email')->required()->unique(),
+                    TextInput::make('email')->required()->unique()->email(),
                     TextInput::make('phone_number')->required()->integer(),
                     TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer(),
                     Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
@@ -80,10 +80,10 @@ class TenantResource extends Resource
                     }),
                 ])->columns(3),
                 Section::make('')->description('Payments & invoicing.')->schema([
-                    TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(0),
-                    TextInput::make('deposit')->prefix('Ksh')->lte('rent')->required()->numeric()->minValue(0),
-                    TextInput::make('arrears')->prefix('Ksh')->required()->default(0)->integer()->minValue(0),
-                    TextInput::make('surplus')->prefix('Ksh')->required()->default(0)->integer()->minValue(0),
+                    TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(10),
+                    TextInput::make('deposit')->prefix('Ksh')->lte('rent')->required()->integer()->minValue(10),
+                    TextInput::make('arrears')->prefix('Ksh')->required()->default(0)->integer(),
+                    TextInput::make('surplus')->prefix('Ksh')->required()->default(0)->integer(),
                     DatePicker::make('entry_date')->required()
                 ])->columns(3),
             ]);
@@ -152,15 +152,24 @@ class TenantResource extends Resource
                                         $tenant_exists = Waterbill::where('property_name', $record->property_name)
                                             ->where('tenant_id', $record->id)
                                             ->where('unit_name', $record->unit_name)->pluck('current_reading');
+                                        if ($tenant_exists->isEmpty()) {
+                                            return 0;
+                                        } else {
+                                            return $tenant_exists->last();
+                                        }
+                                    }),
+                                    TextInput::make('current_reading')->label('Current reading ( m3)')->required()->integer()->minValue(function (Tenant $record) {
+                                        $tenant_exists = Waterbill::where('property_name', $record->property_name)
+                                            ->where('tenant_id', $record->id)
+                                            ->where('unit_name', $record->unit_name)->pluck('current_reading');
 
                                         if ($tenant_exists->isEmpty()) {
                                             return 0;
                                         } else {
-                                            return $tenant_exists->first()->current_reading;
+                                            return $tenant_exists->last()+1;
                                         }
                                     }),
-                                    TextInput::make('current_reading')->label('Current reading ( m3)')->required()->numeric(),
-                                    DatePicker::make('date_added')->label('Date')
+                                    DatePicker::make('date_added')->label('Date')->required()
                                 ];
                             })->columns(3)
                         ])->visible(function (Tenant $record) {
@@ -255,7 +264,7 @@ class TenantResource extends Resource
                         });
                     })->form([
                         Fieldset::make("Rent Invoice")->schema([
-                            DatePicker::make('due_date')->required()->maxDate(now()),
+                            DatePicker::make('due_date')->required(),
                             DatePicker::make('from')->required(),
                             DatePicker::make('to')->required(),
                             Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
@@ -323,7 +332,7 @@ class TenantResource extends Resource
                     })->visible(fn ($livewire) => $livewire->tableFilters['Utility']['value'] != null ? true : false)->form(function ($livewire) {
                         return [
                             Fieldset::make($livewire->tableFilters['Utility']['value'] . " Invoice")->schema([
-                                DatePicker::make('due_date')->required()->maxDate(now()),
+                                DatePicker::make('due_date')->required(),
                                 DatePicker::make('from')->required(),
                                 DatePicker::make('to')->required(),
                                 Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
@@ -379,10 +388,10 @@ class TenantResource extends Resource
                     })->form([
                         Fieldset::make("Standard Invoice")->schema([
                             TextInput::make('invoice_title')->required()->disabled()->default('Standard Invoice')->dehydrated(),
-                            DatePicker::make('due_date')->required()->maxDate(now()),
+                            DatePicker::make('due_date')->required(),
                             DatePicker::make('from')->required(),
                             DatePicker::make('to')->required(),
-                            TextInput::make('amount_invoiced')->integer(),
+                            TextInput::make('amount_invoiced')->integer()->required()->minValue(10),
                             Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
                         ])
                     ]),

@@ -40,7 +40,7 @@ class UnitResource extends Resource
                 TextInput::make('unit_name')->required()->unique(),
                 Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required(),
                 Select::make('unit_type')->options(['bedsitter' => 'Bedsitter','one_bedroom' => 'One Bedroom','two_bedroom' => 'Two Bedroom',])->required(),
-                TextInput::make('unit_size')->numeric()->minValue(1)->required()->prefix('sq . m')->required(),
+                TextInput::make('unit_size')->integer()->minValue(1)->required()->prefix('sq . m')->required(),
                 TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(1),
                 TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->integer()->minValue(1),
             ]);

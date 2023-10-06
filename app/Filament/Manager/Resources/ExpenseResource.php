@@ -135,7 +135,7 @@ class ExpenseResource extends Resource
                                     ])->collapsible()->maxItems(3)->minItems(1)
                                 ]);
                         }),
-                    TextInput::make('amount')->prefix('Ksh')->required(),
+                    TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(10),
                     DatePicker::make('incurred_date')->required(),
                     Textarea::make('description')->required()->rows(1),
                 ])->columns(3)

@@ -52,7 +52,7 @@ class ExtraexpensesRelationManager extends RelationManager
                     Repeater::make('attached_expenses')->label('Extra expense')->schema([
                         TextInput::make('expense')->required(),
                         TextInput::make('description')->required(),
-                        TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(0),
+                        TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(1),
                     ])->columns(3)->collapsible()->columnSpanFull()
                 ])
             ])

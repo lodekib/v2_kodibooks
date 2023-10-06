@@ -30,9 +30,9 @@ class UnitsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('unit_name')->required()->maxLength(255)->unique(),
+                TextInput::make('unit_name')->required()->maxLength(255)->unique(),
                 Select::make('unit_type')->options(['bedsitter' => 'Bedsitter', 'one_bedroom' => 'One Bedroom', 'two_bedroom' => 'Two Bedroom',])->required(),
-                TextInput::make('unit_size')->numeric()->minValue(1)->required()->prefix('sq . m')->required(),
+                TextInput::make('unit_size')->integer()->minValue(1)->prefix('sq . m')->required(),
                 TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(1),
                 TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->integer()->minValue(1),
             ]);
