@@ -11,7 +11,6 @@
         Thank you for choosing Kodibooks. Please provide information about you and your organization.
     </x-slot>
     <livewire:biodata />
-
     <x-slot name="footer">
         Kodibooks
     </x-slot>

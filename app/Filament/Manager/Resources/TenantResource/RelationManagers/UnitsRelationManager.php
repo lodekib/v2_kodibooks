@@ -2,6 +2,8 @@
 
 namespace App\Filament\Manager\Resources\TenantResource\RelationManagers;
 
+use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\Property;
 use App\Models\Unit;
 use Filament\Forms;
@@ -14,6 +16,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -101,16 +104,30 @@ class UnitsRelationManager extends RelationManager
                         TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->disabled(),
                     ])->columns(3)
                 ])->action(function (array $data) {
-                    $unit = Unit::where('unit_name',$data['unit_name'])->where('property_name',$data['property_name'])->update(['tenant_id' => $this->ownerRecord->id,'status' => 'occupied']);
-                    if($unit){
+                    $unit = Unit::where('unit_name', $data['unit_name'])->where('property_name', $data['property_name'])->update(['tenant_id' => $this->ownerRecord->id, 'status' => 'occupied']);
+                    if ($unit) {
                         Notification::make()->success()->body("{$unit} added successfully")->send();
-                    }else{
+                    } else {
                         Notification::make()->warning()->body("Unable to add {$unit} to tenant")->send();
                     }
                 })
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('Vacate Tenant')->color('gray')->icon('heroicon-o-arrow-right-on-rectangle')->action(function () {
+
+                        $total_invoices =  Invoice::where('tenant_name', $this->getOwnerRecord()->full_names)->sum('balance');
+                        $total_receipts =  Payment::where('tenant_name', $this->getOwnerRecord()->full_names)->sum('balance');
+
+                        if (($total_invoices - $total_receipts) > 0) {
+                            Notification::make()->warning()->color('warning')->body('Tenant has pending arrears.')->send();
+                        } else {
+                            $this->getOwnerRecord()->status = 'vacated';
+                            $this->getOwnerRecord()->save();
+                            $unit = Unit::where('unit_name', $this->getOwnerRecord()->unit_name);
+                            $unit->first()->update(['status' => 'vacant']);
+                        }
+                    }),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ])

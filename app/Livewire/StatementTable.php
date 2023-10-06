@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use App\Models\Statement;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -39,7 +41,8 @@ class StatementTable extends Component implements HasForms, HasTable
             ->filters([
                 // ...
             ])->headerActions([
-                // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+                ExportAction::make()->exports([ExcelExport::make('table')->fromTable()->askForFileName()])
+                //  FilamentExportHeaderAction::make('Generate Statement')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->actions([
                 // ...

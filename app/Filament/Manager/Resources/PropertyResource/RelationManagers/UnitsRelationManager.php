@@ -2,8 +2,13 @@
 
 namespace App\Filament\Manager\Resources\PropertyResource\RelationManagers;
 
+use App\Models\Property;
+use App\Models\Unit;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -25,9 +30,11 @@ class UnitsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('unit_name')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\TextInput::make('unit_name')->required()->maxLength(255)->unique(),
+                Select::make('unit_type')->options(['bedsitter' => 'Bedsitter', 'one_bedroom' => 'One Bedroom', 'two_bedroom' => 'Two Bedroom',])->required(),
+                TextInput::make('unit_size')->numeric()->minValue(1)->required()->prefix('sq . m')->required(),
+                TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(1),
+                TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->integer()->minValue(1),
             ]);
     }
 
@@ -56,7 +63,17 @@ class UnitsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->action(function (array $data) {
+                    $unit_data = array_merge(
+                        $data,
+                        [
+                            'property_name' => $this->getOwnerRecord()->property_name,
+                            'property_id' => $this->getOwnerRecord()->id
+                        ]
+                    );
+                    Unit::create($unit_data);
+                    Notification::make()->success()->color('success')->body('Unit added successfully')->send();
+                })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -68,7 +85,7 @@ class UnitsRelationManager extends RelationManager
                 ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ]);
     }
 }
