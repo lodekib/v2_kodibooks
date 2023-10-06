@@ -38,6 +38,10 @@ class InvoiceResource extends Resource
     protected static ?string $navigationGroup = 'Payments';
     protected static ?string $navigationIcon = 'heroicon-s-newspaper';
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->latest();
+    }
     public static function form(Form $form): Form
     {
         return $form

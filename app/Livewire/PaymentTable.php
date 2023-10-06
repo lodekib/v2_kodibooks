@@ -64,31 +64,32 @@ class PaymentTable extends Component implements HasForms, HasTable
                             Select::make('mode_of_payment')->options([
                                 'Cash' => 'Cash', 'Pesalink' => 'Pesalink', 'Cheque' => 'Cheque',
                                 'Paypal' => 'Paypal', 'Agent' => 'Agent'
-                            ])->required(),
-                            TextInput::make('receipt_number')->required(),
+                            ])->required()->reactive(),
                             TextInput::make('amount')->prefix('Ksh')->required(),
-                            TextInput::make('reference_number')->required(),
+                            TextInput::make('reference_number')->required()
+                                ->visible(fn (Get $get) => $get('mode_of_payment') != null && $get('mode_of_payment') == 'Cash' ? false : true),
                             DatePicker::make('paid_date')->required()->maxDate(now())
                         ])->columns(3)
                     ])->action(function (array $data) {
-                        //TODO::OPTIMIZATIONS NEEDED
                         $total_debit = Statement::where('tenant_name', $this->record->full_names)->sum('debit');
                         $total_credit = Statement::where('tenant_name', $this->record->full_names)->sum('credit');
-
+                        $reference_number = $data['model_of_payment'] == 'Cash' ? 'cash payment' : $data['reference_number'];
+                        $receipt_number = strtoupper(substr($data['property_name'], 0, 3)) . "-" . time();
                         $receipt_data = [
                             'tenant_id' => $this->record->id,
                             'tenant_name' => $this->record->full_names,
                             'national_id' => $this->record->id_number,
                             'property_name' => $data['property_name'],
                             'unit_name' => $data['unit_name'],
-                            'reference_number' => $data['reference_number'],
-                            'receipt_number' => $data['receipt_number'],
+                            'reference_number' => $reference_number,
+                            'receipt_number' => $receipt_number,
                             'mode_of_payment' => $data['mode_of_payment'],
                             'amount' => $data['amount'],
                             'balance' => $data['amount'],
                             'paid_date' => $data['paid_date'],
                             'status' => 'unallocated'
                         ];
+                        dd($receipt_data);
                         $receipt = Payment::create($receipt_data);
 
                         if ($receipt) {
@@ -107,9 +108,9 @@ class PaymentTable extends Component implements HasForms, HasTable
 
                             InvoiceReceiptAutoAllocation::handleNewReceipt($this->record, $receipt, $statement);
 
-                            Notification::make()->success()->body("Payment added successfully !")->send();
+                            Notification::make()->success()->color('success')->body("Payment added successfully !")->send();
                         } else {
-                            Notification::make()->warning()->body('Unable to add payment !')->send();
+                            Notification::make()->warning()->color('warning')->body('Unable to add payment !')->send();
                         }
                     })
             ])
