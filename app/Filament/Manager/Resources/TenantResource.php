@@ -44,9 +44,12 @@ use App\Models\Mail as Mailconfig;
 use App\Models\Scopes\ManagerScope;
 use Filament\Forms\Components\Section;
 use Filament\Infolists\Components\Section as InfoSection;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+
 
 class TenantResource extends Resource
 {
@@ -93,9 +96,10 @@ class TenantResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('created_at')->label('Date')->date()->size('sm')->searchable(),
+                TextColumn::make('index')->rowIndex(),
+                TextColumn::make('id_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('full_names')->size('sm')->searchable()->sortable(),
-                TextColumn::make('email')->size('sm')->sortable()->searchable(),
+                TextColumn::make('email')->size('sm')->sortable()->searchable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('units.unit_name')->size('sm')->searchable()->sortable()->badge()->color('gray')->inline()->limit(3),
                 TextColumn::make('rent')->size('sm')->money('kes'),
@@ -103,11 +107,11 @@ class TenantResource extends Resource
                     fn ($record) =>
                     __('KES ' . number_format(Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance, 2, '.', ','))
                 )->color(fn ($record) => Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance > 0 ? 'danger' : 'success'),
-                TextColumn::make('entry_date')->size('sm')->date(),
+                TextColumn::make('entry_date')->size('sm')->date()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')->colors([
                     'success' => static fn ($state): bool => $state === 'active',
                     'warning' => static fn ($state): bool => $state === 'inactive',
-                ])->badge(),
+                ])->badge()->toggleable(isToggledHiddenByDefault:true),
             ])
             ->striped()
             ->filters([
@@ -166,7 +170,7 @@ class TenantResource extends Resource
                                         if ($tenant_exists->isEmpty()) {
                                             return 0;
                                         } else {
-                                            return $tenant_exists->last()+1;
+                                            return $tenant_exists->last() + 1;
                                         }
                                     }),
                                     DatePicker::make('date_added')->label('Date')->required()

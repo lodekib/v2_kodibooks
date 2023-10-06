@@ -33,7 +33,7 @@ class ManagerPanelProvider extends PanelProvider
         return $panel
             ->id('manager')->spa()
             ->path('')->sidebarCollapsibleOnDesktop()
-            ->collapsedSidebarWidth('80px')
+            ->collapsedSidebarWidth('80px')->sidebarWidth('220px')
             ->login()->passwordReset()->registration()
             ->colors([
                 'primary' => Color::hex('#4ade80'),
