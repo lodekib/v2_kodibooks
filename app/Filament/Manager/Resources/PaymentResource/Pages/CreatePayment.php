@@ -17,7 +17,7 @@ class CreatePayment extends CreateRecord
 
     protected function getCreatedNotification(): ?Notification
     {
-        return Notification::make()->success()->body('Payment has been added successfully !');
+        return Notification::make()->success()->color('success')->body('Payment has been added successfully !');
     }
 
     protected function getRedirectUrl(): string
@@ -27,6 +27,8 @@ class CreatePayment extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
+        $receipt_number  = strtoupper(substr($data['property_name'], 0, 3)) . "-" . time();
+        $reference_number = $data['mode_of_payment'] == 'Cash' ? 'cash payment' : $data['reference_number'];
         $tenant = Tenant::where('full_names', $data['tenant_name'])->get(['id', 'full_names']);
         $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
             ->where('tenant_name', $data['tenant_name'])
@@ -38,6 +40,8 @@ class CreatePayment extends CreateRecord
         $payment_data = array_merge(
             $data,
             [
+                'reference_number' => $reference_number,
+                'receipt_number' => $receipt_number,
                 'status' => 'unallocated',
                 'tenant_id' => $tenant[0]->id,
                 'balance' => $data['amount'],

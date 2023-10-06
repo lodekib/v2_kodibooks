@@ -56,10 +56,10 @@ class PaymentResource extends Resource
                     TextInput::make('national_id')->disabled()->dehydrated(),
                     Select::make('mode_of_payment')->options([
                         'Cash' => 'Cash', 'Pesalink' => 'Pesalink', 'Cheque' => 'Cheque', 'Paypal' => 'Paypal', 'Agent' => 'Agent'
-                    ])->required(),
-                    TextInput::make('receipt_number')->required(),
+                    ])->required()->reactive(),
                     TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(0),
-                    TextInput::make('reference_number')->required(),
+                    TextInput::make('reference_number')->required()
+                    ->visible(fn(Get $get) => $get('mode_of_payment') != null && $get('mode_of_payment') == 'Cash' ? false : true),
                     Forms\Components\DatePicker::make('paid_date')->required()->maxDate(now())
                 ])->columns(3)
             ]);
