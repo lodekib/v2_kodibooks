@@ -49,8 +49,6 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 
 class TenantResource extends Resource
@@ -103,7 +101,7 @@ class TenantResource extends Resource
                 TextColumn::make('full_names')->size('sm')->searchable()->sortable(),
                 TextColumn::make('email')->size('sm')->sortable()->searchable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('units.unit_name')->size('sm')->searchable()->sortable()->badge()->color('gray')->inline()->limit(3),
+                TextColumn::make('units.unit_name')->size('sm')->searchable()->sortable()->badge()->color('gray')->inline()->separator(','),
                 TextColumn::make('rent')->size('sm')->money('kes'),
                 TextColumn::make('balance')->size('sm')->formatStateUsing(
                     fn ($record) =>
@@ -128,11 +126,8 @@ class TenantResource extends Resource
                     }
                 })
             ])->headerActions([
-                ExportAction::make()->label('Export CSV')->color('gray')->exports(
-                    [ExcelExport::make('table')->fromTable()->askForFileName()],
-                    )
-                //  FilamentExportHeaderAction::make('Generate Statement')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
-            ])
+                FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+                ])
             ->actions([
                 ActionGroup::make([
                     ViewAction::make()->label('View Tenant'),
