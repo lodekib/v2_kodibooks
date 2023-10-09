@@ -49,6 +49,8 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 
 class TenantResource extends Resource
@@ -125,7 +127,12 @@ class TenantResource extends Resource
                         return Tenant::latest();
                     }
                 })
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview()])
+            ])->headerActions([
+                ExportAction::make()->label('Export CSV')->color('gray')->exports(
+                    [ExcelExport::make('table')->fromTable()->askForFileName()],
+                    )
+                //  FilamentExportHeaderAction::make('Generate Statement')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+            ])
             ->actions([
                 ActionGroup::make([
                     ViewAction::make()->label('View Tenant'),

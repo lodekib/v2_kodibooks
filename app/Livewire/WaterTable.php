@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Tenant;
 use App\Models\Waterbill;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
@@ -74,7 +76,11 @@ class WaterTable extends Component implements HasForms, HasTable
                             DatePicker::make('date_added')->label('Date')->required()
                         ]
                     )->columns(3)
-                ])
+                ]),
+                ExportAction::make()->label('Export CSV')->color('gray')->exports(
+                    [ExcelExport::make('table')->fromTable()->askForFileName()],
+                ),
+
             ])
             ->actions([])
             ->bulkActions([
