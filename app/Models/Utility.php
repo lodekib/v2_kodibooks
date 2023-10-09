@@ -13,4 +13,8 @@ class Utility extends Model
 
     protected $guarded = [];
 
+    public function property(): BelongsTo
+    {
+        return $this->belongsTo(Property::class,'property_name','property_name');
+    }
 }

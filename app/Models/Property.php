@@ -32,4 +32,9 @@ class Property extends Model
     {
         return $this->hasMany(Invoice::class, 'property_name', 'property_name');
     }
+
+    public function utilities(): HasMany
+    {
+        return $this->hasMany(Utility::class,'property_name','property_name');
+    }
 }

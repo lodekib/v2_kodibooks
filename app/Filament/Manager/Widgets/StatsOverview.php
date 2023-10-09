@@ -24,8 +24,6 @@ class StatsOverview extends BaseWidget
         return [
             Stat::make('Apartments', number_format(Property::count()))->icon('heroicon-o-building-office-2')->url(route('filament.manager.resources.properties.index')),
             Stat::make('Total Units', number_format(Unit::count()))->icon('heroicon-o-cube-transparent')->url(route('filament.manager.resources.units.index')),
-            // Stat::make('Occupied Units', number_format(Unit::where('status', 'occupied')->count()))->icon('heroicon-o-cube-transparent')->url(route('filament.manager.resources.units.index')),
-            // Stat::make('Vacant Units', number_format(Unit::where('status', 'vacant')->count()))->icon('heroicon-o-cube-transparent')->url(route('filament.manager.resources.units.index')),
             Stat::make('Total Tenants', number_format(Tenant::count()))->icon('heroicon-o-user-group')->url(route('filament.manager.resources.tenants.index')),
             Stat::make('Income', 'KSH ' . number_format(Statement::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('credit')))
                 ->description(Statement::sum('credit') >= 0 ? 'Increase this month' : 'Drop this month')
