@@ -89,7 +89,6 @@ class PaymentTable extends Component implements HasForms, HasTable
                             'paid_date' => $data['paid_date'],
                             'status' => 'unallocated'
                         ];
-                        dd($receipt_data);
                         $receipt = Payment::create($receipt_data);
 
                         if ($receipt) {
