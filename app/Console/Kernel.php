@@ -7,14 +7,18 @@ use App\Jobs\RentInvoice;
 use App\Jobs\WaterInvoice;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Auth;
 
 class Kernel extends ConsoleKernel
 {
+
+
     /**
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
     {
+        dd(Auth::user());
         $schedule->job(new RentInvoice())->lastDayOfMonth();
         $schedule->job(new GarbageInvoice())->lastDayOfMonth();
         $schedule->job(new WaterInvoice())->lastDayOfMonth();
