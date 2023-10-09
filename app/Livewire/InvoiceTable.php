@@ -7,6 +7,8 @@ use App\Models\Invoice;
 use App\Models\Statement;
 use App\Models\Utility;
 use App\Models\Waterbill;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use App\Services\InvoiceReceiptAutoAllocation;
 use App\Services\InvoiceTenant;
 use Filament\Forms\Components\DatePicker;
@@ -188,6 +190,9 @@ class InvoiceTable extends Component implements HasForms, HasTable
                         Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
                     ])->visible(fn (Get $get) => $get('invoice_type') !== null ? true : false)
                 ]),
+                ExportAction::make()->label('Export CSV')->color('gray')->exports(
+                    [ExcelExport::make('table')->fromTable()->askForFileName()],
+                )
             ])
             ->actions([
                 ActionGroup::make([

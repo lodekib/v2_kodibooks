@@ -7,6 +7,8 @@ use App\Models\Property;
 use App\Models\Statement;
 use App\Models\Tenant;
 use App\Models\Unit;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use App\Services\InvoiceReceiptAutoAllocation;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
@@ -111,7 +113,10 @@ class PaymentTable extends Component implements HasForms, HasTable
                         } else {
                             Notification::make()->warning()->color('warning')->body('Unable to add payment !')->send();
                         }
-                    })
+                    }),
+                ExportAction::make()->label('Export CSV')->color('gray')->exports(
+                    [ExcelExport::make('table')->fromTable()->askForFileName()],
+                )
             ])
             ->actions([
                 // ...
