@@ -58,7 +58,6 @@ class WaterInvoice implements ShouldQueue
                     'quantity' => $quantity
                 ];
     
-                // $mail = Mail::to($tenant->first()->email)->send(new InvoiceSent($tenant->first(), $new_data));
                 $mail_config = ModelsMail::withoutGlobalScope(new ManagerScope())->where('manager_id', $tenant->manager_id)->first();
                 $mail_config->mailer()->to($tenant->email)->send(new InvoiceSent($tenant, $new_data));
                 $final_data = [
