@@ -76,6 +76,7 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('index')->rowIndex(),
                 TextColumn::make('paid_date')->size('sm')->date()->searchable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->sortable()->searchable(),
@@ -107,7 +108,7 @@ class PaymentResource extends Resource
                         $record->update(['status' => 'stale/' . $record->status]);
                         Notification::make()->success()->color('success')->body('Payment deleted successfully !')->send();
                     })
-                ])
+                ])->button()->label('Actions')->color('gray')
             ])->headerActions([
                 FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview(),
             ])

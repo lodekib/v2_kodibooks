@@ -68,7 +68,7 @@ class AllocationResource extends Resource
         return [
             'index' => Pages\ListAllocations::route('/'),
             'create' => Pages\CreateAllocation::route('/create'),
-            'edit' => Pages\EditAllocation::route('/{record}/edit'),
+            // 'edit' => Pages\EditAllocation::route('/{record}/edit'),
         ];
     }
 }
