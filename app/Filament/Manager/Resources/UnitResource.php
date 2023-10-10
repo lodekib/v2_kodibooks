@@ -7,10 +7,12 @@ use App\Filament\Manager\Resources\UnitResource\Pages;
 use App\Filament\Manager\Resources\UnitResource\RelationManagers;
 use App\Models\Property;
 use App\Models\Unit;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -37,9 +39,22 @@ class UnitResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('unit_name')->required()->unique(),
-                Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required(),
-                Select::make('unit_type')->options(['bedsitter' => 'Bedsitter','one_bedroom' => 'One Bedroom','two_bedroom' => 'Two Bedroom',])->required(),
+                Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
+                TextInput::make('unit_name')->required()->rules([
+                    function (Get $get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                            $property_name = $get('property_name');
+                            if ($property_name != null) {
+                                $property = Property::where('property_name', $property_name)->first();
+                                $is_present = $property->units()->where('unit_name', $value)->first();
+                                if ($is_present != null) {
+                                    $fail('The unit already exists in the property.');
+                                }
+                            }
+                        };
+                    },
+                ]),
+                Select::make('unit_type')->options(['bedsitter' => 'Bedsitter', 'one_bedroom' => 'One Bedroom', 'two_bedroom' => 'Two Bedroom',])->required(),
                 TextInput::make('unit_size')->integer()->minValue(1)->required()->prefix('sq . m')->required(),
                 TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(1),
                 TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->integer()->minValue(1),
@@ -53,8 +68,9 @@ class UnitResource extends Resource
                 TextColumn::make('created_at')->label('Date')->size('sm')->date(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
-                IconColumn::make('unit_condition')->label('Condition')->icons(['heroicon-o-check-circle' => 'good','heroicon-o-x-circle' => 'maintenance'
-                ])->colors([ 'success' => 'good','warning' => 'maintenance',]),
+                IconColumn::make('unit_condition')->label('Condition')->icons([
+                    'heroicon-o-check-circle' => 'good', 'heroicon-o-x-circle' => 'maintenance'
+                ])->colors(['success' => 'good', 'warning' => 'maintenance',]),
                 TextColumn::make('unit_type')->size('sm')->sortable()->searchable()->badge(),
                 TextColumn::make('rent')->size('sm')->money('kes'),
                 TextColumn::make('deposit')->size('sm')->money('kes'),
