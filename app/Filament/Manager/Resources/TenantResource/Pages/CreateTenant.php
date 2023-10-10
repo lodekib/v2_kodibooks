@@ -15,7 +15,7 @@ class CreateTenant extends CreateRecord
 
     protected function getCreatedNotification(): ?Notification
     {
-        return Notification::make()->success()->body('Tenant has been created successfully !');
+        return Notification::make()->success()->color('success')->body('Tenant has been created successfully !');
     }
 
     protected function getRedirectUrl(): string
