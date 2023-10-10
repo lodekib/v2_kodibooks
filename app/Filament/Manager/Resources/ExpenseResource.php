@@ -193,7 +193,7 @@ class ExpenseResource extends Resource
                     }),
                     EditAction::make(),
                     DeleteAction::make()
-                ])
+                ])->button()->label('Actions')->color('gray')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

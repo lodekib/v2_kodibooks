@@ -111,7 +111,7 @@ class PropertyResource extends Resource
 
                         Notification::make()->success()->color('success')->body('Successfully deleted the property.')->send();
                     })
-                ])
+                ])->button()->label('Actions')->color('gray')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

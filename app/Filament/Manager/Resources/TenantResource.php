@@ -217,7 +217,7 @@ class TenantResource extends Resource
                         $record->activeutility->delete();
                         Notification::make()->success()->color('success')->body('Successfully deleted the tenant !')->send();
                     })
-                ])
+                ])->button()->label('Actions')->color('gray')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

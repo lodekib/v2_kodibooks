@@ -57,8 +57,8 @@ class InvoiceResource extends Resource
                             return [];
                         }
                     })->required(),
-                    TextInput::make('invoice_number')->required(),
-                    TextInput::make('amount_invoiced')->integer()->required()->minValue(1),
+                    TextInput::make('invoice_number')->required()->disabled(fn($context) => $context === 'edit'),
+                    TextInput::make('amount_invoiced')->integer()->required()->minValue(1)->disabled(fn($context) => $context === 'edit'),
                     DatePicker::make('due_date')->required(),
                     DatePicker::make('from')->required()->maxDate(now()),
                     DatePicker::make('to')->required(),
@@ -98,7 +98,7 @@ class InvoiceResource extends Resource
                         // Statement::where('reference', $record->invoice_number)->delete();
                         Notification::make()->success()->color('success')->body('Invoice deleted successfully')->send();
                     })
-                ])
+                ])->button()->label('Actions')->color('gray')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
