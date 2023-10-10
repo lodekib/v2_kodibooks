@@ -7,12 +7,25 @@ use App\Models\Statement;
 use App\Models\Tenant;
 use App\Services\InvoiceReceiptAutoAllocation;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateInvoice extends CreateRecord
 {
     protected static string $resource = InvoiceResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
+    protected function getCreatedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()->color('success')
+            ->body('Invoice created successfully.');
+    }
 
     protected function handleRecordCreation(array $data): Model
     {
@@ -45,5 +58,4 @@ class CreateInvoice extends CreateRecord
         }
         return $invoice;
     }
-
 }

@@ -15,7 +15,7 @@ class CreateUtility extends CreateRecord
 
     protected function getCreatedNotification(): ?Notification
     {
-        return Notification::make()->success()->body('Utility(s)  added successfully !');
+        return Notification::make()->success()->color('success')->body('Utility(s)  added successfully !');
     }
     protected function getRedirectUrl(): string
     {

@@ -15,7 +15,7 @@ class CreateUnit extends CreateRecord
 
     protected function getCreatedNotification(): ?Notification
     {
-        return Notification::make()->success()
+        return Notification::make()->success()->color('success')
             ->body('Unit has been created successfully !');
     }
 
