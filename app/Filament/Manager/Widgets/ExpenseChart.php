@@ -16,6 +16,8 @@ class ExpenseChart extends ApexChartWidget
     protected static string $chartId = 'expenses';
     protected static ?string $heading = 'Expenses ';
     protected static bool $isLazy = false;
+    protected static bool $deferLoading = true;
+
 
 
 
@@ -34,13 +36,8 @@ class ExpenseChart extends ApexChartWidget
 
         $currentFilter = $this->filter;
 
-        $data = Trend::query(
-            Expense::where('property_name', $currentFilter))->between(
-            start: now()->startOfMonth(),
-            end: now()->endOfMonth()
-        )->perDay()->sum('amount');
+        $data = Trend::query(Expense::where('property_name', $currentFilter))->between(start: now()->startOfMonth(),end: now()->endOfMonth())->perDay()->sum('amount');
         $xlabels = $data->map(fn (TrendValue $value) => $value->date);
-
         $dataset = $data->map(fn (TrendValue $value) => $value->aggregate);
 
         return [
