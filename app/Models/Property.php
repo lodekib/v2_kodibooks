@@ -35,6 +35,11 @@ class Property extends Model
 
     public function utilities(): HasMany
     {
-        return $this->hasMany(Utility::class,'property_name','property_name');
+        return $this->hasMany(Utility::class, 'property_name', 'property_name');
+    }
+
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class, 'property_name', 'property_name');
     }
 }
