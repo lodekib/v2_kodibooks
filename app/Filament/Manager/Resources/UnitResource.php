@@ -63,14 +63,11 @@ class UnitResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->groups(['status'])
+        return $table->groups(['status','property_name'])
             ->columns([
                 TextColumn::make('created_at')->label('Date')->size('sm')->date(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
-                IconColumn::make('unit_condition')->label('Condition')->icons([
-                    'heroicon-o-check-circle' => 'good', 'heroicon-o-x-circle' => 'maintenance'
-                ])->colors(['success' => 'good', 'warning' => 'maintenance',]),
                 TextColumn::make('unit_type')->size('sm')->sortable()->searchable()->badge(),
                 TextColumn::make('rent')->size('sm')->money('kes'),
                 TextColumn::make('deposit')->size('sm')->money('kes'),
@@ -89,7 +86,7 @@ class UnitResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
