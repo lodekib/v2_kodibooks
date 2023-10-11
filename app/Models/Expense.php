@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Expense extends Model
@@ -17,5 +18,10 @@ class Expense extends Model
     public function extraexpenses(): HasMany
     {
         return $this->hasMany(Extraexpense::class);
+    }
+
+    public function property(): BelongsTo
+    {
+        return $this->belongsTo(Property::class, 'property_name', 'property_name');
     }
 }
