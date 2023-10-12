@@ -52,7 +52,8 @@ class PaymentResource extends Resource
                     Select::make('unit_name')->options(function (Get $get) {
                         $property = $get('property_name');
                         if ($property) {
-                            return Unit::where('property_name', $property)->where('status', 'occupied')->pluck('unit_name', 'unit_name');
+                            $unit =  Unit::where('property_name', $property)->where('status', 'occupied')->pluck('unit_name', 'unit_name');
+                            return $unit;
                         }
                     })->afterStateUpdated(function ($state, Set $set) {
                         $tenant_name = Tenant::where('unit_name', $state)->get(['full_names', 'id_number']);
@@ -76,7 +77,7 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('index')->rowIndex(),
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('paid_date')->size('sm')->date()->searchable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),

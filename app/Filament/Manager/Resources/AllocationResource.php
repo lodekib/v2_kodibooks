@@ -34,6 +34,7 @@ class AllocationResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->date()->label('Date')->size('sm'),
                 TextColumn::make('tenant_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),

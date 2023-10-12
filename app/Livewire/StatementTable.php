@@ -30,6 +30,7 @@ class StatementTable extends Component implements HasForms, HasTable
         return $table
             ->query(Statement::where('tenant_name', $this->record->full_names)->oldest())->poll('2s')
             ->columns([
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('custom_date')->size('sm')->date()->label('Date'),
                 TextColumn::make('reference')->sortable()->searchable()->size('sm'),
                 TextColumn::make('description')->searchable()->size('sm'),

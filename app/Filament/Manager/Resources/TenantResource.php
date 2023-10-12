@@ -96,7 +96,7 @@ class TenantResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('index')->rowIndex(),
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('id_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('full_names')->size('sm')->searchable()->sortable(),
                 TextColumn::make('email')->size('sm')->sortable()->searchable()->toggleable(isToggledHiddenByDefault: true),

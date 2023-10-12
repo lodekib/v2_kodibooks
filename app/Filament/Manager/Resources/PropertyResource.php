@@ -69,7 +69,7 @@ class PropertyResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('index')->rowIndex(),
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('property_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('property_size')->size('sm')->suffix(' sq. m'),
                 TextColumn::make('property_cost')->size('sm')->money('kes'),

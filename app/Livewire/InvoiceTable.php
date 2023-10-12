@@ -44,6 +44,7 @@ class InvoiceTable extends Component implements HasForms, HasTable
         return $table
             ->query(Invoice::where('tenant_name', $this->record->full_names)->latest())->poll('2s')
             ->columns([
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->date()->label('Date')->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),

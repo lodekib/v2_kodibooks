@@ -39,6 +39,7 @@ class MailResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->label('Date')->date()->size('sm'),
                 TextColumn::make('smtp_username')->size('smtp_username')->size('sm')->icon('heroicon-o-envelope'),
                 TextColumn::make('smtp_password')->size('sm')->icon('heroicon-o-key')->formatStateUsing(fn ($state) => Str::mask($state, '*', 2))

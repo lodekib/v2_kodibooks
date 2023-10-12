@@ -72,6 +72,7 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->datetime()->label('Date')->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),

@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ScheduleResource extends Resource
 {
     protected static ?string $model = Schedule::class;
-    protected static ?string $navigationGroup = 'Schedules';
+    protected static ?string $navigationGroup = 'Payments';
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $modelLabel = 'Schedule Invoice';
 
@@ -61,7 +61,7 @@ class ScheduleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('index')->rowIndex(),
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('invoice_type')->size('sm')->searchable()->sortable(),
                 TextColumn::make('schedule_date')->size('sm')->formatStateUsing(function ($state) {
