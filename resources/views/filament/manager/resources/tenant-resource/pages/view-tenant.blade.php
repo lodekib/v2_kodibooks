@@ -16,6 +16,9 @@
             <x-filament::tabs.item alpine-active="activeTab === 'Statement'" x-on:click="activeTab = 'Statement'" icon="heroicon-s-clipboard-document">
                 Statement
             </x-filament::tabs.item>
+            <x-filament::tabs.item alpine-active="activeTab === 'Ageing'" x-on:click="activeTab = 'Ageing'" icon="heroicon-s-map">
+                Ageing Statement
+            </x-filament::tabs.item>
             <x-filament::tabs.item alpine-active="activeTab === 'Payments'" x-on:click="activeTab = 'Payments'" icon="heroicon-s-banknotes">
                 Payments
             </x-filament::tabs.item>
@@ -53,6 +56,7 @@
         <div x-show="activeTab === 'Invoices'" class="py-6">@livewire('invoice-table',['record' => $this->record])</div>
         <div x-show="activeTab === 'Payments'" class="py-6">@livewire('payment-table',['record' => $this->record])</div>
         <div x-show="activeTab === 'Statement'" class="py-6">@livewire('statement-table',['record' => $this->record])</div>
+        <div x-show="activeTab === 'Ageing'" class="py-6">@livewire('ageing',['record' => $this->record])</div>
         <div x-show="activeTab === 'Utilities'" class="py-6">
             <form action="{{ route('utilities.update',['tenant' => $this->getRecord()]) }}" method="POST">
                 @csrf
