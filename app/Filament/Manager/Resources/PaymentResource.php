@@ -48,7 +48,7 @@ class PaymentResource extends Resource
             ->schema([
                 Fieldset::make()->schema([
                     Select::make('property_name')->options(Property::pluck('property_name', 'property_name'))->reactive()
-                    ->disabled(fn($context) => $context === 'edit'),
+                        ->disabled(fn ($context) => $context === 'edit'),
                     Select::make('unit_name')->options(function (Get $get) {
                         $property = $get('property_name');
                         if ($property) {
@@ -58,14 +58,14 @@ class PaymentResource extends Resource
                         $tenant_name = Tenant::where('unit_name', $state)->get(['full_names', 'id_number']);
                         $set('tenant_name', $tenant_name->first()->full_names);
                         $set('national_id', $tenant_name->first()->id_number);
-                    })->required()->reactive()->disabled(fn($context) => $context === 'edit'),
+                    })->required()->reactive()->disabled(fn ($context) => $context === 'edit'),
                     TextInput::make('tenant_name')->disabled()->dehydrated(),
                     TextInput::make('national_id')->disabled()->dehydrated(),
                     Select::make('mode_of_payment')->options([
                         'Cash' => 'Cash', 'Pesalink' => 'Pesalink', 'Cheque' => 'Cheque', 'Paypal' => 'Paypal', 'Agent' => 'Agent'
-                    ])->required()->reactive()->disabled(fn($context) => $context === 'edit'),
-                    TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(0)->disabled(fn($context) => $context === 'edit'),
-                    TextInput::make('reference_number')->required()->disabled(fn($context) => $context === 'edit')
+                    ])->required()->reactive()->disabled(fn ($context) => $context === 'edit'),
+                    TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(0)->disabled(fn ($context) => $context === 'edit'),
+                    TextInput::make('reference_number')->required()->disabled(fn ($context) => $context === 'edit')
                         ->visible(fn (Get $get) => $get('mode_of_payment') != null && $get('mode_of_payment') == 'Cash' ? false : true),
                     Forms\Components\DatePicker::make('paid_date')->required()->maxDate(now())
                 ])->columns(3)
@@ -79,6 +79,7 @@ class PaymentResource extends Resource
                 TextColumn::make('index')->rowIndex(),
                 TextColumn::make('paid_date')->size('sm')->date()->searchable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
+                TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->sortable()->searchable(),
                 TextColumn::make('mode_of_payment')->size('sm')->searchable()->sortable(),
                 TextColumn::make('amount')->money('kes')->searchable(),
