@@ -170,11 +170,10 @@ class InvoiceTable extends Component implements HasForms, HasTable
                                 } else if ($state == 'Standard') {
                                     $set('amount_invoiced', '');
                                 } else if ($state == 'Rent') {
-                                    $set('amount_invoiced', $this->record->balance);
+                                    $set('amount_invoiced', $this->record->rent);
                                 } else {
                                     $value  = Utility::where('property_name', $this->record->property_name)
                                         ->where('utility_name', $state)->get();
-
                                     $set('amount_invoiced', $value->first()->amount);
                                 }
                             }
