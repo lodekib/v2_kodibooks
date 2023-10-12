@@ -61,7 +61,7 @@ class VendorResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('index')->rowIndex(),
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('company_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('industry')->size('sm')->searchable()->sortable(),
                 TextColumn::make('contact_person')->size('sm')->searchable()->toggleable(isToggledHiddenByDefault:true),

@@ -32,6 +32,7 @@ class WaterTable extends Component implements HasForms, HasTable
         return $table
             ->query(Waterbill::where('tenant_name', $this->record->full_names)->latest())->poll('2s')
             ->columns([
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->label('Date')->size('sm')->date(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),

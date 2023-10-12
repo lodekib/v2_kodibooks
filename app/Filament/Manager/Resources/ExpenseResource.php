@@ -146,7 +146,7 @@ class ExpenseResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('index')->rowIndex(),
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('incurred_date')->size('sm')->date(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('expense_type')->size('sm')->sortable()->searchable(),

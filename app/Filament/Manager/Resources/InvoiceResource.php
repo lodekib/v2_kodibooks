@@ -52,13 +52,14 @@ class InvoiceResource extends Resource
                         $property_name = $get('property_name');
                         if ($property_name != null) {
                             $property = Property::where('property_name', $property_name)->first();
-                            return $property->units()->where('status', 'occupied')->pluck('unit_name', 'unit_name');
+                            $units =   $property->units()->where('status', 'occupied')->pluck('unit_name', 'unit_name');
+                            return $units;
                         } else {
                             return [];
                         }
                     })->required(),
                     // TextInput::make('invoice_number')->required()->disabled(fn($context) => $context === 'edit'),
-                    TextInput::make('amount_invoiced')->integer()->required()->minValue(1)->disabled(fn($context) => $context === 'edit'),
+                    TextInput::make('amount_invoiced')->integer()->required()->minValue(1)->disabled(fn ($context) => $context === 'edit'),
                     DatePicker::make('due_date')->required(),
                     DatePicker::make('from')->required()->maxDate(now()),
                     DatePicker::make('to')->required(),
@@ -72,7 +73,8 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('created_at')->datetime()->label('Date')->size('sm'),
+                TextColumn::make('No')->rowIndex(),
+                TextColumn::make('due_date')->date()->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),
@@ -83,7 +85,6 @@ class InvoiceResource extends Resource
                     'partially paid' => 'gray',
                     'fully paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
-                TextColumn::make('due_date')->date()->size('sm'),
                 TextColumn::make('amount_invoiced')->size('sm')->money('kes')->searchable(),
                 TextColumn::make('balance')->size('sm')->money('kes')
             ])

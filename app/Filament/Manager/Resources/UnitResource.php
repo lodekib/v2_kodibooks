@@ -65,6 +65,7 @@ class UnitResource extends Resource
     {
         return $table->groups(['status','property_name'])
             ->columns([
+                TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->label('Date')->size('sm')->date(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
