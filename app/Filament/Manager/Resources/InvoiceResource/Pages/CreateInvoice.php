@@ -29,8 +29,10 @@ class CreateInvoice extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
+        $invoice_number = strtoupper(substr($data['property_name'], 0, 3)) . "-" . time();
         $tenant = Tenant::where('unit_name', $data['unit_name'])->get(['full_names', 'id', 'id_number'])->first();
         $invoice_data = array_merge($data, [
+            'invoice_number' => $invoice_number,
             'tenant_id' => $tenant->id,
             'tenant_name' => $tenant->full_names,
             'national_id' => $tenant->id_number,

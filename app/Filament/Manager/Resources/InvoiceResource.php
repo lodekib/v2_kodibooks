@@ -57,7 +57,7 @@ class InvoiceResource extends Resource
                             return [];
                         }
                     })->required(),
-                    TextInput::make('invoice_number')->required()->disabled(fn($context) => $context === 'edit'),
+                    // TextInput::make('invoice_number')->required()->disabled(fn($context) => $context === 'edit'),
                     TextInput::make('amount_invoiced')->integer()->required()->minValue(1)->disabled(fn($context) => $context === 'edit'),
                     DatePicker::make('due_date')->required(),
                     DatePicker::make('from')->required()->maxDate(now()),
