@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Models\Payment;
 use App\Models\Property;
 use App\Models\Statement;
@@ -115,9 +116,7 @@ class PaymentTable extends Component implements HasForms, HasTable
                             Notification::make()->warning()->color('warning')->body('Unable to add payment !')->send();
                         }
                     }),
-                ExportAction::make()->label('Export CSV')->color('gray')->exports(
-                    [ExcelExport::make('table')->fromTable()->askForFileName()],
-                )
+                    FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->actions([
                 // ...

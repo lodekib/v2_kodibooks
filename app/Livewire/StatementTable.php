@@ -41,11 +41,8 @@ class StatementTable extends Component implements HasForms, HasTable
             ->filters([
                 // ...
             ])->headerActions([
-                ExportAction::make()->label('Export CSV')->color('gray')->exports(
-                    [ExcelExport::make('table')->fromTable()->askForFileName()],
-                    )
-                //  FilamentExportHeaderAction::make('Generate Statement')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
-            ])
+                    FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+                    ])
             ->actions([
                 // ...
             ])

@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Tenant;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Models\Waterbill;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
@@ -77,10 +77,7 @@ class WaterTable extends Component implements HasForms, HasTable
                         ]
                     )->columns(3)
                 ]),
-                ExportAction::make()->label('Export CSV')->color('gray')->exports(
-                    [ExcelExport::make('table')->fromTable()->askForFileName()],
-                ),
-
+                FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->actions([])
             ->bulkActions([
