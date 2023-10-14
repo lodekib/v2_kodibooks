@@ -25,6 +25,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
@@ -68,7 +69,7 @@ class PaymentResource extends Resource
                     TextInput::make('amount')->prefix('Ksh')->required()->integer()->minValue(0)->disabled(fn ($context) => $context === 'edit'),
                     TextInput::make('reference_number')->required()->disabled(fn ($context) => $context === 'edit')
                         ->visible(fn (Get $get) => $get('mode_of_payment') != null && $get('mode_of_payment') == 'Cash' ? false : true),
-                    Forms\Components\DatePicker::make('paid_date')->required()->maxDate(now())
+                    DateTimePicker::make('paid_date')->required()->maxDate(now())
                 ])->columns(3)
             ]);
     }
@@ -78,7 +79,7 @@ class PaymentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('paid_date')->size('sm')->date()->searchable(),
+                TextColumn::make('paid_date')->size('sm')->datetime()->searchable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->sortable()->searchable(),
