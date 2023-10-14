@@ -17,6 +17,7 @@ class ExpenseChart extends ApexChartWidget
     protected static ?string $heading = 'Expenses ';
     protected static bool $isLazy = false;
     protected static bool $deferLoading = true;
+    protected static ?int $contentHeight = 260; //px
 
 
 

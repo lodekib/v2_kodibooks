@@ -24,7 +24,7 @@ class Ageing extends Component implements HasForms, HasTable
         ->query(Statement::where('tenant_name', $this->record->full_names)->oldest())->poll('2s')
         ->columns([
             TextColumn::make('No')->rowIndex(),
-            TextColumn::make('custom_date')->size('sm')->date()->label('Date'),
+            TextColumn::make('custom_date')->size('sm')->datetime()->label('Date'),
             TextColumn::make('reference')->sortable()->searchable()->size('sm'),
             TextColumn::make('description')->searchable()->size('sm'),
             TextColumn::make('debit')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Debit')->money('kes')),
