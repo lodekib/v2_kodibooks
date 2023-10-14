@@ -45,7 +45,7 @@ class InvoiceTable extends Component implements HasForms, HasTable
             ->query(Invoice::where('tenant_name', $this->record->full_names)->latest())->poll('2s')
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('created_at')->date()->label('Date')->size('sm'),
+                TextColumn::make('due_date')->datetime()->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),
@@ -55,7 +55,6 @@ class InvoiceTable extends Component implements HasForms, HasTable
                     'partially paid' => 'gray',
                     'fully paid' => 'success'
                 })->searchable()->sortable(),
-                TextColumn::make('due_date')->date()->size('sm'),
                 TextColumn::make('amount_invoiced')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Invoiced')->money('kes')),
                 TextColumn::make('balance')->size('sm')->money('kes')
             ])

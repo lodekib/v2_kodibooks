@@ -12,6 +12,7 @@ use App\Models\Statement;
 use App\Models\Tenant;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -60,7 +61,7 @@ class InvoiceResource extends Resource
                     })->required(),
                     // TextInput::make('invoice_number')->required()->disabled(fn($context) => $context === 'edit'),
                     TextInput::make('amount_invoiced')->integer()->required()->minValue(1)->disabled(fn ($context) => $context === 'edit'),
-                    DatePicker::make('due_date')->required(),
+                    DateTimePicker::make('due_date')->required(),
                     DatePicker::make('from')->required()->maxDate(now()),
                     DatePicker::make('to')->required(),
                     Radio::make('invoice_type')->options(['Standard' => 'Standard', 'Rent' => 'Rent'])->required()->inline(),
@@ -74,7 +75,7 @@ class InvoiceResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('due_date')->date()->size('sm'),
+                TextColumn::make('due_date')->datetime()->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),
