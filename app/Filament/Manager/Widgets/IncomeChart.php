@@ -18,6 +18,8 @@ class IncomeChart extends ApexChartWidget
     public ?string $filter = 'week';
     protected static ?int $sort = 3;
     protected static bool $deferLoading = true;
+    protected static ?int $contentHeight = 260; //px
+
 
 
   
