@@ -28,7 +28,7 @@
             <x-filament::tabs.item alpine-active="activeTab === 'Utilities'" x-on:click="activeTab = 'Utilities'" icon="heroicon-s-bolt">
                 Utilities
             </x-filament::tabs.item>
-            @if($this->hasWater())
+            @if($this->hasWater() === true)
             <x-filament::tabs.item alpine-active="activeTab === 'Water'" x-on:click="activeTab = 'Water'" icon="heroicon-s-funnel">
                 Water
             </x-filament::tabs.item>
@@ -75,7 +75,7 @@
                 </ul>
             </form>
         </div>
-        @if ($this->hasWater())
+        @if ($this->hasWater() === true)
         <div x-show="activeTab === 'Water'" class="py-6">
             @livewire('water-table',['record' => $this->record])
         </div>

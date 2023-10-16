@@ -30,13 +30,14 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class InvoiceResource extends Resource
 {
     protected static ?string $recordTitleAttribute = 'invoice_number';
     protected static ?string $model = Invoice::class;
-    protected static ?string $navigationGroup = 'Payments';
+    protected static ?string $navigationGroup = 'Invoices';
     protected static ?string $navigationIcon = 'heroicon-s-newspaper';
 
     public static function getEloquentQuery(): Builder
@@ -75,7 +76,7 @@ class InvoiceResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('due_date')->datetime()->size('sm'),
+                TextColumn::make('created_at')->label('Date')->datetime()->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),
@@ -104,7 +105,9 @@ class InvoiceResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                     Tables\Actions\DeleteBulkAction::make()->action(function(Collection $records){
+                        $records->each(fn($record) => $record->update(['invoice_status' => 'stale/'.$record->invoice_status]));
+                     }),
                 ]),
             ])
             ->emptyStateActions([

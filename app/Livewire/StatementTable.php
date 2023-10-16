@@ -34,9 +34,9 @@ class StatementTable extends Component implements HasForms, HasTable
                 TextColumn::make('custom_date')->size('sm')->datetime()->label('Date'),
                 TextColumn::make('reference')->sortable()->searchable()->size('sm'),
                 TextColumn::make('description')->searchable()->size('sm'),
-                TextColumn::make('debit')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Debit')->money('kes')),
-                TextColumn::make('credit')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Credit')->money('kes')),
-                TextColumn::make('balance')->size('sm')->money('kes'),
+                TextColumn::make('debit')->size('sm')->money('kes')->formatStateUsing(fn($state) => $state == 0 ? '-' :'KES ' .number_format($state,2)),
+                TextColumn::make('credit')->size('sm')->formatStateUsing(fn($state) => $state == 0 ? '-' :'KES ' .number_format($state,2)),
+                TextColumn::make('s_balance')->label('Balance')->size('sm')->money('kes'),
             ])
             ->filters([
                 // ...

@@ -58,7 +58,9 @@ class CreatePayment extends CreateRecord
                 'credit' => $payment->balance,
                 'debit' => 0,
                 'balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance,
-                'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance
+                'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance,
+                's_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance,
+
             ];
             Statement::create($statement_data);
             InvoiceReceiptAutoAllocation::handleNewReceipt($tenant->first()->full_names, $payment);

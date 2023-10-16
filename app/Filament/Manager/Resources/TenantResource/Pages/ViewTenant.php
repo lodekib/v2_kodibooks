@@ -15,7 +15,7 @@ class ViewTenant extends ViewRecord
 
     protected static string $view = 'filament.manager.resources.tenant-resource.pages.view-tenant';
 
-    public string $activeTab ;
+    public string $activeTab;
 
     public function getUtilities()
     {
@@ -51,14 +51,10 @@ class ViewTenant extends ViewRecord
 
     public function hasWater(): bool
     {
-        $water_exists = false;
-        $has_water_utility = ActiveUtility::where('tenant_name', $this->getRecord()->full_names)->get('active_utilities')->toArray();
-        if (!empty($has_water_utility)) {
-            if (in_array('Water', $has_water_utility[0]['active_utilities'])) {
-                $water_exists =  true;
-            }
-        }
-        return $water_exists;
+        $has_water_utility = ActiveUtility::where('tenant_name', $this->getRecord()->full_names)
+            ->whereJsonContains('active_utilities', 'Water')
+            ->exists();
+
+        return $has_water_utility;
     }
-    
 }
