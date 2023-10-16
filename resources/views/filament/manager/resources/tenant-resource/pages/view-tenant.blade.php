@@ -56,7 +56,7 @@
             </x-filament-panels::resources.relation-managers>
             @endif
         </div>
-        <div x-show="activeTab === 'Invoice Statement'" class="py-6">@livewire('invoice-statement') </div>
+        <div x-show="activeTab === 'Invoice Statement'" class="py-6">@livewire('invoice-statement',['record' => $this->record]) </div>
         <div x-show="activeTab === 'Invoices'" class="py-6">@livewire('invoice-table',['record' => $this->record])</div>
         <div x-show="activeTab === 'Payments'" class="py-6">@livewire('payment-table',['record' => $this->record])</div>
         <div x-show="activeTab === 'Statement'" class="py-6">@livewire('statement-table',['record' => $this->record])</div>

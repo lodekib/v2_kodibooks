@@ -162,7 +162,7 @@ class InvoiceTable extends Component implements HasForms, HasTable
                                     if ($tenant_water->first() != null) {
                                         $quantity = $tenant_water->first()->current_reading - $tenant_water->first()->previous_reading;
                                         $get_amount = Utility::where('property_name', $this->record->property_name)->where('utility_name', 'Water')->pluck('amount');
-                                        $set('amount_invoiced', number_format($get_amount[0] * $quantity));
+                                        $set('amount_invoiced', $get_amount[0] * $quantity);
                                     } else {
                                         Notification::make()->body('Please add water reading before invoicing')->warning()
                                             ->color('warning')->persistent()->actions([
