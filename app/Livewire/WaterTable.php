@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use App\Models\Utility;
 use App\Models\Waterbill;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
@@ -18,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
 class WaterTable extends Component implements HasForms, HasTable
@@ -33,12 +35,17 @@ class WaterTable extends Component implements HasForms, HasTable
             ->query(Waterbill::where('tenant_name', $this->record->full_names)->latest())->poll('2s')
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('created_at')->label('Date')->size('sm')->date(),
+                TextColumn::make('date_added')->date()->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('previous_reading')->label('Previous reading ( m3 )')->size('sm'),
                 TextColumn::make('current_reading')->label('Current reading ( m3 )')->size('sm'),
-                TextColumn::make('date_added')->date()->size('sm')
+                TextColumn::make('created_at')->label('Rate')->size('sm')->formatStateUsing(fn(Model $record) => number_format(Utility::where('property_name',$record->property_name)->where('utility_name','Water')->first()->amount))->prefix('KES '),
+                TextColumn::make('updated_at')->label('Total Amount')->size('sm')->formatStateUsing(function(Model $record) {
+                    $consumption = $record->current_reading - $record->previous_reading;
+                    $rate = Utility::where('property_name',$record->property_name)->where('utility_name','Water')->first()->amount;
+                    return number_format($consumption * $rate) ;
+                })->prefix('KES ')
             ])
             ->filters([
                 // ...
