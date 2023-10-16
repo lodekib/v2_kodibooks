@@ -11,8 +11,11 @@
         @endif
     </div>
 
-    <div x-data="{ activeTab: 'Statement' }">
+    <div x-data="{ activeTab: 'Invoice Statement' }">
         <x-filament::tabs label="tenant info tabs">
+            <x-filament::tabs.item alpine-active="activeTab === 'Invoice Statement'" x-on:click="activeTab = 'Invoice Statement'" icon="heroicon-s-clipboard-document">
+                Invoice Statement
+            </x-filament::tabs.item>
             <x-filament::tabs.item alpine-active="activeTab === 'Statement'" x-on:click="activeTab = 'Statement'" icon="heroicon-s-clipboard-document">
                 Statement
             </x-filament::tabs.item>
@@ -53,6 +56,7 @@
             </x-filament-panels::resources.relation-managers>
             @endif
         </div>
+        <div x-show="activeTab === 'Invoice Statement'" class="py-6">@livewire('invoice-statement') </div>
         <div x-show="activeTab === 'Invoices'" class="py-6">@livewire('invoice-table',['record' => $this->record])</div>
         <div x-show="activeTab === 'Payments'" class="py-6">@livewire('payment-table',['record' => $this->record])</div>
         <div x-show="activeTab === 'Statement'" class="py-6">@livewire('statement-table',['record' => $this->record])</div>
