@@ -23,7 +23,7 @@ class LatestPayments extends BaseWidget
                 Payment::latest()->withoutGlobalScopes([ManagerScope::class])
             )
             ->columns([
-                TextColumn::make('paid_date')->label('Date')->size('sm')->searchable()->date(),
+                TextColumn::make('paid_date')->label('Date')->size('sm')->searchable()->datetime(),
                 TextColumn::make('tenant_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('mode_of_payment')->size('sm')->searchable()->sortable(),

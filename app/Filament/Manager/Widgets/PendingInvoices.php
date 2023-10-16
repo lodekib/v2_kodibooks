@@ -25,7 +25,7 @@ class PendingInvoices extends BaseWidget
             ->query(Invoice::where('invoice_status', '!=', 'fully paid'))
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('due_date')->date()->size('sm'),
+                TextColumn::make('due_date')->datetime()->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),

@@ -12,6 +12,7 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use App\Services\InvoiceReceiptAutoAllocation;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -42,7 +43,7 @@ class PaymentTable extends Component implements HasForms, HasTable
             ->query(Payment::where('tenant_name', $this->record->full_names)->latest())->poll('2s')
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('paid_date')->date()->size('sm')->searchable()->sortable(),
+                TextColumn::make('paid_date')->datetime()->size('sm')->searchable(),
                 TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('reference_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->searchable()->sortable()->size('sm'),
@@ -73,7 +74,7 @@ class PaymentTable extends Component implements HasForms, HasTable
                             TextInput::make('amount')->prefix('Ksh')->required(),
                             TextInput::make('reference_number')->required()
                                 ->visible(fn (Get $get) => $get('mode_of_payment') != null && $get('mode_of_payment') == 'Cash' ? false : true),
-                            DatePicker::make('paid_date')->required()->maxDate(now())
+                            DateTimePicker::make('paid_date')->required()->maxDate(now())
                         ])->columns(3)
                     ])->action(function (array $data) {
                         $total_debit = Statement::where('tenant_name', $this->record->full_names)->sum('debit');
