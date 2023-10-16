@@ -53,7 +53,8 @@ class CreateInvoice extends CreateRecord
                 'debit' => $invoice->balance,
                 'credit' => 0,
                 'balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit - $invoice->balance) : $invoice->balance,
-                'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit - $invoice->balance) : $invoice->balance
+                'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit - $invoice->balance) : $invoice->balance,
+                's_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit - $invoice->balance) : $invoice->balance,
             ];
             Statement::create($statement_data);
             InvoiceReceiptAutoAllocation::handleNewInvoice($invoice);

@@ -30,6 +30,7 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class InvoiceResource extends Resource
@@ -104,7 +105,9 @@ class InvoiceResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                     Tables\Actions\DeleteBulkAction::make()->action(function(Collection $records){
+                        $records->each(fn($record) => $record->update(['invoice_status' => 'stale/'.$record->invoice_status]));
+                     }),
                 ]),
             ])
             ->emptyStateActions([

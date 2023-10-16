@@ -79,7 +79,7 @@ class PaymentTable extends Component implements HasForms, HasTable
                     ])->action(function (array $data) {
                         $total_debit = Statement::where('tenant_name', $this->record->full_names)->sum('debit');
                         $total_credit = Statement::where('tenant_name', $this->record->full_names)->sum('credit');
-                        $reference_number = $data['model_of_payment'] == 'Cash' ? 'cash payment' : $data['reference_number'];
+                        $reference_number = $data['mode_of_payment'] == 'Cash' ? 'cash payment' : $data['reference_number'];
                         $receipt_number = strtoupper(substr($data['property_name'], 0, 3)) . "-" . time();
                         $receipt_data = [
                             'tenant_id' => $this->record->id,
@@ -106,7 +106,9 @@ class PaymentTable extends Component implements HasForms, HasTable
                                 'credit' => $receipt->balance,
                                 'debit' => 0,
                                 'balance' => $total_debit - ($total_credit + $receipt->balance),
-                                'cummulative_balance' => $total_debit - ($total_credit + $receipt->balance)
+                                'cummulative_balance' => $total_debit - ($total_credit + $receipt->balance),
+                                's_balance' => $total_debit - ($total_credit + $receipt->balance),
+
                             ];
 
                             $statement = Statement::create($statement_data);

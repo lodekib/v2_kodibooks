@@ -127,7 +127,9 @@ class InvoiceTable extends Component implements HasForms, HasTable
                             'debit' => $final_invoice->balance,
                             'credit' => 0,
                             'balance' => $total_debit - ($total_credit - $final_invoice->balance),
-                            'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
+                            'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance),
+                            's_balance' => $total_debit - ($total_credit - $final_invoice->balance),
+
                         ];
 
                         Statement::create($statement_data);
