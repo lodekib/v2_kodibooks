@@ -36,7 +36,7 @@ class InvoiceResource extends Resource
 {
     protected static ?string $recordTitleAttribute = 'invoice_number';
     protected static ?string $model = Invoice::class;
-    protected static ?string $navigationGroup = 'Payments';
+    protected static ?string $navigationGroup = 'Invoices';
     protected static ?string $navigationIcon = 'heroicon-s-newspaper';
 
     public static function getEloquentQuery(): Builder
@@ -75,7 +75,7 @@ class InvoiceResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('due_date')->datetime()->size('sm'),
+                TextColumn::make('created_at')->label('Date')->datetime()->size('sm'),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),
