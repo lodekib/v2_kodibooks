@@ -20,6 +20,7 @@ use Filament\Notifications\Notification;
 class InvoiceStatement extends Component
 {
     public $record;
+    public $email;
 
     public function invoices()
     {
@@ -80,9 +81,11 @@ class InvoiceStatement extends Component
 
     public function i_share()
     {
+        $validated = $this->email != null ? $this->validate(['email' => 'email']) : null;
+        $mail = $this->email != null ? $this->email : $this->record->email;
         InvoiceStatement::share($this->record);
         $mail_config = ModelsMail::withoutGlobalScope(new ManagerScope())->where('manager_id', $this->record->manager_id)->first();
-        $mail_config->mailer()->to($this->record->email)->send(new ShareInvoiceStatement($this->record));
+        $mail_config->mailer()->to($mail)->send(new ShareInvoiceStatement($this->record));
         Notification::make()->success()->color('success')->body('Invoice statement shared successfully !')->send();
     }
 

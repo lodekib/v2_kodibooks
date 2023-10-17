@@ -1,5 +1,27 @@
    <div>
-       <x-filament::button wire:click="i_share" color="gray" icon="heroicon-s-envelope-open">Share Statement</x-filament::button>
+       <x-filament::modal>
+
+           <x-slot name="trigger">
+               <x-filament::button color="gray" icon="heroicon-s-share">
+                   Share Statement
+               </x-filament::button>
+           </x-slot>
+           <x-slot name="heading">
+               Current mail : {{ $record->email }}
+           </x-slot>
+
+           <x-slot name="description">
+               Wish to change the receipient email ?
+           </x-slot>
+           <x-filament::input.wrapper suffix-icon="heroicon-m-envelope">
+               <x-filament::input type="email" wire:model="email" />
+           </x-filament::input.wrapper>
+           <div class="text-red-500">@error('email') {{ $message }} @enderror</div>
+
+
+           <x-filament::button wire:click="i_share" color="primary" icon="heroicon-s-envelope-open">Share</x-filament::button>
+
+       </x-filament::modal>
        <table class="table-auto border border-slate-400 w-full bg-white rounded-lg mt-2 ">
            <tr>
                <th colspan="7" class="bg-gray-60 text-center py-4"> {{ $record->full_names }} </th>
