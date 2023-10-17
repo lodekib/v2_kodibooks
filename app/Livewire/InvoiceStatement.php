@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Barryvdh\DomPDF\PDF;
+use Filament\Notifications\Notification;
 
 class InvoiceStatement extends Component
 {
@@ -82,6 +83,7 @@ class InvoiceStatement extends Component
         InvoiceStatement::share($this->record);
         $mail_config = ModelsMail::withoutGlobalScope(new ManagerScope())->where('manager_id', $this->record->manager_id)->first();
         $mail_config->mailer()->to($this->record->email)->send(new ShareInvoiceStatement($this->record));
+        Notification::make()->success()->color('success')->body('Invoice statement shared successfully !')->send();
     }
 
     public function render()
