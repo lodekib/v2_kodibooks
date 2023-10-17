@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MpesaC2BController;
+use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UtilityController;
 use Illuminate\Support\Facades\Response;
