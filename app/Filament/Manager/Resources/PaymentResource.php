@@ -113,7 +113,7 @@ class PaymentResource extends Resource
                     })
                 ])->button()->label('Actions')->color('gray')
             ])->headerActions([
-                FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview(),
+                FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),

@@ -101,7 +101,7 @@ class PaymentTable extends Component implements HasForms, HasTable
                             $statement_data = [
                                 'tenant_id' => $this->record->id,
                                 'tenant_name' => $this->record->full_names,
-                                'description' => $data['mode_of_payment'] . "# " . $data['reference_number'],
+                                'description' => $data['mode_of_payment'] . "# " . $reference_number,
                                 'reference' => $receipt->receipt_number,
                                 'credit' => $receipt->balance,
                                 'debit' => 0,

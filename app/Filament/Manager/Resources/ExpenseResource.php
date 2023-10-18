@@ -158,7 +158,7 @@ class ExpenseResource extends Resource
             ])
             ->filters([
                 //
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()->disablePreview()])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     ActionsAction::make('Assign Vendor')->icon('heroicon-o-wrench')->color('primary')->form([
