@@ -78,7 +78,7 @@ class UnitResource extends Resource
             ->striped()
             ->filters([
                 //
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->disableAdditionalColumns()->disablePreview()])
+            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),

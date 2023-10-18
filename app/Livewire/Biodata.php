@@ -148,7 +148,6 @@ class Biodata extends Component implements HasForms
             ]
         );
 
-
         if ($new_data['payment_method'] == 'card') {
             $cardDate = explode("-", $new_data['expiry_date']);
 

@@ -8,6 +8,7 @@ use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use App\Models\Statement;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
@@ -31,7 +32,7 @@ class StatementTable extends Component implements HasForms, HasTable
             ->query(Statement::where('tenant_name', $this->record->full_names)->oldest())->poll('2s')
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('custom_date')->size('sm')->datetime()->label('Date'),
+                TextColumn::make('created_at')->size('sm')->datetime()->label('Date'),
                 TextColumn::make('reference')->sortable()->searchable()->size('sm'),
                 TextColumn::make('description')->searchable()->size('sm'),
                 TextColumn::make('debit')->size('sm')->money('kes')->formatStateUsing(fn($state) => $state == 0 ? '-' :'KES ' .number_format($state,2)),
@@ -41,8 +42,8 @@ class StatementTable extends Component implements HasForms, HasTable
             ->filters([
                 // ...
             ])->headerActions([
-                    FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
-                    ])
+                    FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns(),
+            ])
             ->actions([
                 // ...
             ])

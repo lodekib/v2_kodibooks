@@ -40,7 +40,7 @@ class InvoiceStatement extends Component
         $rate = Utility::where('property_name', $property->property_name)->where('utility_name', 'Water')->get('amount')->first();
         $balance = Statement::where('tenant_name', $this->record->full_names)
             ->selectRaw('SUM(debit) - SUM(credit) as balance')->where('created_at', '<', $startOfMonth)->first()->balance;
-        $consumption_total = ($water_readings->first()->current_reading - $water_readings->first()->previous_reading) * $rate->amount;
+        $consumption_total = $water_readings->isNotEmpty() ? ($water_readings->first()->current_reading - $water_readings->first()->previous_reading) * $rate->amount : 0;
         $total_overdue = $balance + $consumption_total + $total_balances;
         return [$pending_invoices, $water_readings->first(), $rate, $balance, $total_overdue];
     }
