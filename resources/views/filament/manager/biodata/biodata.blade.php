@@ -10,7 +10,7 @@
     <x-slot name="description">
         Thank you for choosing Kodibooks. Please provide information about you and your organization.
     </x-slot>
-    <livewire:biodata />
+    <livewire:biodata /> 
     <x-slot name="footer">
         Kodibooks
     </x-slot>

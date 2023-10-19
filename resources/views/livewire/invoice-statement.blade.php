@@ -24,15 +24,17 @@
        </x-filament::modal>
        <table class="table-auto border border-slate-400 w-full bg-white rounded-lg mt-2 ">
            <tr>
-               <th colspan="7" class="bg-gray-60 text-center py-4"> {{ $record->full_names }} </th>
+               <th colspan="7" class="bg-gray-60 py-4"> {{ $record->full_names }} </th>
+           </tr>
+           <tr>
+           <td colspan="7" class="font-bold text-evenly">AMOUNT</td>
            </tr>
            <tr>
                <td class="px-4 py-2" colspan="6">Balance ,by {{\Carbon\Carbon::now()->subMonthNoOverflow()->endOfMonth()->format('F d,Y') }}</td>
                <td class="px-4 py-2" colspan="1">KES {{number_format($this->invoices()[3])}}</td>
            </tr>
            <tr>
-               <td colspan="4" class="font-bold text-center">INVOICE</td>
-               <td colspan="3" class="font-bold text-center">AMOUNT</td>
+               <td colspan="4" class="font-bold px-4 py-2">INVOICE ITEM</td>
            </tr>
            @foreach ($this->invoices()[0] as $invoice )
            @if($invoice->invoice_type === 'Rent' )

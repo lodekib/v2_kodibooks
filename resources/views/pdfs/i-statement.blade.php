@@ -1,7 +1,7 @@
 <div>
     <table class="table-auto border border-slate-400 w-full bg-white rounded-lg mt-2 ">
         <tr>
-            <th colspan="7" class="bg-gray-60 text-center py-4"> {{ $tenant }} </th>
+            <th colspan="7" class="bg-gray-60 py-4"> {{ $tenant }} </th>
         </tr>
         <tr>
             <td class="px-4 py-2" colspan="6">Balance ,by {{\Carbon\Carbon::now()->subMonthNoOverflow()->endOfMonth()->format('F d,Y') }}</td>

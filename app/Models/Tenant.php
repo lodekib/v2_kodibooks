@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Notifications\Notifiable;
 
 class Tenant extends Model
 {
-    use HasFactory, HasManager;
+    use HasFactory ,Notifiable, HasManager;
 
     protected $guarded = [];
 
@@ -21,6 +22,11 @@ class Tenant extends Model
         static::addGlobalScope('nonestale', function (Builder $builder) {
             $builder->where('status', '!=', 'stale');
         });
+    }
+
+    public function routeNotificationForAfricasTalking($notification)
+    {
+        return $this->phone_number;
     }
 
     public function units(): HasMany

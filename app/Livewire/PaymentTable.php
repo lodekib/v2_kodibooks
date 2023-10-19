@@ -8,6 +8,7 @@ use App\Models\Property;
 use App\Models\Statement;
 use App\Models\Tenant;
 use App\Models\Unit;
+use App\Notifications\ReminderNotification;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use App\Services\InvoiceReceiptAutoAllocation;
@@ -120,7 +121,7 @@ class PaymentTable extends Component implements HasForms, HasTable
                             Notification::make()->warning()->color('warning')->body('Unable to add payment !')->send();
                         }
                     }),
-                    FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+                FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->actions([
                 // ...
