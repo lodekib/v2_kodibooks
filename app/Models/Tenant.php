@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Tenant extends Model
 {
-    use HasFactory ,Notifiable, HasManager;
+    use HasFactory, Notifiable, HasManager;
 
     protected $guarded = [];
 
@@ -26,7 +26,7 @@ class Tenant extends Model
 
     public function routeNotificationForAfricasTalking($notification)
     {
-        return $this->phone_number;
+        return '254' . substr($this->phone_number, 1);
     }
 
     public function units(): HasMany

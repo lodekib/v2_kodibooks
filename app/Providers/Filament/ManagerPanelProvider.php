@@ -4,6 +4,11 @@ namespace App\Providers\Filament;
 
 use App\Filament\AvatarProviders\BoringAvatarsProvider;
 use App\Filament\Manager\Pages\ManagerDashboard;
+use App\Filament\Manager\Widgets\ExpenseChart;
+use App\Filament\Manager\Widgets\IncomeChart;
+use App\Filament\Manager\Widgets\LatestPayments;
+use App\Filament\Manager\Widgets\PendingInvoices;
+use App\Filament\Manager\Widgets\StatsOverview;
 use App\Http\Middleware\CheckRole;
 use Closure;
 use Filament\Http\Middleware\Authenticate;
@@ -47,7 +52,11 @@ class ManagerPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Manager/Widgets'), for: 'App\\Filament\\Manager\\Widgets')
             ->widgets([
-                // Widgets\AccountWidget::class,
+                ExpenseChart::class,
+                IncomeChart::class,
+                LatestPayments::class,
+                PendingInvoices::class,
+                StatsOverview::class
             ])
             ->middleware([
                 EncryptCookies::class,

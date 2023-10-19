@@ -9,6 +9,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +43,7 @@ class CalendarWidget extends FullCalendarWidget
             ->get()
             ->map(fn (Reminder $reminder) => [
                 'id' => $reminder->id,
-                'type'=> $reminder->type,
+                'type' => $reminder->type,
                 'message' => $reminder->message,
                 'start' => $reminder->starts_at,
                 'end' => $reminder->ends_at,
@@ -53,14 +54,11 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             Action::make('Send Reminder')->icon('heroicon-o-device-phone-mobile')->form([
-                TextInput::make('message')->required()
+                Textarea::make('message')->required()
             ])->action(function (array $data, $record) {
                 $tenant = Tenant::find($record->tenant_id);
-                if ($tenant->notify(new ReminderNotification($data['message']))) {
-                    Notification::make()->success()->color('success')->body('Reminder sent successfully')->send();
-                } else {
-                    Notification::make()->danger()->color('danger')->body('Unable to send reminder')->send();
-                }
+                $tenant->notify(new ReminderNotification($data['message']));
+                Notification::make()->success()->color('success')->body('Reminder sent successfully')->send();
             }),
             Act\EditAction::make()->label('')->icon('heroicon-o-pencil'),
             Act\DeleteAction::make()->label('')->icon('heroicon-o-trash')
@@ -73,7 +71,7 @@ class CalendarWidget extends FullCalendarWidget
             Grid::make()
                 ->schema([
                     Select::make('tenant_name')->options(Tenant::pluck('full_names', 'full_names'))->searchable(),
-                    Select::make('type')->options(['Reminder' => 'Reminder','Task' => 'Task','Goal' => 'Goal']),
+                    Select::make('type')->options(['Reminder' => 'Reminder', 'Task' => 'Task', 'Goal' => 'Goal']),
                     TextInput::make('message'),
                     DateTimePicker::make('starts_at')->dehydrated()->label('From'),
                     DateTimePicker::make('ends_at')->label('End date'),
