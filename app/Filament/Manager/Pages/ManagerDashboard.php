@@ -2,6 +2,11 @@
 
 namespace App\Filament\Manager\Pages;
 
+use App\Filament\Manager\Widgets\ExpenseChart;
+use App\Filament\Manager\Widgets\IncomeChart;
+use App\Filament\Manager\Widgets\LatestPayments;
+use App\Filament\Manager\Widgets\PendingInvoices;
+use App\Filament\Manager\Widgets\StatsOverview;
 use Filament\Pages\Dashboard as BasePage;
 use JibayMcs\FilamentTour\Tour\HasTour;
 use JibayMcs\FilamentTour\Tour\Step;
@@ -16,6 +21,17 @@ class ManagerDashboard extends BasePage
         return 'heroicon-s-bars-3';
     }
 
+    public function getWidgets(): array
+    {
+        return [
+            StatsOverview::class,
+            IncomeChart::class,
+            ExpenseChart::class,
+            PendingInvoices::class,
+            LatestPayments::class,
+        ];
+    }
+
 
     public function tours(): array
     {
@@ -28,7 +44,7 @@ class ManagerDashboard extends BasePage
                     Step::make('li.fi-sidebar-group:nth-of-type(2) .fi-sidebar-item:nth-of-type(3)')->title('Units')->description('<p>After adding the properties, you can attach units<br>to the properties here')->icon('heroicon-s-cube')->iconColor('success')->uncloseable(),
                     Step::make('li.fi-sidebar-group:nth-of-type(2) .fi-sidebar-item:nth-of-type(2)')->title('Tenants')->description('<p>Add and manage tenants profiles from this section</p>')->icon('heroicon-s-users')->iconColor('success')->uncloseable(),
                     Step::make('li.fi-sidebar-group:nth-of-type(3)')->title('Payments')->description('<p>View the payments, invoices and allocations made from this section')->icon('heroicon-o-credit-card')->iconColor('success')->uncloseable(),
-                    Step::make('dashboard')->title('Verification')->description(view('filament.manager.biodata.biodata'))->uncloseable(),
+                    Step::make('dashboard')->title('Verification')->description(view('filament.manager.biodata.biodata'))->uncloseable()->dispatchOnNext('open-modal', id: 'biodata'),
                 )->alwaysShow(fn (): bool => auth()->check() && auth()->user()->is_verified ? true : false)->ignoreRoutes()->doneButtonLabel('Verify')
         ];
     }

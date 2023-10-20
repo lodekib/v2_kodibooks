@@ -52,11 +52,6 @@ class ManagerPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Manager/Widgets'), for: 'App\\Filament\\Manager\\Widgets')
             ->widgets([
-                ExpenseChart::class,
-                IncomeChart::class,
-                LatestPayments::class,
-                PendingInvoices::class,
-                StatsOverview::class
             ])
             ->middleware([
                 EncryptCookies::class,
