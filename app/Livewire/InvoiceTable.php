@@ -158,7 +158,7 @@ class InvoiceTable extends Component implements HasForms, HasTable
                                 if ($state == 'Water') {
                                     $tenant_water = Waterbill::where('property_name', $this->record->property_name)
                                         ->where('unit_name', $this->record->unit_name)
-                                        ->where('tenant_name', $this->record->full_names)->get(['current_reading', 'previous_reading']);
+                                        ->where('tenant_name', $this->record->full_names)->latest()->get(['current_reading', 'previous_reading']);
                                     if ($tenant_water->first() != null) {
                                         $quantity = $tenant_water->first()->current_reading - $tenant_water->first()->previous_reading;
                                         $get_amount = Utility::where('property_name', $this->record->property_name)->where('utility_name', 'Water')->pluck('amount');
