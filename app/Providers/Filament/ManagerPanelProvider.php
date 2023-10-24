@@ -10,6 +10,7 @@ use App\Filament\Manager\Widgets\LatestPayments;
 use App\Filament\Manager\Widgets\PendingInvoices;
 use App\Filament\Manager\Widgets\StatsOverview;
 use App\Http\Middleware\CheckRole;
+use App\Services\ExampleBillingProvider;
 use Closure;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -31,6 +32,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
+
 
 
 class ManagerPanelProvider extends PanelProvider

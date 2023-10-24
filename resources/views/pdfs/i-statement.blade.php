@@ -1,4 +1,5 @@
 <div>
+    
     <table class="table-auto  w-full bg-white mt-2 border border-slate-400">
         <tr>
             <td colspan="7" class="py-6 px-4 font-bold"> {{ $tenant }} </td>
