@@ -15,10 +15,12 @@ use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Fouladgar\OTP\Contracts\OTPNotifiable;
 use Fouladgar\OTP\Concerns\HasOTPNotify;
 use Illuminate\Support\Facades\Storage;
+use Bpuig\Subby\Traits\HasSubscriptions;
 
 class User extends Authenticatable implements FilamentUser, OTPNotifiable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasSuperAdmin, TwoFactorAuthenticatable, HasOTPNotify;
+    use HasApiTokens, HasFactory, Notifiable, HasSuperAdmin, 
+    TwoFactorAuthenticatable, HasOTPNotify,HasSubscriptions;
 
     /**
      * The attributes that are mass assignable.
