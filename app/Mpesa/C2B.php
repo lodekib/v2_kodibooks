@@ -2,6 +2,7 @@
 
 namespace App\Mpesa;
 
+use App\Events\MpesaReceived;
 use App\Models\MpesaC2B;
 use App\Models\Payment;
 use App\Models\Statement;
@@ -9,6 +10,7 @@ use App\Models\Tenant;
 use App\Services\InvoiceReceiptAutoAllocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Livewire\Livewire;
 
 class C2B
 {
@@ -16,6 +18,7 @@ class C2B
     {
         Log::info('Confirmation endpoint has been hit');
         $payload = $request->all();
+
 
         $c2b = new MpesaC2B();
         $c2b->Transaction_type = $payload['TransactionType'];
@@ -31,11 +34,13 @@ class C2B
         $c2b->FirstName = $payload['FirstName'];
         $c2b->save();
 
-        $tenant = Tenant::where('id_number',$payload['BillRefNumber'])->get(['id','full_names','property_name','unit_name']);
+        MpesaReceived::dispatch($c2b);
+
+        $tenant = Tenant::where('id_number', $payload['BillRefNumber'])->get(['id', 'full_names', 'property_name', 'unit_name']);
         $debit_credit = Statement::selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
-        ->where('tenant_name', $tenant['full_names'])
-        ->groupBy('tenant_name')
-        ->first();
+            ->where('tenant_name', $tenant['full_names'])
+            ->groupBy('tenant_name')
+            ->first();
 
         $payment = Payment::create([
             'receipt_number' => $payload['TransID'],
