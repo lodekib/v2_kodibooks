@@ -10,6 +10,7 @@ use App\Filament\Manager\Widgets\LatestPayments;
 use App\Filament\Manager\Widgets\PendingInvoices;
 use App\Filament\Manager\Widgets\StatsOverview;
 use App\Http\Middleware\CheckRole;
+use App\Services\ExampleBillingProvider;
 use Closure;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -33,6 +34,7 @@ use JibayMcs\FilamentTour\FilamentTourPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 
+
 class ManagerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -52,11 +54,6 @@ class ManagerPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Manager/Widgets'), for: 'App\\Filament\\Manager\\Widgets')
             ->widgets([
-                ExpenseChart::class,
-                IncomeChart::class,
-                LatestPayments::class,
-                PendingInvoices::class,
-                StatsOverview::class
             ])
             ->middleware([
                 EncryptCookies::class,
