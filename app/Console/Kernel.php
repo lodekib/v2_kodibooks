@@ -8,6 +8,7 @@ use App\Jobs\WaterInvoice;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Auth;
+use \Bpuig\Subby\Jobs\SubscriptionPaymentQueuerJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -18,10 +19,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        dd(Auth::user());
         $schedule->job(new RentInvoice())->lastDayOfMonth();
         $schedule->job(new GarbageInvoice())->lastDayOfMonth();
         $schedule->job(new WaterInvoice())->lastDayOfMonth();
+        $schedule->job(new SubscriptionPaymentQueuerJob())->everyFiveMinutes();
     }
 
     /**
@@ -29,7 +30,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

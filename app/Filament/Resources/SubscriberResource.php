@@ -38,6 +38,7 @@ class SubscriberResource extends Resource
                 TextColumn::make('Index')->rowIndex(),
                 TextColumn::make('subscriber_id')->label('Subscriber Name')->searchable()->sortable()->formatStateUsing(fn($state) => User::find($state)->name),
                 TextColumn::make('plan_id')->label('Plan Name')->size('sm')->searchable()->sortable()->formatStateUsing(fn ($state) => Plan::find($state)->name),
+                TextColumn::make('payment_method')->size('sm')->searchable()->sortable(),
                 TextColumn::make('price')->size('sm')->money('KES')
             ])
             ->filters([

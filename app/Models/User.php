@@ -78,7 +78,7 @@ class User extends Authenticatable implements FilamentUser, OTPNotifiable
         static::created(function ($user){
             $user->assignRole('Manager');
             $plan = Plan::getByTag('basic');
-            $user->newSubscription('primary',$plan, 'Primary Subscription', 'Client primary subscription', null, 'free' );
+            $user->newSubscription('primary',$plan, 'Primary Subscription', 'Client primary subscription', null, 'mpesa' );
         });
     }
 }
