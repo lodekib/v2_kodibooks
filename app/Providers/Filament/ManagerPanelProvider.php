@@ -10,6 +10,7 @@ use App\Filament\Manager\Widgets\LatestPayments;
 use App\Filament\Manager\Widgets\PendingInvoices;
 use App\Filament\Manager\Widgets\StatsOverview;
 use App\Http\Middleware\CheckRole;
+use App\Providers\BillingProvider;
 use App\Services\ExampleBillingProvider;
 use Closure;
 use Filament\Http\Middleware\Authenticate;
@@ -41,6 +42,8 @@ class ManagerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('manager')->spa()
+            ->requiresTenantSubscription()
+            ->tenantBillingProvider(new BillingProvider())
             ->path('')->sidebarCollapsibleOnDesktop()
             ->collapsedSidebarWidth('80px')->sidebarWidth('220px')
             ->login()->passwordReset()->registration()

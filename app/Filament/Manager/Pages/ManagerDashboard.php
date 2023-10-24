@@ -9,6 +9,7 @@ use App\Filament\Manager\Widgets\PendingInvoices;
 use App\Filament\Manager\Widgets\StatsOverview;
 use DOMDocument;
 use Filament\Pages\Dashboard as BasePage;
+use Filament\Panel;
 use JibayMcs\FilamentTour\Tour\HasTour;
 use JibayMcs\FilamentTour\Tour\Step;
 use JibayMcs\FilamentTour\Tour\Tour;
