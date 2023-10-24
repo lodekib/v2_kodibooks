@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
+use Bpuig\Subby\Models\Plan;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,7 @@ class User extends Authenticatable implements FilamentUser, OTPNotifiable
         'name',
         'email',
         'password',
+        'avatar_url'
     ];
 
     /**
@@ -73,6 +75,10 @@ class User extends Authenticatable implements FilamentUser, OTPNotifiable
     protected static function boot()
     {
         parent::boot();
-        static::created(fn ($user) => $user->assignRole('Manager'));
+        static::created(function ($user){
+            $user->assignRole('Manager');
+            $plan = Plan::getByTag('basic');
+            $user->newSubscription('primary',$plan, 'Primary Subscription', 'Client primary subscription', null, 'free' );
+        });
     }
 }
