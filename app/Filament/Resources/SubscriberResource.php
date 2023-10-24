@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SubscriberResource\Pages;
 use App\Filament\Resources\SubscriberResource\RelationManagers;
 use App\Models\Subscriber;
+use App\Models\User;
+use Bpuig\Subby\Models\Plan;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Bpuig\Subby\Models\PlanSubscription;
+use Filament\Tables\Columns\TextColumn;
 
 class SubscriberResource extends Resource
 {
@@ -32,7 +35,10 @@ class SubscriberResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('Index')->rowIndex(),
+                TextColumn::make('subscriber_id')->label('Subscriber Name')->searchable()->sortable()->formatStateUsing(fn($state) => User::find($state)->name),
+                TextColumn::make('plan_id')->label('Plan Name')->size('sm')->searchable()->sortable()->formatStateUsing(fn ($state) => Plan::find($state)->name),
+                TextColumn::make('price')->size('sm')->money('KES')
             ])
             ->filters([
                 //
