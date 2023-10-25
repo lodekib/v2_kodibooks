@@ -2,9 +2,6 @@
         <x-slot name="heading">
              Biodata
         </x-slot>
-        <x-slot name="trigger">
-          <x-filament::button>Trigger</x-filament::button>
-        </x-slot>
         <x-slot name="description">
              Thank you for choosing Kodibooks. Please provide information about you and your organization.
         </x-slot>
@@ -12,7 +9,7 @@
              <form wire:submit.prevent="create">
                   {{ $this->form }}
              </form>
-        </div> 
+        </div>
         <x-slot name="footer">
              Kodibooks
         </x-slot>

@@ -10,6 +10,7 @@ use App\Filament\Manager\Widgets\LatestPayments;
 use App\Filament\Manager\Widgets\PendingInvoices;
 use App\Filament\Manager\Widgets\StatsOverview;
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\PaymentMiddleware;
 use App\Providers\BillingProvider;
 use App\Services\ExampleBillingProvider;
 use Closure;
@@ -29,9 +30,11 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
+use Livewire\Livewire;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 
@@ -42,8 +45,6 @@ class ManagerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('manager')->spa()
-            ->requiresTenantSubscription()
-            ->tenantBillingProvider(new BillingProvider())
             ->path('')->sidebarCollapsibleOnDesktop()
             ->collapsedSidebarWidth('80px')->sidebarWidth('220px')
             ->login()->passwordReset()->registration()
@@ -56,8 +57,7 @@ class ManagerPanelProvider extends PanelProvider
                 ManagerDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Manager/Widgets'), for: 'App\\Filament\\Manager\\Widgets')
-            ->widgets([
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -72,8 +72,13 @@ class ManagerPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])->navigationGroups([
-                'Assets', 'Payments','Invoices', 'Expenses', 'Utilities', 'Settings',
-            ])
+                'Assets', 'Payments', 'Invoices', 'Expenses', 'Utilities', 'Settings',
+            ])->renderHook(
+                'panels::content.start',
+                function (): string {
+                    return Blade::render('@livewire(\'biodata\')');
+                },
+            )
             ->plugins([
                 BreezyCore::make()->myProfile(
                     shouldRegisterUserMenu: true,
@@ -82,8 +87,8 @@ class ManagerPanelProvider extends PanelProvider
                 )->enableTwoFactorAuthentication(force: false),
                 FilamentTourPlugin::make(),
                 FilamentFullCalendarPlugin::make()
-                ->selectable()
-                ->timezone('Africa/Nairobi')->editable(true)
+                    ->selectable()
+                    ->timezone('Africa/Nairobi')->editable(true)
             ]);
     }
 }
