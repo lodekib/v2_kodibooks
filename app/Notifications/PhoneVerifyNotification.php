@@ -18,7 +18,7 @@ class PhoneVerifyNotification extends Notification
      */
     public $phone;
     public $otp;
-    public function __construct($phone,$otp)
+    public function __construct($phone, $otp)
     {
         $this->phone = $phone;
         $this->otp = $otp;
@@ -34,19 +34,19 @@ class PhoneVerifyNotification extends Notification
         return [AfricasTalkingChannel::class];
     }
 
-public function toAfricasTalking($notifiable)
-{
-    return (new AfricasTalkingMessage())->content($this->otp)->to($this->phone);
-}
+    public function toAfricasTalking($notifiable)
+    {
+        return (new AfricasTalkingMessage())->content($this->otp)->to($this->phone);
+    }
     /**
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**

@@ -15,11 +15,16 @@ use Illuminate\Support\Facades\Auth;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Illuminate\Support\Facades\Storage;
 use Bpuig\Subby\Traits\HasSubscriptions;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable, HasSuperAdmin, 
-    TwoFactorAuthenticatable,HasSubscriptions;
+    use HasApiTokens,
+        HasFactory,
+        Notifiable,
+        HasSuperAdmin,
+        TwoFactorAuthenticatable,
+        HasSubscriptions;
 
     /**
      * The attributes that are mass assignable.
@@ -55,7 +60,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->avatar_url ? Storage::url($this->avatar_url) : null ;
+        return $this->avatar_url ? Storage::url($this->avatar_url) : null;
     }
 
     public function canAccessPanel(Panel $panel): bool
@@ -73,10 +78,15 @@ class User extends Authenticatable implements FilamentUser
     protected static function boot()
     {
         parent::boot();
-        static::created(function ($user){
+        static::created(function ($user) {
             $user->assignRole('Manager');
             $plan = Plan::getByTag('basic');
-            $user->newSubscription('primary',$plan, 'Primary Subscription', 'Client primary subscription', null, 'mpesa' );
+            $user->newSubscription('primary', $plan, 'Primary Subscription', 'Client primary subscription', null, 'mpesa');
         });
+    }
+
+    public function manager(): HasOne
+    {
+        return $this->hasOne(Manager::class,'id','id');
     }
 }

@@ -66,7 +66,7 @@ class Biodata extends Component implements HasForms
                         ])->afterValidation(function (Get $get) {
                             $otp = (new Otp())->generate($get('contact_number'), 6, 2);
                             Auth::user()->notify(new PhoneVerifyNotification('254' . substr($get('contact_number'), 1), $otp->token));
-                            Cache::put('phone', $get('contact_number'),now()->addMinutes(2));
+                            Cache::put('phone', $get('contact_number'),now()->addMinutes(5));
                             Notification::make()->success()->body('Check your phone for an otp token.The otp expires in 2 minutes.')->seconds(2)->send();
                         }),
                     Wizard\Step::make('Phone')->icon('heroicon-o-device-phone-mobile')->schema([
@@ -74,7 +74,7 @@ class Biodata extends Component implements HasForms
                             ->required()->rules([
                                 function () {
                                     return function (string $attribute, $value, $fail) {
-                                        $token = OtpModel::where('identifier', Cache::get('phone'))->latest()->get('token');
+                                        $token = OtpModel::where('identifier', Cache::get('phone'))->get('token');
                                         if ($value  != $token->first()->token) {
                                             $fail("The otp provided is invalid.");
                                         }
@@ -162,7 +162,7 @@ class Biodata extends Component implements HasForms
                 $manager =  Manager::create($new_data);
 
                 if ($manager) {
-                    User::whereId($manager->id)->update([
+                    User::find($manager->id)->update([
                         "isVerified" => true
                     ]);
 
@@ -193,7 +193,7 @@ class Biodata extends Component implements HasForms
             $manager =  Manager::create($new_data);
 
             if ($manager) {
-                User::whereId($manager->id)->update([
+                User::find($manager->id)->update([
                     "is_verified" => true
                 ]);
 

@@ -11,7 +11,6 @@ class MpesaC2BController extends Controller
 {
     public function registerURLS()
     {
-        dd('yelp');
         $shortcode = env('MPESA_B2C_SHORTCODE');
         $response =  Mpesa::c2bregisterURLS($shortcode);
         $result = json_decode((string)$response, true);
