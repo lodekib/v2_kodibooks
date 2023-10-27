@@ -21,7 +21,6 @@ class SubscriptionMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if(auth()->check()){
-
             $manager = Manager::find(auth()->id());
             if (!$manager->paid_subscription) {
                 if (!$manager->is_invoiced) {
