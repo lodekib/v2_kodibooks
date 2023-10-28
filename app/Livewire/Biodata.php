@@ -5,8 +5,8 @@ namespace App\Livewire;
 use App\Mail\VerifyOrgMail;
 use App\Models\Manager;
 use App\Models\User;
+use App\Notifications\PhoneVerifyNotification;
 use App\Services\CardService;
-use App\Services\SMSService;
 use Closure;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\DNSCheckValidation;
@@ -30,6 +30,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use Ichtrojan\Otp\Otp;
+use Ichtrojan\Otp\Models\Otp as OtpModel;
+
+use Illuminate\Support\Facades\Auth;
 
 class Biodata extends Component implements HasForms
 {
@@ -60,18 +64,18 @@ class Biodata extends Component implements HasForms
                                 TextInput::make('residence')->label('Residence')->required(),
                             ])->columns(4),
                         ])->afterValidation(function (Get $get) {
-                            $smsservice = App::make(SMSService::class);
-                            $response = $smsservice->sendOTP($get('contact_number'));
-                            if ($response->getStatusCode() == 200 && $response->getData()->isExpired == true) {
-                                Notification::make()->success()->body('Check your phone for an otp token.The otp expires in 5 minutes.')->seconds(2)->send();
-                            }
+                            $otp = (new Otp())->generate($get('contact_number'), 6, 2);
+                            Auth::user()->notify(new PhoneVerifyNotification('254' . substr($get('contact_number'), 1), $otp->token));
+                            Cache::put('phone', $get('contact_number'),now()->addMinutes(5));
+                            Notification::make()->success()->body('Check your phone for an otp token.The otp expires in 2 minutes.')->seconds(2)->send();
                         }),
                     Wizard\Step::make('Phone')->icon('heroicon-o-device-phone-mobile')->schema([
                         TextInput::make('otp')->helperText('Enter OTP sent to  your phone number.')
                             ->required()->rules([
                                 function () {
                                     return function (string $attribute, $value, $fail) {
-                                        if ($value  !== Cache::get('otp')) {
+                                        $token = OtpModel::where('identifier', Cache::get('phone'))->get('token');
+                                        if ($value  != $token->first()->token) {
                                             $fail("The otp provided is invalid.");
                                         }
                                     };
@@ -158,7 +162,7 @@ class Biodata extends Component implements HasForms
                 $manager =  Manager::create($new_data);
 
                 if ($manager) {
-                    User::whereId($manager->id)->update([
+                    User::find($manager->id)->update([
                         "isVerified" => true
                     ]);
 
@@ -189,7 +193,7 @@ class Biodata extends Component implements HasForms
             $manager =  Manager::create($new_data);
 
             if ($manager) {
-                User::whereId($manager->id)->update([
+                User::find($manager->id)->update([
                     "is_verified" => true
                 ]);
 

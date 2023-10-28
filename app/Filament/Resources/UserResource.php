@@ -27,7 +27,7 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Fieldset::make()->label('New user')->schema([
+                Fieldset::make()->label('New Client')->schema([
                     TextInput::make('name')->required(),
                     TextInput::make('email')->email()->required()->unique(ignoreRecord:true),
                     TextInput::make('password')->password()->required()->hiddenOn('edit')->confirmed(),
@@ -43,8 +43,9 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('created_at')->label('Date')->date(),
-                TextColumn::make('name')->size('sm'),
-                TextColumn::make('email')->size('sm')
+                TextColumn::make('manager.org_brand')->label('Client Name')->size('sm')->searchable(),
+                TextColumn::make('name')->label('Client Contact')->size('sm')->searchable(),
+                TextColumn::make('manager.org_email')->label('Client Email')->size('sm')->searchable(),
             ])
             ->filters([
                 //

@@ -15,7 +15,7 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
         $user = Auth::user();
         $plan = Plan::getByTag('Basic');
         if ($user->hasRole('Manager')) {
-            if (($user->subscriptions)->isEmpty()) {
+            if ($plan != null && ($user->subscriptions)->isEmpty()) {
                 $user->newSubscription('primary',$plan, 'Primary Subscription', 'Client primary subscription', null, 'mpesa' );
             }
             return redirect()->route('filament.manager.pages.manager-dashboard');

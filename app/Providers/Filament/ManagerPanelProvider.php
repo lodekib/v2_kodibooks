@@ -11,6 +11,7 @@ use App\Filament\Manager\Widgets\PendingInvoices;
 use App\Filament\Manager\Widgets\StatsOverview;
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\PaymentMiddleware;
+use App\Http\Middleware\SubscriptionMiddleware;
 use App\Providers\BillingProvider;
 use App\Services\ExampleBillingProvider;
 use Closure;
@@ -68,6 +69,7 @@ class ManagerPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                SubscriptionMiddleware::class
             ])
             ->authMiddleware([
                 Authenticate::class,
