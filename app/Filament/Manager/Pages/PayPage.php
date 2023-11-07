@@ -6,19 +6,16 @@ use App\Models\MpesaC2B;
 use App\Models\User;
 use App\Http\Middleware\SubscriptionMiddleware;
 use App\Models\Manager;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Notifications\Notification;
-
+use Iankumu\Mpesa\Facades\Mpesa;
 
 class PayPage extends Page implements HasForms
 {
     public $code;
+    public $isAgreed;
     use InteractsWithForms;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static bool $shouldRegisterNavigation = false;
@@ -43,5 +40,10 @@ class PayPage extends Page implements HasForms
         } else {
             Notification::make()->danger()->color('danger')->body('No such payment has been received !')->send();
         }
+    }
+
+    public function stk_push()
+    {
+        dd(Mpesa::stkpush('0748184040',1,4237321));
     }
 }
