@@ -60,7 +60,6 @@
                 <li>Press <strong>Make payment</strong> and enter your <strong>PIN</strong> </li>
                 <li>The active subscription amount will be deducted on successful transaction.</li>
             </ul>
-
         </x-slot>
         <x-filament::button wire:click="stk_push" icon="heroicon-m-banknotes">
             Make Payment
