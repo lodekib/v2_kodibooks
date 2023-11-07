@@ -14,9 +14,10 @@ use Iankumu\Mpesa\Facades\Mpesa;
 
 class PayPage extends Page implements HasForms
 {
+    use InteractsWithForms;
+
     public $code;
     public $isAgreed;
-    use InteractsWithForms;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static bool $shouldRegisterNavigation = false;
     protected ?string $heading = 'Payment Page';
@@ -44,6 +45,8 @@ class PayPage extends Page implements HasForms
 
     public function stk_push()
     {
-        dd(Mpesa::stkpush('0748184040',1,4237321));
+        $manager = Manager::find(auth()->id());
+        $subscription_amount = auth()->user()->subscriptions;
+        Mpesa::stkpush($manager->contact_number, $subscription_amount->first()->price, $manager->national_id);
     }
 }
