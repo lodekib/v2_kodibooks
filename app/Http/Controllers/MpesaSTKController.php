@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Manager;
 use App\Models\MpesaSTK;
 use Iankumu\Mpesa\Facades\Mpesa;
 use App\Mpesa\STKPush;
@@ -11,6 +12,7 @@ class MpesaSTKController extends Controller
 {
     public $result_code = 1;
     public $result_desc = 'An error occured';
+    
 
 
     public function STKPush(Request $request)
@@ -32,7 +34,8 @@ class MpesaSTKController extends Controller
 
     public function STKConfirm(Request $request)
     {
-        $stk_push_confirm = (new STKPush())->confirm($request);
+        $manager_identity = Manager::find(auth()->id())->national_id;
+        $stk_push_confirm = (new STKPush())->confirm($request,$manager_identity);
 
         if ($stk_push_confirm) {
             $this->result_code = 0;

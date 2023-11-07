@@ -1,18 +1,20 @@
 <?php
 
 namespace App\Mpesa;
+
+use App\Models\Manager;
 use App\Models\MpesaSTK;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class STKPush
 {
     public $failed = false;
     public $response = 'An Unknown Error Occured';
 
-    public function confirm(Request $request)
+    public function confirm(Request $request,$id)
     {
         $payload = json_decode($request->getContent());
-
         if (property_exists($payload, 'Body') && $payload->Body->stkCallback->ResultCode == '0') {
             $merchant_request_id = $payload->Body->stkCallback->MerchantRequestID;
             $checkout_request_id = $payload->Body->stkCallback->CheckoutRequestID;
@@ -20,8 +22,8 @@ class STKPush
             $result_code = $payload->Body->stkCallback->ResultCode;
             $amount = $payload->Body->stkCallback->CallbackMetadata->Item[0]->Value;
             $mpesa_receipt_number = $payload->Body->stkCallback->CallbackMetadata->Item[1]->Value;
-            $transaction_date = $payload->Body->stkCallback->CallbackMetadata->Item[2]->Value;
-            $phonenumber = $payload->Body->stkCallback->CallbackMetadata->Item[3]->Value;
+            $transaction_date = $payload->Body->stkCallback->CallbackMetadata->Item[3]->Value;
+            $phonenumber = $payload->Body->stkCallback->CallbackMetadata->Item[4]->Value;
 
             $stkPush = MpesaSTK::where('merchant_request_id', $merchant_request_id)
                 ->where('checkout_request_id', $checkout_request_id)->first();
@@ -35,6 +37,7 @@ class STKPush
                 'mpesa_receipt_number' => $mpesa_receipt_number,
                 'transaction_date' => $transaction_date,
                 'phone_number' => $phonenumber,
+                'manager_id_number' => $id
             ];
 
             if ($stkPush) {

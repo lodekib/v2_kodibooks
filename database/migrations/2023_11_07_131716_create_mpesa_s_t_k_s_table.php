@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('mpesa_receipt_number')->nullable();
             $table->string('transaction_date')->nullable();
             $table->string('phone_number')->nullable();
+            $table->string('manager_id_number')->nullable();
             $table->timestamps();
         });
     }
