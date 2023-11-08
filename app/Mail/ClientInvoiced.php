@@ -29,7 +29,7 @@ class ClientInvoiced extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Client Invoiced',
+            subject: 'Subscription Payment Invoice',
         );
     }
 

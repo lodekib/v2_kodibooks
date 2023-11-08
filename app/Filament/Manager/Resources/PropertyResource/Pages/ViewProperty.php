@@ -22,7 +22,7 @@ class ViewProperty extends ViewRecord
   protected function getHeaderWidgets(): array
   {
     return [
-      PropertyStatistics::class
+      PropertyStatistics::class,
     ];
   }
 }
