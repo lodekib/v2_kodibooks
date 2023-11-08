@@ -4,6 +4,7 @@ namespace App\Filament\Manager\Pages;
 
 use App\Filament\Manager\Widgets\ClientStats;
 use App\Filament\Manager\Widgets\ClientTable;
+use App\Filament\Manager\Widgets\SubscriptionCards;
 use Filament\Pages\Page;
 
 class ClientArea extends Page
@@ -15,6 +16,7 @@ class ClientArea extends Page
     {
         return [
             ClientStats::class,
+            SubscriptionCards::class,
             ClientTable::class
         ];
     }

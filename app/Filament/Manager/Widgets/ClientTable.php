@@ -13,6 +13,7 @@ class ClientTable extends BaseWidget
 
     protected  static ?string $heading = 'Subscription Invoices';
     protected int | string | array $columnSpan = 'full';
+
     public function table(Table $table): Table
     {
         return $table
