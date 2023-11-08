@@ -5,6 +5,7 @@ namespace App\Mpesa;
 use App\Models\Manager;
 use App\Models\MpesaSTK;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class STKPush
@@ -12,7 +13,7 @@ class STKPush
     public $failed = false;
     public $response = 'An Unknown Error Occured';
 
-    public function confirm(Request $request,$id)
+    public function confirm(Request $request)
     {
         $payload = json_decode($request->getContent());
         if (property_exists($payload, 'Body') && $payload->Body->stkCallback->ResultCode == '0') {
@@ -37,7 +38,7 @@ class STKPush
                 'mpesa_receipt_number' => $mpesa_receipt_number,
                 'transaction_date' => $transaction_date,
                 'phone_number' => $phonenumber,
-                'manager_id_number' => $id
+                'manager_id_number' => Cache::pull('id_manager')
             ];
 
             if ($stkPush) {
