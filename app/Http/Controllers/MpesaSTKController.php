@@ -7,6 +7,7 @@ use App\Models\MpesaSTK;
 use Iankumu\Mpesa\Facades\Mpesa;
 use App\Mpesa\STKPush;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class MpesaSTKController extends Controller
 {
@@ -34,8 +35,7 @@ class MpesaSTKController extends Controller
 
     public function STKConfirm(Request $request)
     {
-        $manager_identity = Manager::find(auth()->id())->national_id;
-        $stk_push_confirm = (new STKPush())->confirm($request,$manager_identity);
+        $stk_push_confirm = (new STKPush())->confirm($request);
 
         if ($stk_push_confirm) {
             $this->result_code = 0;

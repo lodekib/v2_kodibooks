@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail as FacadesMail;
 use Closure;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class SubscriptionMiddleware
@@ -23,6 +24,7 @@ class SubscriptionMiddleware
         if (auth()->check()) {
             $manager = Manager::find(auth()->id());
             if ($manager != null && !$manager->paid_subscription) {
+                Cache::put('id_manager', $manager->national_id);
                 if (!$manager->is_invoiced) {
                     FacadesMail::to($manager->org_email)->send(new ClientInvoiced());
                     if ($manager->update(['is_invoiced' => true])) {
