@@ -7,6 +7,7 @@ use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use App\Models\Tenant;
 use App\Models\Manager;
+use App\Models\ManagerInvoice;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,12 +28,8 @@ class InvoiceClient
 
         $the_client = new Party([
             'client' => $manager->org_brand,
-            // 'tenant_email' => $manager->org_email,
             'org_address' => $manager->org_address,
             'org_email' => $manager->org_email,
-            // 'due_date' =>  $data['due_date'],
-            // 'from' => $data['from'],
-            // 'to' => $data['to'],
         ]);
 
 
@@ -57,6 +54,15 @@ class InvoiceClient
         $outputPath = 'invoices/' . $the_client->client  . '/' . uniqid('invoice_') . 'pdf';
         Storage::disk('public')->put($outputPath, $invoice->stream());
         $pdfContent = Storage::disk('public')->get($outputPath);
+
+        $invoice_data = [
+            'client' => $the_client->client,
+            'invoice_number' => $invoiceNumber,
+            'amount' => $subscription->first()->price,
+            'national_id' => $manager->national_id
+        ];
+
+        ManagerInvoice::create($invoice_data);
 
         return $pdfContent;
     }
