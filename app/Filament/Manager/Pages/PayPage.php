@@ -18,12 +18,21 @@ class PayPage extends Page implements HasForms
 
     public $code;
     public $isAgreed;
+    public $isVisible = false;
+    public $new_number;
+
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static bool $shouldRegisterNavigation = false;
     protected ?string $heading = 'Payment Page';
     protected static string $view = 'filament.manager.pages.pay-page';
     protected static string | array $withoutRouteMiddleware = [SubscriptionMiddleware::class];
 
+
+    public function toggleVisibility()
+    {
+        $this->isVisible = !$this->isVisible;
+    }
 
     public function create()
     {
@@ -45,6 +54,7 @@ class PayPage extends Page implements HasForms
 
     public function stk_push()
     {
+        dd($this->new_number);
         $manager = Manager::find(auth()->id());
         $subscription_amount = auth()->user()->subscriptions;
         Mpesa::stkpush($manager->contact_number, $subscription_amount->first()->price, $manager->national_id);

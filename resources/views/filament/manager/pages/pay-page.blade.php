@@ -21,20 +21,22 @@
 
     </x-filament::fieldset>
 
-    @if ($isAgreed)
-    <x-filament::fieldset>
-        Invoice Area
-    </x-filament::fieldset>
-    <x-filament::section icon="heroicon-o-user" icon-color="primary" aside>
+    <x-filament::button type="submit" outlined icon="heroicon-o-arrow-right-circle" icon-position="after" wire:click="toggleVisibility">
+        Proceed to Payment section
+    </x-filament::button>
+    <x-filament::section icon="heroicon-o-banknotes" icon-color="primary" aside>
         <x-slot name="heading">
-            Transaction Code
+            Paybill 
         </x-slot>
-        <form wire:submit="create" class="py-4">
+        <form wire:submit="create">
             <x-filament::input.wrapper>
                 <x-filament::input type="text" wire:model="code" required />
             </x-filament::input.wrapper>
             <br>
-            <x-filament::button type="submit" icon="heroicon-m-paper-airplane">
+            <x-filament::button type="submit" icon="heroicon-m-chevron-right" icon-position="after">
+                <div wire:loading>
+                    <x-filament::loading-indicator class="h-5 w-5" />
+                </div>
                 Submit
             </x-filament::button>
         </form>
@@ -61,10 +63,26 @@
                 <li>The active subscription amount will be deducted on successful transaction.</li>
             </ul>
         </x-slot>
-        <x-filament::button wire:click="stk_push" icon="heroicon-m-banknotes">
-            Make Payment
-        </x-filament::button>
+        <x-filament::modal>
+            <x-slot name="heading">
+                Modal heading
+            </x-slot>
+            <x-slot name="trigger">
+                <x-filament::button>
+                    Stk Push
+                </x-filament::button>
+            </x-slot>
+            <form wire:submit="stk_push" class="py-4">
+                <x-filament::input.wrapper>
+                    <x-filament::input type="text" wire:model="new_number" required />
+                </x-filament::input.wrapper>
+                <br>
+                <x-filament::button type="submit" icon="heroicon-m-chevron-right" icon-position="after">
+                    Make Payment
+                </x-filament::button>
+            </form>
+        </x-filament::modal>
     </x-filament::section>
-    @endif
+
 
 </x-filament-panels::page>

@@ -16,8 +16,6 @@ class ClientArea extends Page
     {
         return [
             ClientStats::class,
-            SubscriptionCards::class,
-            ClientTable::class
         ];
     }
 }
