@@ -1,3 +1,3 @@
 <div>
-    Payments
+    {{$this->table}}
 </div>

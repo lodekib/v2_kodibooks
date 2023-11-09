@@ -20,7 +20,7 @@ class AllocationResource extends Resource
     protected static ?string $recordTitleAttribute = 'receipt_number';
     protected static ?string $model = Allocation::class;
     protected static ?string $navigationGroup = 'Payments';
-    protected static ?string $navigationIcon = 'heroicon-s-scale';
+    // protected static ?string $navigationIcon = 'heroicon-s-scale';
 
     public static function form(Form $form): Form
     {

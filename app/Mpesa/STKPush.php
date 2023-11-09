@@ -46,9 +46,7 @@ class STKPush
             } else {
                 MpesaSTK::create($data);
             }
-            Manager::where('national_id',Cache::get('id_manager'))->update(['paid_subscription' => true]);
-
-
+            Manager::where('national_id', Cache::get('id_manager'))->update(['paid_subscription' => true]);
         } else {
             $this->failed =  true;
         }

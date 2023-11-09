@@ -74,7 +74,27 @@ class ManagerPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])->navigationGroups([
-                'Assets', 'Payments', 'Invoices', 'Expenses', 'Utilities', 'Settings',
+                NavigationGroup::make()
+                    ->label('Assets')
+                    ->icon('heroicon-s-cube-transparent'),
+                NavigationGroup::make()
+                    ->label('Payments')
+                    ->icon('heroicon-s-currency-dollar'),
+                NavigationGroup::make()
+                    ->label('Invoices')
+                    ->icon('heroicon-s-clipboard-document-list'),
+                NavigationGroup::make()
+                    ->label('Expenses')
+                    ->icon('heroicon-s-banknotes'),
+                NavigationGroup::make()
+                    ->label('Utilities')
+                    ->icon('heroicon-s-funnel'),
+                NavigationGroup::make()
+                    ->label('Settings')
+                    ->icon('heroicon-s-cog'),
+                NavigationGroup::make()
+                    ->label('Archives')
+                    ->icon('heroicon-s-archive-box'),
             ])->renderHook(
                 'panels::content.start',
                 function (): string {

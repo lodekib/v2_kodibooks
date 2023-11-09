@@ -16,7 +16,7 @@ class StaleInvoices extends Page implements HasForms, HasTable
 
 {
     use InteractsWithForms, InteractsWithTable;
-    protected static ?string $navigationIcon = 'heroicon-s-archive-box';
+    // protected static ?string $navigationIcon = 'heroicon-s-archive-box';
     protected static ?string $navigationGroup = 'Archives';
     protected static string $view = 'filament.manager.pages.stale-invoices';
 

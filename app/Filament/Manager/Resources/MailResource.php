@@ -23,7 +23,7 @@ class MailResource extends Resource
     protected static ?string $recordTitleAttribute = 'smtp_username';
     protected static ?string $model = Mail::class;
     protected static ?string $navigationGroup = 'Settings';
-    protected static ?string $navigationIcon = 'heroicon-s-envelope-open';
+    // protected static ?string $navigationIcon = 'heroicon-s-envelope-open';
 
     public static function form(Form $form): Form
     {
