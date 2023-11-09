@@ -27,7 +27,7 @@ class UtilityResource extends Resource
     protected static ?string $recordTitleAttribute = 'utility_name';
     protected static ?string $model = Utility::class;
     protected static ?string $navigationGroup = 'Utilities';
-    protected static ?string $navigationIcon = 'heroicon-s-bolt';
+    // protected static ?string $navigationIcon = 'heroicon-s-bolt';
 
     public static function form(Form $form): Form
     {

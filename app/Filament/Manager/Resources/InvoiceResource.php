@@ -38,7 +38,7 @@ class InvoiceResource extends Resource
     protected static ?string $recordTitleAttribute = 'invoice_number';
     protected static ?string $model = Invoice::class;
     protected static ?string $navigationGroup = 'Invoices';
-    protected static ?string $navigationIcon = 'heroicon-s-newspaper';
+    // protected static ?string $navigationIcon = 'heroicon-s-newspaper';
 
     public static function getEloquentQuery(): Builder
     {

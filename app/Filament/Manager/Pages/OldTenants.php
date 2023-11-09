@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 class OldTenants extends Page implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
-    protected static ?string $navigationIcon = 'heroicon-s-user-minus';
+    // protected static ?string $navigationIcon = 'heroicon-s-user-minus';
     protected static ?string $navigationGroup = 'Archives';
     protected static string $view = 'filament.manager.pages.old-tenants';
 

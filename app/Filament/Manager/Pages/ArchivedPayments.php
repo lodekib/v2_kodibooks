@@ -18,7 +18,7 @@ use Konnco\FilamentImport\Actions\ImportField;
 class ArchivedPayments extends Page implements HasForms, HasTable
 {
     use InteractsWithTable, InteractsWithForms;
-    protected static ?string $navigationIcon = 'heroicon-s-document-minus';
+    // protected static ?string $navigationIcon = 'heroicon-s-document-minus';
     protected static ?string $navigationGroup = 'Archives';
     protected static string $view = 'filament.manager.pages.archived-payments';
 

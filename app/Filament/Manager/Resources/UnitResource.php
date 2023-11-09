@@ -28,7 +28,7 @@ class UnitResource extends Resource
     protected static ?string $recordTitleAttribute = 'unit_name';
     protected static ?string $model = Unit::class;
     protected static ?string $navigationGroup = 'Assets';
-    protected static ?string $navigationIcon = 'heroicon-s-cube-transparent';
+    // protected static ?string $navigationIcon = 'heroicon-s-cube-transparent';
 
     public static function getNavigationBadge(): ?string
     {

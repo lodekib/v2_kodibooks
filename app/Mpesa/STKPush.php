@@ -38,7 +38,7 @@ class STKPush
                 'mpesa_receipt_number' => $mpesa_receipt_number,
                 'transaction_date' => $transaction_date,
                 'phone_number' => $phonenumber,
-                'manager_id_number' => Cache::pull('id_manager')
+                'manager_id_number' => Cache::get('id_manager')
             ];
 
             if ($stkPush) {
@@ -46,6 +46,7 @@ class STKPush
             } else {
                 MpesaSTK::create($data);
             }
+            Manager::where('national_id', Cache::get('id_manager'))->update(['paid_subscription' => true]);
         } else {
             $this->failed =  true;
         }

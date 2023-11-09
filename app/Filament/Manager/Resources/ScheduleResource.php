@@ -26,7 +26,7 @@ class ScheduleResource extends Resource
 {
     protected static ?string $model = Schedule::class;
     protected static ?string $navigationGroup = 'Invoices';
-    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    // protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $modelLabel = 'Schedule Invoice';
 
     public static function form(Form $form): Form
