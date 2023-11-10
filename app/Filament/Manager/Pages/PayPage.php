@@ -15,7 +15,6 @@ use Iankumu\Mpesa\Facades\Mpesa;
 class PayPage extends Page implements HasForms
 {
     use InteractsWithForms;
-
     public $code;
     public $isAgreed;
     public $isVisible = false;
