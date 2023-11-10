@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('manager_invoices', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('manager_id');
+            $table->string('client');
+            $table->string('invoice_number');
             $table->string('invoice_status')->default('unpaid');
             $table->string('national_id');
             $table->string('amount');
