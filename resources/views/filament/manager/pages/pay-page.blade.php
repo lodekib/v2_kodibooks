@@ -12,7 +12,7 @@
                 <p class="text-sm text-gray-500">Billed monthly</p>
             </div>
             <label>
-                <x-filament::input.checkbox wire:model="isAgreed" />
+                <x-filament::input.checkbox wire:model.live="isAgreed" />
                 I agree to the <x-filament::link :href="route('filament.manager.pages.pay-page')">
                     Terms & Conditions
                 </x-filament::link></span>
