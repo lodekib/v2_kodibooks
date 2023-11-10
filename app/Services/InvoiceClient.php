@@ -51,7 +51,7 @@ class InvoiceClient
             ->currencyFormat('{SYMBOL}{VALUE}')->currencyThousandsSeparator(',')->currencyDecimalPoint('.')
             ->filename($the_client->client)->addItems($items)->notes($notes)
             ->logo(public_path('vendor/invoices/sample-logo.png'));
-        $outputPath = 'invoices/' . $the_client->client  . '/' . uniqid('invoice_') . 'pdf';
+        $outputPath = 'invoices/' . $the_client->client  . '/' .$invoiceNumber. '.pdf';
         Storage::disk('public')->put($outputPath, $invoice->stream());
         $pdfContent = Storage::disk('public')->get($outputPath);
 
