@@ -5,6 +5,7 @@ use App\Http\Controllers\MpesaSTKController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UtilityController;
+use App\Http\Middleware\ManagerIDMiddleware;
 use Illuminate\Support\Facades\Response;
 
 Route::middleware('auth')->group(function () {
@@ -13,7 +14,7 @@ Route::middleware('auth')->group(function () {
 
 Route::post('register-urls', [MpesaC2BController::class, 'registerURLS']);
 Route::post('validation',[MpesaC2BController::class,'validation'])->name('c2b.validate');
-Route::post('confirmation',[MpesaC2BController::class,'confirmation'])->name('c2b.confirm');
+Route::post('confirmation',[MpesaC2BController::class,'confirmation'])->name('c2b.confirm')->middleware(ManagerIDMiddleware::class);
 
 Route::post('/v1/mpesatest/stk/push', [MpesaSTKController::class, 'STKPush']);
 
