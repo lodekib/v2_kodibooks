@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\MpesaC2B;
+use App\Models\Paybill;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\Summarizers\Sum;
@@ -20,7 +21,7 @@ class ClientPaymentsComponent extends Component implements HasTable, HasForms
 
     public function table(Table $table): Table
     {
-        return $table->query(MpesaC2B::query())
+        return $table->query(MpesaC2B::where('Business_Shortcode',env('MPESA_BUSINESS_SHORTCODE')))
             ->columns([
                 TextColumn::make('created_at')->date()->size('sm')->searchable(),
                 TextColumn::make('FirstName')->searchable()->size('sm'),

@@ -21,8 +21,9 @@ class SubscriptionMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        
+
         if (auth()->check()) {
+            session(['manager_id'=> auth()->id()]);
             $manager = Manager::find(auth()->id());
             if ($manager != null && !$manager->paid_subscription) {
                 Cache::put('id_manager', $manager->national_id);
