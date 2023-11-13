@@ -35,45 +35,62 @@ class C2B
             $c2b->FirstName = $payload['FirstName'];
             $c2b->save();
         } else {
-            //TODO::SAVE IN PAYMENTS
-            Log::info(Cache::get('manager_id'));
             $tenant = Tenant::withoutGlobalScope(ManagerScope::class)->where('id_number', $payload['BillRefNumber'])->where('manager_id',Cache::get('manager_id'))->get(['id', 'full_names', 'property_name', 'unit_name']);
-            Log::info('My log message: ', $tenant->toArray());
-            $debit_credit = Statement::withoutGlobalScope(ManagerScope::class)->selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
-                ->where('tenant_name', $tenant->first()->full_names)->where('manager_id',Cache::get('manager_id'))
-                ->groupBy('tenant_name')
-                ->first();
-
-            $payment = Payment::withoutGlobalScope(ManagerScope::class)->create([
-                'manager_id' => Cache::get('manager_id'),
-                'receipt_number' => $payload['TransID'],
-                'reference_number' => $payload['TransID'],
-                'unit_name' => $tenant->first()->unit_name,
-                'national_id' => $payload['BillRefNumber'],
-                'tenant_name' => $tenant->first()->full_names,
-                'property_name' => $tenant->first()->property_name,
-                'mode_of_payment' => $payload['TransactionType'],
-                'amount' => $payload['TransAmount'],
-                'tenant_id' => $tenant[0]->id,
-                'balance' => $payload['TransAmount'],
-                'status' => 'unallocated',
-                'paid_date'  => $payload['TransTime']
-            ]);
-
-            if ($payment) {
-                $statement_data = [
+            if($tenant->isEmpty())
+            {
+                $payment = Payment::withoutGlobalScope(ManagerScope::class)->create([
                     'manager_id' => Cache::get('manager_id'),
-                    'tenant_id' => $tenant[0]->id,
+                    'receipt_number' => $payload['TransID'],
+                    'reference_number' => $payload['TransID'],
+                    // 'unit_name' => $tenant->first()->unit_name,
+                    'national_id' => $payload['BillRefNumber'],
+                    // 'tenant_name' => $tenant->first()->full_names,
+                    // 'property_name' => $tenant->first()->property_name,
+                    'mode_of_payment' => $payload['TransactionType'],
+                    'amount' => $payload['TransAmount'],
+                    // 'tenant_id' => $tenant[0]->id,
+                    'balance' => $payload['TransAmount'],
+                    'status' => 'unallocated',
+                    'paid_date'  => $payload['TransTime']
+                ]);
+
+            }else{
+                $debit_credit = Statement::withoutGlobalScope(ManagerScope::class)->selectRaw('tenant_name, SUM(debit) as total_debit, SUM(credit) as total_credit')
+                    ->where('tenant_name', $tenant->first()->full_names)->where('manager_id',Cache::get('manager_id'))
+                    ->groupBy('tenant_name')
+                    ->first();
+    
+                $payment = Payment::withoutGlobalScope(ManagerScope::class)->create([
+                    'manager_id' => Cache::get('manager_id'),
+                    'receipt_number' => $payload['TransID'],
+                    'reference_number' => $payload['TransID'],
+                    'unit_name' => $tenant->first()->unit_name,
+                    'national_id' => $payload['BillRefNumber'],
                     'tenant_name' => $tenant->first()->full_names,
-                    'description' => 'Mpesa',
-                    'reference' => $payload['TransID'],
-                    'credit' => $payment->balance,
-                    'debit' => 0,
-                    'balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance,
-                    'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance
-                ];
-                Statement::withoutGlobalScope(ManagerScope::class)->create($statement_data);
-                InvoiceReceiptAutoAllocation::handleNewReceipt($tenant->first()->full_names, $payment);
+                    'property_name' => $tenant->first()->property_name,
+                    'mode_of_payment' => $payload['TransactionType'],
+                    'amount' => $payload['TransAmount'],
+                    'tenant_id' => $tenant[0]->id,
+                    'balance' => $payload['TransAmount'],
+                    'status' => 'unallocated',
+                    'paid_date'  => $payload['TransTime']
+                ]);
+    
+                if ($payment) {
+                    $statement_data = [
+                        'manager_id' => Cache::get('manager_id'),
+                        'tenant_id' => $tenant[0]->id,
+                        'tenant_name' => $tenant->first()->full_names,
+                        'description' => 'Mpesa',
+                        'reference' => $payload['TransID'],
+                        'credit' => $payment->balance,
+                        'debit' => 0,
+                        'balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance,
+                        'cummulative_balance' => $debit_credit != null ? $debit_credit->total_debit - ($debit_credit->total_credit + $payment->balance) : -$payment->balance
+                    ];
+                    Statement::withoutGlobalScope(ManagerScope::class)->create($statement_data);
+                    InvoiceReceiptAutoAllocation::handleNewReceipt($tenant->first()->full_names, $payment);
+                }
             }
         }
 
