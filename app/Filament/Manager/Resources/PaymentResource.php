@@ -10,6 +10,7 @@ use App\Models\Property;
 use App\Models\Statement;
 use App\Models\Tenant;
 use App\Models\Unit;
+use App\Services\InvoiceReceiptAutoAllocation;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
@@ -95,9 +96,44 @@ class PaymentResource extends Resource
             ->filters([])
             ->actions([
                 ActionGroup::make([
+                    Tables\Actions\Action::make('Update Payment')->icon('heroicon-o-pencil-square')->action(function (array $data, $record) {
+                        $payment = Payment::where('reference_number', $record->reference_number)->first();
+                        $tenant = Tenant::where('id_number', $data['account'])->first();
+                        $total_debit = Statement::where('tenant_name', $tenant->full_names)->sum('debit');
+                        $total_credit = Statement::where('tenant_name', $tenant->full_names)->sum('credit');
+
+                        $update = $payment->update([
+                            'tenant_id' => $tenant->id,
+                            'property_name' => $tenant->property_name,
+                            'unit_name' => $tenant->unit_name,
+                            'tenant_name' => $tenant->full_names
+                        ]);
+
+                        if ($update) {
+                            $statement_data = [
+                                'tenant_id' => $tenant->id,
+                                'tenant_name' => $tenant->full_names,
+                                'description' => 'Mpesa',
+                                'reference' => $record->reference_number,
+                                'credit' => $record->balance,
+                                'debit' => 0,
+                                'balance' => $total_debit - ($total_credit + $record->balance),
+                                'cummulative_balance' => $total_debit - ($total_credit + $record->balance),
+                                's_balance' => $total_debit - ($total_credit + $record->balance),
+
+                            ];
+                            $statement = Statement::create($statement_data);
+                            InvoiceReceiptAutoAllocation::handleNewReceipt($tenant, $update, $statement);
+                        }
+                    })->form([
+                        Fieldset::make()->schema([
+                            TextInput::make('account')->default(fn ($record) => $record->national_id),
+                            TextInput::make('reference number')->default(fn ($record) => $record->reference_number)->disabled()->dehydrated(),
+                            TextInput::make('amount')->default(fn ($record) => $record->amount)->disabled()->dehydrated()
+                        ])->columns(3)
+                    ]),
                     Tables\Actions\Action::make('pdf')
                         ->label('Download Receipt')
-                        ->color('primary')
                         ->icon('heroicon-s-arrow-down-tray')
                         ->action(function (Model $record) {
                             return response()->streamDownload(function () use ($record) {
