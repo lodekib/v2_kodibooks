@@ -6,6 +6,7 @@ use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\UnitResource\Pages;
 use App\Filament\Manager\Resources\UnitResource\RelationManagers;
 use App\Models\Property;
+use App\Models\Tenant;
 use App\Models\Unit;
 use Closure;
 use Filament\Forms;
@@ -63,7 +64,7 @@ class UnitResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->groups(['status','property_name'])
+        return $table->groups(['status', 'property_name'])
             ->columns([
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->label('Date')->size('sm')->date(),
@@ -82,12 +83,24 @@ class UnitResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make()
+                    Tables\Actions\DeleteAction::make()->action(function ($record) {
+                        if ($record->status == 'occupied') {
+                            $tenant = Tenant::find($record->tenant_id);
+                            if ($tenant->units->count() > 1) {
+                                $record->delete();
+                            } else {
+                                $tenant->update(['status' => 'stale']);
+                                $tenant->payments->each->update(['status' => fn ($payment) => 'stale/' . $payment->status]);
+                                $tenant->invoices->each->update(['invoice_status' => fn ($invoice) => 'stale/' . $invoice->invoice_status]);
+                                $record->delete();
+                            }
+                        }
+                    })
                 ])->button()->label('Actions')->color('gray')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([

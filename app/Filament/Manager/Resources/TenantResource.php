@@ -208,12 +208,8 @@ class TenantResource extends Resource
                     DeleteAction::make()->action(function ($record) {
                         $record->update(['status' => 'stale']);
                         Unit::where('unit_name', $record->unit_name)->update(['status' => 'vacant']);
-                        $record->payments->each(function (Payment $payment) {
-                            $payment->update(['status' => 'stale/' . $payment->status]);
-                        });
-                        $record->invoices->each(function (Invoice $invoice) {
-                            $invoice->update(['invoice_status' => 'stale/' . $invoice->invoice_status]);
-                        });
+                        $record->payments->each->update(['status' => fn ($payment) => 'stale/' . $payment->status]);
+                        $record->invoices->each->update(['invoice_status' => fn ($invoice) => 'stale/' . $invoice->invoice_status]);                        
                         $record->activeutility->delete();
                         Notification::make()->success()->color('success')->body('Successfully deleted the tenant !')->send();
                     })
