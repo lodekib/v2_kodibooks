@@ -97,12 +97,11 @@ class PaymentResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\Action::make('Update Payment')->icon('heroicon-o-pencil-square')->action(function (array $data, $record) {
-                        $payment = Payment::where('reference_number', $record->reference_number)->first();
                         $tenant = Tenant::where('id_number', $data['account'])->first();
                         $total_debit = Statement::where('tenant_name', $tenant->full_names)->sum('debit');
                         $total_credit = Statement::where('tenant_name', $tenant->full_names)->sum('credit');
 
-                        $update = $payment->update([
+                        $update = $record->update([
                             'tenant_id' => $tenant->id,
                             'property_name' => $tenant->property_name,
                             'unit_name' => $tenant->unit_name,
@@ -123,7 +122,7 @@ class PaymentResource extends Resource
 
                             ];
                             $statement = Statement::create($statement_data);
-                            InvoiceReceiptAutoAllocation::handleNewReceipt($tenant, $update, $statement);
+                            InvoiceReceiptAutoAllocation::handleNewReceipt($tenant->full_names, $record);
                         }
                     })->form([
                         Fieldset::make()->schema([
