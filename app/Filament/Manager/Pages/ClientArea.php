@@ -11,6 +11,8 @@ class ClientArea extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-arrows-pointing-in';
     protected static string $view = 'filament.manager.pages.client-area';
+    protected static bool $shouldRegisterNavigation = false;
+
 
     protected function getHeaderWidgets(): array
     {

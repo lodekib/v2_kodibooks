@@ -82,6 +82,7 @@ class PaymentResource extends Resource
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->size('sm')->datetime()->searchable()->label('Date'),
                 TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
+                TextColumn::make('tenant.id_number')->label('Account number')->size('sm')->searchable()->sortable()->copyable(),
                 TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->size('sm')->sortable()->searchable(),
                 TextColumn::make('mode_of_payment')->size('sm')->searchable()->sortable(),
@@ -141,7 +142,6 @@ class PaymentResource extends Resource
                                 )->stream();
                             }, $record->property_name . '-' . $record->tenant_name . '.pdf');
                         }),
-                    Tables\Actions\EditAction::make()->color('gray'),
                     DeleteAction::make()->action(function ($record) {
                         $record->update(['status' => 'stale/' . $record->status]);
                         Notification::make()->success()->color('success')->body('Payment deleted successfully !')->send();

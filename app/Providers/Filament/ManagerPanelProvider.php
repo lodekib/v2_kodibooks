@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\AvatarProviders\BoringAvatarsProvider;
+use App\Filament\Manager\Pages\ClientArea;
 use App\Filament\Manager\Pages\ManagerDashboard;
 use App\Filament\Manager\Widgets\ExpenseChart;
 use App\Filament\Manager\Widgets\IncomeChart;
@@ -18,6 +19,7 @@ use Closure;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages;
@@ -34,6 +36,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
+use Jeffgreco13\FilamentBreezy\Pages\MyProfilePage;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
 use Livewire\Livewire;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
@@ -73,7 +76,11 @@ class ManagerPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->navigationGroups([
+            ])->userMenuItems([
+                'Client Area' => MenuItem::make()->label('Client Area')->icon('heroicon-s-user-group')->url(fn():string => ClientArea::getUrl()),
+                'Profile' =>MenuItem::make()->label('Profile')->icon('heroicon-s-cog')->url(fn():string => MyProfilePage::getUrl())
+            ])
+            ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Assets')
                     ->icon('heroicon-s-cube-transparent'),
