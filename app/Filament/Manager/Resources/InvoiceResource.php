@@ -28,6 +28,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -91,7 +92,22 @@ class InvoiceResource extends Resource
                 TextColumn::make('balance')->size('sm')->money('kes')
             ])
             ->filters([
-                //
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('start_date'),
+                        DatePicker::make('end_date'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['start_date'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['end_date'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
             ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()])
             ->actions([
                 ActionGroup::make([
@@ -105,9 +121,9 @@ class InvoiceResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                     Tables\Actions\DeleteBulkAction::make()->action(function(Collection $records){
-                        $records->each(fn($record) => $record->update(['invoice_status' => 'stale/'.$record->invoice_status]));
-                     }),
+                    Tables\Actions\DeleteBulkAction::make()->action(function (Collection $records) {
+                        $records->each(fn ($record) => $record->update(['invoice_status' => 'stale/' . $record->invoice_status]));
+                    }),
                 ]),
             ])
             ->emptyStateActions([

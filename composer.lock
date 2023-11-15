@@ -6433,16 +6433,16 @@
         },
         {
             "name": "pxlrbt/filament-excel",
-            "version": "v2.1.4",
+            "version": "v2.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pxlrbt/filament-excel.git",
-                "reference": "c228e73c4adc0aa919088033c239705740718c95"
+                "reference": "c1fff9026e386474a55a4463ca24a258390b252f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pxlrbt/filament-excel/zipball/c228e73c4adc0aa919088033c239705740718c95",
-                "reference": "c228e73c4adc0aa919088033c239705740718c95",
+                "url": "https://api.github.com/repos/pxlrbt/filament-excel/zipball/c1fff9026e386474a55a4463ca24a258390b252f",
+                "reference": "c1fff9026e386474a55a4463ca24a258390b252f",
                 "shasum": ""
             },
             "require": {
@@ -6488,7 +6488,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pxlrbt/filament-excel/issues",
-                "source": "https://github.com/pxlrbt/filament-excel/tree/v2.1.4"
+                "source": "https://github.com/pxlrbt/filament-excel/tree/v2.1.8"
             },
             "funding": [
                 {
@@ -6496,7 +6496,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-11T06:14:04+00:00"
+            "time": "2023-10-31T08:23:14+00:00"
         },
         {
             "name": "ralouphie/getallheaders",

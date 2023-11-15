@@ -26,10 +26,12 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 class PaymentResource extends Resource
@@ -94,7 +96,24 @@ class PaymentResource extends Resource
                     'partially allocated' => 'warning',
                 })->searchable(),
             ])->striped()
-            ->filters([])
+            ->filters([
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('start_date'),
+                        DatePicker::make('end_date'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['start_date'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['end_date'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+            ])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\Action::make('Update Payment')->icon('heroicon-o-pencil-square')->action(function (array $data, $record) {
@@ -154,7 +173,7 @@ class PaymentResource extends Resource
                 Tables\Actions\BulkActionGroup::make([]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ]);
     }
 

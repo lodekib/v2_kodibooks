@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Livewire;
+
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Models\ActiveUtility;
 use App\Models\Invoice;
@@ -30,7 +31,9 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class InvoiceTable extends Component implements HasForms, HasTable
@@ -59,7 +62,22 @@ class InvoiceTable extends Component implements HasForms, HasTable
                 TextColumn::make('balance')->size('sm')->money('kes')
             ])
             ->filters([
-                // ...
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('start_date'),
+                        DatePicker::make('end_date'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['start_date'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['end_date'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
             ])
             ->headerActions([
                 CreateAction::make()->label('Invoice tenant')->action(function (array $data): void {
