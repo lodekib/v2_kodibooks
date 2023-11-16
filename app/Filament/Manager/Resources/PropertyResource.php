@@ -57,7 +57,7 @@ class PropertyResource extends Resource
                 Fieldset::make()
                     ->schema([
                         TextInput::make('property_name')->required()->unique(ignoreRecord: true),
-                        TextInput::make('number_of_units')->integer()->minValue(1)->required(),
+                        // TextInput::make('number_of_units')->integer()->minValue(1)->required(),
                         TextInput::make('property_size')->integer()->minValue(1)->required()->prefix('sq . m'),
                         TextInput::make('property_cost')->prefix('Ksh')->required()->integer()->minValue(0),
                         Select::make('property_status')->options(['good' => 'Good', 'maintenance' => 'Maintenance',]),
@@ -75,7 +75,7 @@ class PropertyResource extends Resource
                 TextColumn::make('property_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('property_size')->size('sm')->suffix(' sq. m'),
                 TextColumn::make('property_cost')->size('sm')->money('kes'),
-                TextColumn::make('number_of_units')->size('sm'),
+                TextColumn::make('number_of_units')->size('sm')->formatStateUsing(fn($record) => $record->units->count()),
                 TextColumn::make('property_status')->color(fn ($state) => $state == 'good' ? 'primary' : 'danger')->searchable()->badge(),
                 TextColumn::make('property_location')->size('sm')->searchable()->sortable(),
             ])
@@ -94,7 +94,7 @@ class PropertyResource extends Resource
             ])->headerActions([
                 ExportAction::make()->outlined()->label('Excel')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])])
                 // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
-                ])
+            ])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
