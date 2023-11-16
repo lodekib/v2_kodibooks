@@ -77,8 +77,8 @@ class ManagerPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])->userMenuItems([
-                'Client Area' => MenuItem::make()->label('Client Area')->icon('heroicon-s-user-group')->url(fn():string => ClientArea::getUrl()),
-                'Profile' =>MenuItem::make()->label('Profile')->icon('heroicon-s-cog')->url(fn():string => MyProfilePage::getUrl())
+                'Client Area' => MenuItem::make()->label('Client Area')->icon('heroicon-s-user-group')->url(fn (): string => ClientArea::getUrl()),
+                'Profile' => MenuItem::make()->label('Profile')->icon('heroicon-s-cog')->url(fn (): string => MyProfilePage::getUrl())
             ])
             ->navigationGroups([
                 NavigationGroup::make()

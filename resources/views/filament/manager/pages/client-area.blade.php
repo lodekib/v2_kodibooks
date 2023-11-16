@@ -1,5 +1,4 @@
 <x-filament-panels::page>
-
     <div x-data="{ activeTab: 'Invoices' }">
         <x-filament::tabs label="client area">
             <x-filament::tabs.item alpine-active="activeTab === 'Invoices'" x-on:click="activeTab = 'Invoices'" icon="heroicon-o-map">
