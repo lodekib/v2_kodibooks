@@ -137,7 +137,8 @@ class PaymentTable extends Component implements HasForms, HasTable
                         } else {
                             Notification::make()->warning()->color('warning')->body('Unable to add payment !')->send();
                         }
-                    }),
+                    }
+                ),
                 FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->actions([

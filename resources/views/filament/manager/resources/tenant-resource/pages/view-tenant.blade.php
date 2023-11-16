@@ -11,6 +11,15 @@
         @endif
     </div>
 
+    <x-filament::fieldset>
+        <x-slot name="label">
+            Quick Actions
+        </x-slot>
+
+        <x-filament::button wire:click="refund"  icon="heroicon-s-minus" icon-position="after" outlined >
+            Refund Deposit
+        </x-filament::button></x-filament::fieldset>
+
     <div x-data="{ activeTab: 'Invoice Statement' }">
         <x-filament::tabs label="tenant info tabs">
             <x-filament::tabs.item alpine-active="activeTab === 'Invoice Statement'" x-on:click="activeTab = 'Invoice Statement'" icon="heroicon-s-clipboard-document">

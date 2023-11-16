@@ -6,7 +6,11 @@ use App\Filament\Manager\Resources\TenantResource;
 use App\Models\ActiveUtility;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Models\Statement;
 use App\Models\Utility;
+use App\Services\InvoiceReceiptAutoAllocation;
+use Carbon\Carbon;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewTenant extends ViewRecord
@@ -56,5 +60,46 @@ class ViewTenant extends ViewRecord
             ->exists();
 
         return $has_water_utility;
+    }
+
+    public function refund()
+    {
+        $total_debit = Statement::where('tenant_name', $this->record->full_names)->sum('debit');
+        $total_credit = Statement::where('tenant_name', $this->record->full_names)->sum('credit');
+        $receipt_number = strtoupper(substr($this->record->property_name, 0, 3)) . "-" . time();
+        $receipt_data = [
+            'tenant_id' => $this->record->id,
+            'tenant_name' => $this->record->full_names,
+            'national_id' => $this->record->id_number,
+            'property_name' => $this->record->property_name,
+            'unit_name' => $this->record->unit_name,
+            'reference_number' => 'Deposit',
+            'receipt_number' => $receipt_number,
+            'mode_of_payment' => 'Deposit',
+            'amount' => $this->record->deposit,
+            'balance' => $this->record->deposit,
+            'paid_date' => Carbon::now(),
+            'status' => 'unallocated'
+        ];
+        $receipt = Payment::create($receipt_data);
+
+        if ($receipt) {
+            $statement_data = [
+                'tenant_id' => $this->record->id,
+                'tenant_name' => $this->record->full_names,
+                'description' => 'Deposit refund',
+                'reference' => $receipt->receipt_number,
+                'credit' => $receipt->balance,
+                'debit' => 0,
+                'balance' => $total_debit - ($total_credit + $receipt->balance),
+                'cummulative_balance' => $total_debit - ($total_credit + $receipt->balance),
+                's_balance' => $total_debit - ($total_credit + $receipt->balance),
+            ];
+            $statement = Statement::create($statement_data);
+            InvoiceReceiptAutoAllocation::handleNewReceipt($this->record->full_names, $receipt);
+            Notification::make()->success()->color('success')->body("Deposit refunded  successfully !")->send();
+        } else {
+            Notification::make()->warning()->color('warning')->body('Unable to refund the deposit !')->send();
+        }
     }
 }

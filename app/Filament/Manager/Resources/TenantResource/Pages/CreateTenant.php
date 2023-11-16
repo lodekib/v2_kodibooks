@@ -3,7 +3,11 @@
 namespace App\Filament\Manager\Resources\TenantResource\Pages;
 
 use App\Filament\Manager\Resources\TenantResource;
+use App\Models\Invoice;
+use App\Models\Statement;
 use App\Models\Unit;
+use App\Services\InvoiceReceiptAutoAllocation;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -33,16 +37,59 @@ class CreateTenant extends CreateRecord
                 'balance' => intval($data['rent']) + intval($data['deposit'])
             ]
         );
-        $response = $this->getModel()::create($tenant_data);
+        $tenant = $this->getModel()::create($tenant_data);
 
-        if ($response) {
+        if ($tenant) {
             $unit->first()->update([
                 'status' => 'occupied',
-                'tenant_id' => $response->id,
+                'tenant_id' => $tenant->id,
                 'rent' => $data['rent'],
                 'deposit' => $data['deposit']
             ]);
+
+            //CREATE THE DEPOSIT INVOICE
+            $invoice_number = strtoupper(substr($tenant->property_name, 0, 3)) . "-" . time();
+            $final_invoice_data = [
+                'tenant_id' => $tenant->id,
+                'national_id' => $tenant->id_number,
+                'invoice_number' => $invoice_number,
+                'invoice_type' => 'Deposit',
+                'due_date' => Carbon::now(),
+                'from' => Carbon::now(),
+                'to' => Carbon::now(),
+                'tenant_name' => $tenant->full_names,
+                'property_name' => $tenant->property_name,
+                'unit_name' => $tenant->unit_name,
+                'invoice_description' => 'Deposit Invoice',
+                'amount_invoiced' => $tenant->deposit,
+                'invoice_status' => 'pending',
+                'balance' => $tenant->deposit
+            ];
+
+            $final_invoice = Invoice::create($final_invoice_data);
+            //check for auto invoicing 
+            if ($final_invoice) {
+                //TODO::OPTIMIZATION NEEDED
+                $total_debit = Statement::where('tenant_name', $tenant->full_names)->sum('debit');
+                $total_credit = Statement::where('tenant_name', $tenant->full_names)->sum('credit');
+
+                $statement_data = [
+                    'tenant_id' => $tenant->id,
+                    'tenant_name' => $tenant->full_names,
+                    'description' => "Deposit invoice",
+                    'reference' => $final_invoice->invoice_number,
+                    'debit' => $final_invoice->balance,
+                    'credit' => 0,
+                    'balance' => $total_debit - ($total_credit - $final_invoice->balance),
+                    'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance),
+                    's_balance' => $total_debit - ($total_credit - $final_invoice->balance),
+
+                ];
+                Statement::create($statement_data);
+                InvoiceReceiptAutoAllocation::handleNewInvoice($final_invoice);
+            }
+            //END
         }
-        return $response;
+        return $tenant;
     }
 }
