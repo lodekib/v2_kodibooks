@@ -9,6 +9,8 @@ use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
 use Closure;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -79,23 +81,18 @@ class UnitResource extends Resource
             ->striped()
             ->filters([
                 //
-            ])->headerActions([FilamentExportHeaderAction::make('Generate Reports')->color('gray')->disableAdditionalColumns()])
+            ])->headerActions([
+                ExportAction::make()->outlined()->label('Excel')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])])
+                // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->disableAdditionalColumns()
+                ])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make()->action(function ($record) {
-                        if ($record->status == 'occupied') {
-                            $tenant = Tenant::find($record->tenant_id);
-                            if ($tenant->units->count() > 1) {
-                                $record->delete();
-                            } else {
-                                $tenant->update(['status' => 'stale']);
-                                $tenant->payments->each->update(['status' => fn ($payment) => 'stale/' . $payment->status]);
-                                $tenant->invoices->each->update(['invoice_status' => fn ($invoice) => 'stale/' . $invoice->invoice_status]);
-                                $record->delete();
-                            }
+                        if ($record->status == 'vacant') {
+                            $record->delete();
                         }
-                    })
+                    })->visible(fn($record) => $record->status == 'vacant' ? true : false)
                 ])->button()->label('Actions')->color('gray')
             ])
             ->bulkActions([
@@ -104,7 +101,7 @@ class UnitResource extends Resource
                 ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ]);
     }
 
