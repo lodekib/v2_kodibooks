@@ -8,8 +8,6 @@ use App\Models\Invoice;
 use App\Models\Statement;
 use App\Models\Utility;
 use App\Models\Waterbill;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use App\Services\InvoiceReceiptAutoAllocation;
 use App\Services\InvoiceTenant;
 use Filament\Forms\Components\DatePicker;
@@ -35,6 +33,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class InvoiceTable extends Component implements HasForms, HasTable
 {
@@ -209,7 +209,8 @@ class InvoiceTable extends Component implements HasForms, HasTable
                         Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
                     ])->visible(fn (Get $get) => $get('invoice_type') !== null ? true : false)
                 ]),
-                FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+                ExportAction::make()->outlined()->label('Excel')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])])
+                // FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->actions([
                 ActionGroup::make([
