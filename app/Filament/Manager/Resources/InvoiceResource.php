@@ -80,18 +80,18 @@ class InvoiceResource extends Resource
             ->columns([
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->label('Date')->datetime()->size('sm'),
-                TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('unit_name')->size('sm')->sortable()->searchable(),
-                TextColumn::make('invoice_number')->size('sm')->searchable()->sortable(),
-                TextColumn::make('invoice_type')->size('sm')->searchable()->sortable(),
-                TextColumn::make('invoice_status')->color(fn (string $state): string => match ($state) {
+                TextColumn::make('property_name')->label('Property')->size('sm')->searchable()->sortable(),
+                TextColumn::make('tenant_name')->label('Tenant')->size('sm')->searchable()->sortable(),
+                TextColumn::make('unit_name')->label('Unit')->size('sm')->sortable()->searchable(),
+                TextColumn::make('invoice_number')->label('INV')->size('sm')->searchable()->sortable(),
+                TextColumn::make('invoice_type')->label('Type')->size('sm')->searchable()->sortable(),
+                TextColumn::make('invoice_status')->label('Status')->color(fn (string $state): string => match ($state) {
                     'pending' => 'warning',
                     'partially paid' => 'gray',
                     'fully paid' => 'success'
                 })->label('Status')->searchable()->sortable()->badge(),
-                TextColumn::make('amount_invoiced')->size('sm')->money('kes')->searchable(),
-                TextColumn::make('balance')->size('sm')->money('kes')
+                TextColumn::make('amount_invoiced')->label('Amount')->size('sm')->money('kes')->searchable(),
+                TextColumn::make('balance')->label('Balance')->size('sm')->money('kes')
             ])
             ->filters([
                 Filter::make('created_at')
