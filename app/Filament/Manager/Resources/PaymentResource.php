@@ -84,12 +84,12 @@ class PaymentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('created_at')->size('sm')->datetime()->searchable()->label('Date'),
-                TextColumn::make('tenant_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('tenant.id_number')->label('Account number')->size('sm')->searchable()->sortable()->copyable(),
-                TextColumn::make('unit_name')->size('sm')->searchable()->sortable(),
-                TextColumn::make('receipt_number')->size('sm')->sortable()->searchable(),
-                TextColumn::make('mode_of_payment')->size('sm')->searchable()->sortable(),
+                TextColumn::make('created_at')->size('sm')->date()->searchable()->label('Date'),
+                TextColumn::make('tenant_name')->label('Tenant')->size('sm')->searchable()->sortable(),
+                TextColumn::make('tenant.id_number')->label('Account')->size('sm')->searchable()->sortable()->copyable(),
+                TextColumn::make('unit_name')->label('Unit')->size('sm')->searchable()->sortable(),
+                TextColumn::make('receipt_number')->label('Receipt')->size('sm')->sortable()->searchable(),
+                TextColumn::make('mode_of_payment')->label('Mode')->size('sm')->searchable()->sortable(),
                 TextColumn::make('amount')->money('kes')->searchable(),
                 TextColumn::make('balance')->money('kes')->searchable(),
                 TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
