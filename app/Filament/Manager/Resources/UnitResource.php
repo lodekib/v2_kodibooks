@@ -81,8 +81,8 @@ class UnitResource extends Resource
             ->filters([
                 //
             ])->headerActions([
-                ExportAction::make()->outlined()->label('Excel')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])])
-                // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->disableAdditionalColumns()
+                ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::CSV)]),
+                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::XLSX)])                // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->disableAdditionalColumns()
                 ])
             ->actions([
                 ActionGroup::make([

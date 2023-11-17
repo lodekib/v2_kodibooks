@@ -92,8 +92,11 @@ class PropertyResource extends Resource
                         ->when($data['created_until'], fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date));
                 }),
             ])->headerActions([
-                ExportAction::make()->outlined()->label('Excel')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])])
-                // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+                ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::CSV)]),
+                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::XLSX)]),
+                ExportAction::make()->outlined()->label('PDF')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::DOMPDF)]),
+
+                                // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->actions([
                 ActionGroup::make([
