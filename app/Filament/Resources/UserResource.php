@@ -58,7 +58,24 @@ class UserResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\Action::make('message')->label('Message Client')->icon('heroicon-o-chat-bubble-left-right')->action(
-                        fn ($record, array $data) => Notification::make()->title($data['message_title'])->body($data['message'])->sendToDatabase($record))->form([
+                        fn ($record, array $data) => Notification::make()->title($data['message_title'])->icon(
+                            function () use ($data) {
+                                $type = $data['message_type'];
+                                return  match ($type) {
+                                    'Reminder' => 'heroicon-o-clock',
+                                    'Info' => 'heroicon-o-information-circle',
+                                    'Warning' => 'heroicon-o-exclamation-triangle',
+                                };
+                            }
+                        )->iconColor(function () use ($data) {
+                            $type = $data['message_type'];
+                            return  match ($type) {
+                                'Reminder' => 'primary',
+                                'Info' => 'info',
+                                'Warning' => 'danger',
+                            };
+                        })->body($data['message'])->sendToDatabase($record)
+                    )->form([
                         Section::make()->schema([
                             Select::make('message_type')->options(['Reminder' => 'Reminder', 'Info' => 'Info', 'Warning' => 'Warning'])->required(),
                             TextInput::make('message_title')->required()->maxLength(100),
