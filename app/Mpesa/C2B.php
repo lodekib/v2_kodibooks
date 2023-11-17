@@ -3,6 +3,7 @@
 namespace App\Mpesa;
 
 use App\Models\MpesaC2B;
+use App\Models\Paybill;
 use App\Models\Payment;
 use App\Models\Statement;
 use App\Models\Scopes\ManagerScope;
@@ -35,11 +36,12 @@ class C2B
             $c2b->FirstName = $payload['FirstName'];
             $c2b->save();
         } else {
-            $tenant = Tenant::withoutGlobalScope(ManagerScope::class)->where('id_number', $payload['BillRefNumber'])->where('manager_id',Cache::get('manager_id'))->get(['id', 'full_names', 'property_name', 'unit_name']);
+            $manager_id = Paybill::withoutGlobalScope(ManagerScope::class)->where('paybill_number',$payload['BusinessShortCode'])->pluck('manager_id');
+            $tenant = Tenant::withoutGlobalScope(ManagerScope::class)->where('id_number', $payload['BillRefNumber'])->where('manager_id',$manager_id[0])->get(['id', 'full_names', 'property_name', 'unit_name']);
             if($tenant->isEmpty())
             {
                 $payment = Payment::withoutGlobalScope(ManagerScope::class)->create([
-                    'manager_id' => Cache::get('manager_id'),
+                    'manager_id' => $manager_id[0],
                     'receipt_number' => $payload['TransID'],
                     'reference_number' => $payload['TransID'],
                     // 'unit_name' => $tenant->first()->unit_name,
@@ -61,7 +63,7 @@ class C2B
                     ->first();
     
                 $payment = Payment::withoutGlobalScope(ManagerScope::class)->create([
-                    'manager_id' => Cache::get('manager_id'),
+                    'manager_id' => $manager_id[0],
                     'receipt_number' => $payload['TransID'],
                     'reference_number' => $payload['TransID'],
                     'unit_name' => $tenant->first()->unit_name,
@@ -78,7 +80,7 @@ class C2B
     
                 if ($payment) {
                     $statement_data = [
-                        'manager_id' => Cache::get('manager_id'),
+                        'manager_id' => $manager_id[0],
                         'tenant_id' => $tenant[0]->id,
                         'tenant_name' => $tenant->first()->full_names,
                         'description' => 'Mpesa',
