@@ -12,6 +12,7 @@ use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\DNSCheckValidation;
 use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
 use Egulias\EmailValidator\Validation\RFCValidation;
+use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -130,7 +131,8 @@ class Biodata extends Component implements HasForms
                                 DatePicker::make('expiry_date')->displayFormat('d/m/y')->minDate(now())->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)->required(fn ($get) => $get('payment_method') == 'card' ? true : false)
                             ])
                         ]),
-                ])->submitAction(new HtmlString('
+                ])->nextAction(fn(ActionsAction $action) => $action->label('Next step')->icon('heroicon-m-chevron-double-right')->outlined(),)
+                ->submitAction(new HtmlString('
                 <button type="submit" wire:loading.attr="disabled" class="filament-button filament-button-size-sm inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset dark:focus:ring-offset-0 min-h-[2rem] px-3 text-sm text-white shadow focus:ring-white border-transparent bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700">
                     <svg class="animate-spin h-4 w-4 mr-1" wire:loading wire:target="create" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
