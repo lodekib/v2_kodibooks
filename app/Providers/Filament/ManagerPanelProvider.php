@@ -55,6 +55,7 @@ class ManagerPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex('#4ade80'),
             ])->favicon(asset('assets/kodibooks.png'))
+            ->databaseNotifications()->databaseNotificationsPolling('2s')
             ->discoverResources(in: app_path('Filament/Manager/Resources'), for: 'App\\Filament\\Manager\\Resources')
             ->discoverPages(in: app_path('Filament/Manager/Pages'), for: 'App\\Filament\\Manager\\Pages')
             ->pages([
