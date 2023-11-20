@@ -89,9 +89,9 @@ class PaymentResource extends Resource
                 TextColumn::make('tenant.id_number')->label('Account')->size('sm')->searchable()->sortable()->copyable(),
                 TextColumn::make('unit_name')->label('Unit')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->label('Receipt')->size('sm')->sortable()->searchable(),
-                TextColumn::make('mode_of_payment')->label('Mode')->size('sm')->searchable()->sortable(),
+                TextColumn::make('mode_of_payment')->label('Mode')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault:true),
                 TextColumn::make('amount')->money('kes')->searchable(),
-                TextColumn::make('balance')->money('kes')->searchable(),
+                TextColumn::make('balance')->money('kes')->searchable()->toggleable(isToggledHiddenByDefault:true),
                 TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
                     'unallocated' => 'success',
                     'fully allocated' => 'gray',

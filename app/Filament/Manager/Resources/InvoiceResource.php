@@ -80,11 +80,11 @@ class InvoiceResource extends Resource
             ->columns([
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->label('Date')->datetime()->size('sm'),
-                TextColumn::make('property_name')->label('Property')->size('sm')->searchable()->sortable(),
+                TextColumn::make('property_name')->label('Property')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault:true),
                 TextColumn::make('tenant_name')->label('Tenant')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->label('Unit')->size('sm')->sortable()->searchable(),
                 TextColumn::make('invoice_number')->label('INV')->size('sm')->searchable()->sortable(),
-                TextColumn::make('invoice_type')->label('Type')->size('sm')->searchable()->sortable(),
+                TextColumn::make('invoice_type')->label('Type')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault:true),
                 TextColumn::make('invoice_status')->label('Status')->color(fn (string $state): string => match ($state) {
                     'pending' => 'warning',
                     'partially paid' => 'gray',
