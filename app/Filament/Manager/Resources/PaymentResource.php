@@ -157,9 +157,10 @@ class PaymentResource extends Resource
                         ->label('Download Receipt')
                         ->icon('heroicon-s-arrow-down-tray')
                         ->action(function (Model $record) {
-                            return response()->streamDownload(function () use ($record) {
+                            $tenant = Tenant::find($record->tenant_id);
+                            return response()->streamDownload(function () use ($record,$tenant) {
                                 echo Pdf::loadHtml(
-                                    Blade::render('pdfs/payment', ['record' => $record])
+                                    Blade::render('pdfs/payment', ['record' => $record,'tenant' => $tenant])
                                 )->stream();
                             }, $record->property_name . '-' . $record->tenant_name . '.pdf');
                         }),
