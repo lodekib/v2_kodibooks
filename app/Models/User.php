@@ -35,7 +35,8 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'avatar_url'
+        'avatar_url',
+        'type'
     ];
 
     /**
@@ -58,16 +59,22 @@ class User extends Authenticatable implements FilamentUser
         'password' => 'hashed',
     ];
 
+
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar_url ? Storage::url($this->avatar_url) : null;
     }
 
+
     public function canAccessPanel(Panel $panel): bool
     {
         $response = false;
 
-        if ($panel->getId() == 'admin' && Auth::user()->hasRole('Super Admin') || $panel->getId() == 'manager' && Auth::user()->hasRole('Manager')) {
+        if (
+            $panel->getId() == 'admin' && Auth::user()->hasRole('Super Admin') ||
+            $panel->getId() == 'manager' && Auth::user()->hasRole('Manager')   ||
+            $panel->getId() == 'partner' && Auth::user()->hasRole('Partner')
+        ) {
             $response =  true;
         }
 
@@ -79,14 +86,16 @@ class User extends Authenticatable implements FilamentUser
     {
         parent::boot();
         static::created(function ($user) {
-            $user->assignRole('Manager');
-            $plan = Plan::getByTag('basic');
-            $user->newSubscription('primary', $plan, 'Primary Subscription', 'Client primary subscription', null, 'mpesa');
+            if ($user->type == null) {
+                $user->assignRole('Manager');
+                $plan = Plan::getByTag('basic');
+                $user->newSubscription('primary', $plan, 'Primary Subscription', 'Client primary subscription', null, 'mpesa');
+            }
         });
     }
 
     public function manager(): HasOne
     {
-        return $this->hasOne(Manager::class,'id','id');
+        return $this->hasOne(Manager::class, 'id', 'id');
     }
 }
