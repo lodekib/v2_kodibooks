@@ -23,7 +23,9 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -57,7 +59,7 @@ class PaymentTable extends Component implements HasForms, HasTable
                     'fully allocated' => 'gray',
                     'partially allocated' => 'warning'
                 }),
-                TextColumn::make('balance')->size('sm')->sortable()->money('kes')->summarize(Sum::make()->label('Total Balance')->money('kes'))->money('kes'),
+                TextColumn::make('balance')->size('sm')->sortable()->money('kes')->summarize(Sum::make()->label('Total Balance')->money('kes'))->money('kes')->toggleable(isToggledHiddenByDefault:true),
             ])
             ->filters([
                 Filter::make('created_at')
@@ -94,56 +96,62 @@ class PaymentTable extends Component implements HasForms, HasTable
                                 ->visible(fn (Get $get) => $get('mode_of_payment') != null && $get('mode_of_payment') == 'Cash' ? false : true),
                             DateTimePicker::make('paid_date')->required()->maxDate(now())
                         ])->columns(3)
-                    ])->action(function (array $data) {
-                        $total_debit = Statement::where('tenant_name', $this->record->full_names)->sum('debit');
-                        $total_credit = Statement::where('tenant_name', $this->record->full_names)->sum('credit');
-                        $reference_number = $data['mode_of_payment'] == 'Cash' ? 'cash payment' : $data['reference_number'];
-                        $receipt_number = strtoupper(substr($data['property_name'], 0, 3)) . "-" . time();
-                        $receipt_data = [
-                            'tenant_id' => $this->record->id,
-                            'tenant_name' => $this->record->full_names,
-                            'national_id' => $this->record->id_number,
-                            'property_name' => $data['property_name'],
-                            'unit_name' => $data['unit_name'],
-                            'reference_number' => $reference_number,
-                            'receipt_number' => $receipt_number,
-                            'mode_of_payment' => $data['mode_of_payment'],
-                            'amount' => $data['amount'],
-                            'balance' => $data['amount'],
-                            'paid_date' => $data['paid_date'],
-                            'status' => 'unallocated'
-                        ];
-                        $receipt = Payment::create($receipt_data);
-
-                        if ($receipt) {
-                            $statement_data = [
+                    ])->action(
+                        function (array $data) {
+                            $total_debit = Statement::where('tenant_name', $this->record->full_names)->sum('debit');
+                            $total_credit = Statement::where('tenant_name', $this->record->full_names)->sum('credit');
+                            $reference_number = $data['mode_of_payment'] == 'Cash' ? 'cash payment' : $data['reference_number'];
+                            $receipt_number = strtoupper(substr($data['property_name'], 0, 3)) . "-" . time();
+                            $receipt_data = [
                                 'tenant_id' => $this->record->id,
                                 'tenant_name' => $this->record->full_names,
-                                'description' => $data['mode_of_payment'] . "# " . $reference_number,
-                                'reference' => $receipt->receipt_number,
-                                'credit' => $receipt->balance,
-                                'debit' => 0,
-                                'balance' => $total_debit - ($total_credit + $receipt->balance),
-                                'cummulative_balance' => $total_debit - ($total_credit + $receipt->balance),
-                                's_balance' => $total_debit - ($total_credit + $receipt->balance),
-
+                                'national_id' => $this->record->id_number,
+                                'property_name' => $data['property_name'],
+                                'unit_name' => $data['unit_name'],
+                                'reference_number' => $reference_number,
+                                'receipt_number' => $receipt_number,
+                                'mode_of_payment' => $data['mode_of_payment'],
+                                'amount' => $data['amount'],
+                                'balance' => $data['amount'],
+                                'paid_date' => $data['paid_date'],
+                                'status' => 'unallocated'
                             ];
+                            $receipt = Payment::create($receipt_data);
 
-                            $statement = Statement::create($statement_data);
+                            if ($receipt) {
+                                $statement_data = [
+                                    'tenant_id' => $this->record->id,
+                                    'tenant_name' => $this->record->full_names,
+                                    'description' => $data['mode_of_payment'] . "# " . $reference_number,
+                                    'reference' => $receipt->receipt_number,
+                                    'credit' => $receipt->balance,
+                                    'debit' => 0,
+                                    'balance' => $total_debit - ($total_credit + $receipt->balance),
+                                    'cummulative_balance' => $total_debit - ($total_credit + $receipt->balance),
+                                    's_balance' => $total_debit - ($total_credit + $receipt->balance),
 
-                            InvoiceReceiptAutoAllocation::handleNewReceipt($this->record, $receipt, $statement);
+                                ];
 
-                            Notification::make()->success()->color('success')->body("Payment added successfully !")->send();
-                        } else {
-                            Notification::make()->warning()->color('warning')->body('Unable to add payment !')->send();
+                                $statement = Statement::create($statement_data);
+
+                                InvoiceReceiptAutoAllocation::handleNewReceipt($this->record, $receipt, $statement);
+
+                                Notification::make()->success()->color('success')->body("Payment added successfully !")->send();
+                            } else {
+                                Notification::make()->warning()->color('warning')->body('Unable to add payment !')->send();
+                            }
                         }
-                    }
-                ),
+                    ),
                 ExportAction::make()->outlined()->label('Excel')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])])
                 // FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
             ])
             ->actions([
-                // ...
+                ActionGroup::make([
+                    DeleteAction::make()->action(function ($record) {
+                        $record->update(['status' => 'stale/' . $record->status]);
+                        Notification::make()->success()->color('success')->body('Payment deleted successfully !')->send();
+                    })
+                ])
             ])
             ->bulkActions([
                 // ...
