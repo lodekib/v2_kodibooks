@@ -16,7 +16,7 @@
             Quick Actions
         </x-slot>
 
-        <x-filament::button wire:click="refund"  icon="heroicon-s-minus" icon-position="after" outlined >
+        <x-filament::button wire:click="refund" wire:confirm="Please confirm this action ."  icon="heroicon-s-minus" icon-position="after" outlined >
             Refund Deposit
         </x-filament::button></x-filament::fieldset>
 

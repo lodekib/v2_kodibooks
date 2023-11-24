@@ -134,7 +134,7 @@ class PaymentTable extends Component implements HasForms, HasTable
 
                                 $statement = Statement::create($statement_data);
 
-                                InvoiceReceiptAutoAllocation::handleNewReceipt($this->record, $receipt, $statement);
+                                InvoiceReceiptAutoAllocation::handleNewReceipt($this->record->full_names, $receipt, $statement);
 
                                 Notification::make()->success()->color('success')->body("Payment added successfully !")->send();
                             } else {

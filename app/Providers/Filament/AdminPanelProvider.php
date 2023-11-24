@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -17,7 +18,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class AdminPanelProvider extends PanelProvider
@@ -58,10 +58,10 @@ class AdminPanelProvider extends PanelProvider
             ])->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
                 BreezyCore::make()->myProfile(
-                    shouldRegisterUserMenu:true,
-                    shouldRegisterNavigation:true,
-                    hasAvatars:true
-                )->enableTwoFactorAuthentication(force:false)
+                    shouldRegisterUserMenu: true,
+                    shouldRegisterNavigation: true,
+                    hasAvatars: true
+                )->enableTwoFactorAuthentication(force: false)
             ]);
     }
 }
