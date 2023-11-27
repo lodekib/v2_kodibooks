@@ -97,8 +97,8 @@ class PropertyResource extends Resource
                 }),
             ])->headerActions([
                 ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
-                Action::make('PDF')->outlined()->label('PDF')->color('gray')->action(function (Component $livewire) {
-                    dd($livewire);
+                Action::make('PDF')->outlined()->label('PDF')->color('gray')->action(static function (Component $livewire, $data) {
+                    dd($livewire->getTableRecords());
                 })
             ])
             ->actions([
