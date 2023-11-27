@@ -12,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -37,7 +38,9 @@ class UserResource extends Resource
                     TextInput::make('email')->email()->required()->unique(ignoreRecord: true),
                     TextInput::make('password')->password()->required()->hiddenOn('edit')->confirmed(),
                     TextInput::make('password_confirmation')->required()->hiddenOn('edit')->password(),
-                    Select::make('roles')->multiple()->relationship('roles', 'name')->required()
+                    Select::make('roles')->relationship('roles', 'name')->required()->reactive(),
+                    Select::make('manager')->label('Attach to manager')->visible(fn (Get $get) => $get('roles') != null && $get('roles') == 3 ? true : false)
+                        ->options(User::role('Manager')->pluck('name', 'name'))->required()
                 ])->columns(3)
 
             ]);
