@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Illuminate\Support\Facades\Storage;
 use Bpuig\Subby\Traits\HasSubscriptions;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable implements FilamentUser
@@ -97,5 +98,10 @@ class User extends Authenticatable implements FilamentUser
     public function manager(): HasOne
     {
         return $this->hasOne(Manager::class, 'id', 'id');
+    }
+
+    public function partners(): HasMany
+    {
+        return $this->hasMany(Partner::class, 'id', 'id');
     }
 }
