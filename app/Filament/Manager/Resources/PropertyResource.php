@@ -10,7 +10,7 @@ use App\Models\Payment;
 use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
-use Filament\Forms;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -27,13 +27,17 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Livewire\Component;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
@@ -75,7 +79,7 @@ class PropertyResource extends Resource
                 TextColumn::make('property_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('property_size')->size('sm')->suffix(' sq. m'),
                 TextColumn::make('property_cost')->size('sm')->money('kes'),
-                TextColumn::make('number_of_units')->size('sm')->formatStateUsing(fn($record) => $record->units->count()),
+                TextColumn::make('number_of_units')->size('sm')->formatStateUsing(fn ($record) => $record->units->count()),
                 TextColumn::make('property_status')->color(fn ($state) => $state == 'good' ? 'primary' : 'danger')->searchable()->badge(),
                 TextColumn::make('property_location')->size('sm')->searchable()->sortable(),
             ])
@@ -92,11 +96,10 @@ class PropertyResource extends Resource
                         ->when($data['created_until'], fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date));
                 }),
             ])->headerActions([
-                ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::CSV)]),
-                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::XLSX)]),
-                ExportAction::make()->outlined()->label('PDF')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::DOMPDF)]),
-
-                                // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+                ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
+                Action::make('PDF')->outlined()->label('PDF')->color('gray')->action(function (Component $livewire) {
+                    dd($livewire);
+                })
             ])
             ->actions([
                 ActionGroup::make([
@@ -123,8 +126,19 @@ class PropertyResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                    BulkAction::make('Generate PDF')->label('PDF')
+                        ->color('gray')
+                        ->action(function (Collection $records, array $data) {
+                            $pdf = Pdf::loadView('pdfs/property', ['records' => $records])->output();
+                            Notification::make()->title('Export successfully')->icon('heroicon-o-document-text')
+                                ->iconColor('success')->send();
+
+                            return response()->streamDownload(
+                                fn () => print($pdf),
+                                "YourPdfName.pdf"
+                            );
+                        })
+                ])
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
