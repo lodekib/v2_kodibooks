@@ -12,8 +12,8 @@ use Filament\Tables\Table;
 class ClientPayments extends Page implements HasTable
 {
     use InteractsWithTable;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
+    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static ?string $navigationGroup = 'Clients';
     protected static string $view = 'filament.pages.client-payments';
 
     public function table(Table $table): Table

@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('partners', function (Blueprint $table) {
             $table->unsignedBigInteger('id');
-            $table->string('kyc');
+            $table->string('reg_code')->nullable();
+            $table->string('commision')->nullable();
+            $table->string('kyc')->nullable();
             $table->timestamps();
         });
     }
