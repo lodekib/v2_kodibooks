@@ -2,12 +2,14 @@
 
 namespace App\Http\PartnerAuth;
 
+use App\Models\Partner;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -73,7 +75,12 @@ class Register extends SimplePage
 
         $data = $this->form->getState();
         $user = $this->getUserModel()::create($data);
+        Partner::create([
+            'id' => $user->id,
+            'kyc' => $data['kyc']
+        ]);
         $user->assignRole('Partner');
+
         app()->bind(
             \Illuminate\Auth\Listeners\SendEmailVerificationNotification::class,
             \Filament\Listeners\Auth\SendEmailVerificationNotification::class,
@@ -104,6 +111,7 @@ class Register extends SimplePage
                         $this->getNameFormComponent(),
                         $this->getEmailFormComponent(),
                         $this->getPartnerTypeComponent(),
+                        $this->getPartnerKYCComponent(),
                         $this->getPasswordFormComponent(),
                         $this->getPasswordConfirmationFormComponent(),
                     ])
@@ -112,10 +120,20 @@ class Register extends SimplePage
         ];
     }
 
+    protected function getPartnerKYCComponent(): Component
+    {
+        return FileUpload::make('kyc')->multiple()->label('Attachments')->preserveFilenames()
+            ->helperText('Please upload supporting documents e.g permits,id etc.');
+    }
+
     protected function getPartnerTypeComponent(): Component
     {
         return Select::make('type')->label('Partner Type')
-            ->options(['IT Firm' => 'IT Firm', 'Developer' => 'Developer', 'Accountant' => 'Accountant'])
+            ->options([
+                'IT Firm' => 'IT Firm', 'Developer' => 'Developer',
+                'Business Partner' => 'Business Partner', 'Broker' => 'Broker',
+                'Marketing Consultant' => 'Marketing Consultant', 'Job Seeker' => 'Job Seeker'
+            ])
             ->required();
     }
 
@@ -189,7 +207,7 @@ class Register extends SimplePage
 
     public function getHeading(): string | Htmlable
     {
-        return __('filament-panels::pages/auth/register.heading');
+        return 'Partner Registration';
     }
 
     /**
