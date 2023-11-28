@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
@@ -97,8 +98,11 @@ class PropertyResource extends Resource
                 }),
             ])->headerActions([
                 ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
-                Action::make('PDF')->outlined()->label('PDF')->color('gray')->action(static function (Component $livewire, $data) {
-                    dd($livewire->getTableRecords());
+                Action::make('PDF')->outlined()->label('PDF')->color('gray')->action(static function (Component $livewire) {
+                    $properties = $livewire->getTableRecords();
+                    $manager = User::find($properties->first()->manager_id);
+                    $pdf = Pdf::loadView('pdfs/property', ['properties' => $properties,'manager' => $manager])->output();
+                    return response()->streamDownload(fn() => print($pdf),'properties.pdf');
                 })
             ])
             ->actions([
@@ -124,24 +128,9 @@ class PropertyResource extends Resource
                     })
                 ])->button()->label('Actions')->color('gray')
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    BulkAction::make('Generate PDF')->label('PDF')
-                        ->color('gray')
-                        ->action(function (Collection $records, array $data) {
-                            $pdf = Pdf::loadView('pdfs/property', ['records' => $records])->output();
-                            Notification::make()->title('Export successfully')->icon('heroicon-o-document-text')
-                                ->iconColor('success')->send();
-
-                            return response()->streamDownload(
-                                fn () => print($pdf),
-                                "YourPdfName.pdf"
-                            );
-                        })
-                ])
-            ])
+            ->bulkActions([])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ]);
     }
 

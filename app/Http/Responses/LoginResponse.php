@@ -15,7 +15,12 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
         $user = Auth::user();
         $plan = Plan::getByTag('Basic');
         if ($user->hasRole('Partner')) {
-            return redirect()->route('filament.partner.pages.dashboard');
+            if (!$user->is_verified) {
+                auth()->logout();
+                return redirect()->route('filament.partner.auth.login')->with('status', 'Please wait till your account is Approved !');
+            } else {
+                return redirect()->route('filament.partner.pages.dashboard');
+            }
         } else {
             if ($user->hasRole('Manager')) {
                 if ($plan != null && ($user->subscriptions)->isEmpty()) {

@@ -87,7 +87,8 @@ class Register extends SimplePage
         );
         event(new Registered($user));
 
-        Filament::auth()->login($user);
+        redirect()->route('filament.partner.auth.login');
+        // Filament::auth()->login($user);
 
         session()->regenerate();
 
