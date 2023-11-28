@@ -34,8 +34,9 @@ class Partner extends Page implements HasForms, HasTable
                     })->color(fn (string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'info',
-                    })
-                // TextColumn::make('partners.kyc')->size('sm'),
+                    }),
+                // ImageColumn::make('partners.kyc')->size('sm')->state(function($record,$state){
+                // })->stacked(),
                 // TextColumn::make('partners.commission')->label('Commission')->size('sm')->formatStateUsing(fn ($state) => $state == null ? '-' : $state)
             ])->actions([
                 Action::make('Approve Partner')->color('gray')->outlined()->icon('heroicon-o-shield-check')->button()->action(function () {})
