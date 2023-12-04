@@ -82,8 +82,9 @@ class UnitResource extends Resource
             ->filters([
                 //
             ])->headerActions([
-                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->askForWriterType()]),
-                ExportAction::make()->outlined()->label('PDF')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::DOMPDF)]),
+                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
+                FilamentExportHeaderAction::make('PDF')->label('PDF')->color('gray')->outlined()->disableAdditionalColumns()
+                ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()
             ],position:HeaderActionsPosition::Bottom)
             ->actions([
                 ActionGroup::make([

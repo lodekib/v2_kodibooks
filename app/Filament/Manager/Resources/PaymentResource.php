@@ -172,8 +172,9 @@ class PaymentResource extends Resource
                     })
                 ])->button()->label('Actions')->color('gray')
             ])->headerActions([
-                ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
-            ])
+                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
+                FilamentExportHeaderAction::make('PDF')->label('PDF')->color('gray')->outlined()->disableAdditionalColumns()
+                ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
             ])
