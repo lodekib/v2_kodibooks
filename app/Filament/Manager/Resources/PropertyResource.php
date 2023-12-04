@@ -97,13 +97,9 @@ class PropertyResource extends Resource
                         ->when($data['created_until'], fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date));
                 }),
             ])->headerActions([
-                ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
-                Action::make('PDF')->outlined()->label('PDF')->color('gray')->action(static function (Component $livewire) {
-                    $properties = $livewire->getTableRecords();
-                    $manager = User::find($properties->first()->manager_id);
-                    $pdf = Pdf::loadView('pdfs/property', ['properties' => $properties,'manager' => $manager])->output();
-                    return response()->streamDownload(fn() => print($pdf),'properties.pdf');
-                })
+                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
+                FilamentExportHeaderAction::make('PDF')->label('PDF')->color('gray')->outlined()->disableAdditionalColumns()
+                ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()
             ])
             ->actions([
                 ActionGroup::make([
@@ -162,7 +158,10 @@ class PropertyResource extends Resource
                     ->schema([
                         Split::make([
                             Grid::make(2)
-                                ->schema([
+     
+     
+     
+                            ->schema([
                                     Group::make([
                                         TextEntry::make('property_name'),
                                         TextEntry::make('property_location'),

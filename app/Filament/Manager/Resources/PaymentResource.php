@@ -10,6 +10,7 @@ use App\Models\Property;
 use App\Models\Statement;
 use App\Models\Tenant;
 use App\Models\Unit;
+use App\Models\User;
 use App\Services\InvoiceReceiptAutoAllocation;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -33,6 +34,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
@@ -170,8 +172,7 @@ class PaymentResource extends Resource
                     })
                 ])->button()->label('Actions')->color('gray')
             ])->headerActions([
-                ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::CSV)]),
-                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])->withWriterType(\Maatwebsite\Excel\Excel::XLSX)])                // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns(),
+                ExportAction::make()->outlined()->label('CSV')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
