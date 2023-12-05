@@ -127,6 +127,7 @@ class Register extends SimplePage
             ->helperText('Please upload supporting documents e.g permits,id etc.');
     }
 
+
     protected function getPartnerTypeComponent(): Component
     {
         return Select::make('type')->label('Partner Type')
