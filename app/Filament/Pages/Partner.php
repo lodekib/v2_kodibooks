@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Mail\PartnerApproved;
 use App\Models\User;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -39,10 +40,12 @@ class Partner extends Page implements HasForms, HasTable
                         false => 'warning',
                         true => 'info',
                     }),
+                TextColumn::make('partners.commision')->label('Commision')->formatStateUsing(fn ($state) => $state != null ? $state . '%' : '-'),
+                TextColumn::make('partners.discount')->label('Discount')->formatStateUsing(fn ($state) => $state != null ? $state . '%' : '-')
                 // ImageColumn::make('partners.kyc')->size('sm')->state(function($record,$state){
                 // })->stacked(),
-                // TextColumn::make('partners.commission')->label('Commission')->size('sm')->formatStateUsing(fn ($state) => $state == null ? '-' : $state)
             ])->actions([
+
                 Action::make('Approve Partner')->color('gray')->outlined()->icon('heroicon-o-shield-check')->button()->action(function ($record) {
                     $status = $record->is_verified;
                     if ((bool)$status == false) {
@@ -55,10 +58,24 @@ class Partner extends Page implements HasForms, HasTable
                     } else {
                         $record->is_verified = false;
                         $record->save();
-                        //send email
                         Notification::make()->color('danger')->body('Partner unapproved !')->send();
                     }
-                })
+                }),
+                ActionGroup::make([
+                    Action::make('Set Discount')->icon('heroicon-o-viewfinder-circle')->color('primary')->action(function (array $data, $record) {
+                        $partner = $record->partners()->first();
+                        $partner->discount = $data['discount'];
+                        $partner->save();
+                        Notification::make()->success()->color('success')->body('Partner discount updated successfully !')->send();
+                    })->form([TextInput::make('discount')->required()->integer()->minValue(1)->maxValue(100)]),
+                    Action::make('Set Commission')->icon('heroicon-o-banknotes')->color('primary')->action(function (array $data, $record) {
+                        $partner = $record->partners()->first();
+                        $partner->commision = $data['commision'];
+                        $partner->save();
+                        Notification::make()->success()->color('success')->body('Partner commision updated successfully !')->send();
+                    })->form([TextInput::make('commision')->required()->integer()->minValue(1)->maxValue(100)])
+
+                ])
             ]);
     }
 }

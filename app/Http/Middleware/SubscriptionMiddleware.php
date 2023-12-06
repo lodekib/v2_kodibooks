@@ -28,7 +28,7 @@ class SubscriptionMiddleware
             if ($manager != null && !$manager->paid_subscription) {
                 Cache::put('id_manager', $manager->national_id);
                 if (!$manager->is_invoiced) {
-                    FacadesMail::to($manager->org_email)->send(new ClientInvoiced());
+                    FacadesMail::to($manager->org_email)->send(new ClientInvoiced($manager));
                     if ($manager->update(['is_invoiced' => true])) {
                         Notification::make()->success()->color('success')->body('Check your email for the pending invoice and make the 
                     subscription payment')->seconds(4)->send();

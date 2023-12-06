@@ -49,7 +49,7 @@ class InvoiceTenant
             ->date(now())->dateFormat('m/d/Y')->payUntilDays(4)->currencySymbol('Ksh ')->currencyCode('Ksh ')
             ->currencyFormat('{SYMBOL}{VALUE}')->currencyThousandsSeparator(',')->currencyDecimalPoint('.')
             ->filename($the_tenant->tenant)->addItems($items)->notes($notes)
-            ->logo(public_path('vendor/invoices/sample-logo.png'));
+            ->logo(public_path('vendor/invoices/header.png'));
         $outputPath = 'invoices/' . $property_name . '/' . $tenant_name . '/' . uniqid('invoice_') . 'pdf';
         Storage::disk('public')->put($outputPath, $invoice->stream());
         $pdfContent = Storage::disk('public')->get($outputPath);

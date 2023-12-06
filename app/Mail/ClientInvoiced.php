@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Manager;
 use App\Services\InvoiceClient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,7 +19,7 @@ class ClientInvoiced extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(protected Manager $manager)
     {
         //
     }
@@ -51,7 +52,7 @@ class ClientInvoiced extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromData(fn() => InvoiceClient::invoiceClient(),'Subscription.pdf')
+            Attachment::fromData(fn() => InvoiceClient::invoiceClient($this->manager),'Subscription.pdf')
             ->withMime('application/pdf')
         ];
     }

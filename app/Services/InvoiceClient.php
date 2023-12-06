@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 class InvoiceClient
 {
 
-    public static function invoiceClient()
+    public static function invoiceClient(Manager $manager)
     {
 
         $prefix = "INV";
@@ -22,8 +22,7 @@ class InvoiceClient
         $number = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT); // Generate a random 4-digit number
         $invoiceNumber = $prefix . "-" . $year . "-" . $number;
 
-        $manager  =  Manager::find(auth()->id());
-        $user  =  User::find(auth()->id());
+        $user  =  User::find($manager->id);
         $subscription = $user->subscriptions;
 
         $the_client = new Party([
@@ -50,7 +49,7 @@ class InvoiceClient
             ->date(now())->dateFormat('m/d/Y')->currencySymbol('KES ')->currencyCode('KES ')
             ->currencyFormat('{SYMBOL}{VALUE}')->currencyThousandsSeparator(',')->currencyDecimalPoint('.')
             ->filename($the_client->client)->addItems($items)->notes($notes)
-            ->logo(public_path('vendor/invoices/sample-logo.png'));
+            ->logo(public_path('vendor/invoices/header.png'));
         $outputPath = 'invoices/' . $the_client->client  . '/' .$invoiceNumber. '.pdf';
         Storage::disk('public')->put($outputPath, $invoice->stream());
         $pdfContent = Storage::disk('public')->get($outputPath);
