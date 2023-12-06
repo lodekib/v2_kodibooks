@@ -2,6 +2,7 @@
 
 namespace App\Filament\Partner\Pages;
 
+use App\Filament\Partner\Widgets\PartnerStats;
 use App\Filament\Partner\Widgets\ReferralWidget;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
@@ -17,11 +18,12 @@ class PartnerDashboard extends Dashboard
         return 'Partners Area';
     }
 
-    
+
     public function getWidgets(): array
     {
         return [
-            ReferralWidget::class
+            ReferralWidget::class,
+            PartnerStats::class
         ];
     }
 }

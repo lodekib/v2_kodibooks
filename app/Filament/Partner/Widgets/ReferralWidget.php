@@ -14,6 +14,7 @@ class ReferralWidget extends Widget
     public $hasCode;
     public $email;
     protected static string $view = 'filament.partner.widgets.referral-widget';
+    protected static ?int $sort = 1;
 
     public function mount()
     {

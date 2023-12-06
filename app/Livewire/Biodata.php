@@ -67,7 +67,7 @@ class Biodata extends Component implements HasForms
                         ])->afterValidation(function (Get $get) {
                             $otp = (new Otp())->generate($get('contact_number'), 6, 2);
                             Auth::user()->notify(new PhoneVerifyNotification('254' . substr($get('contact_number'), 1), $otp->token));
-                            Cache::put('phone', $get('contact_number'),now()->addMinutes(5));
+                            Cache::put('phone', $get('contact_number'), now()->addMinutes(5));
                             Notification::make()->success()->body('Check your phone for an otp token.The otp expires in 2 minutes.')->seconds(2)->send();
                         }),
                     Wizard\Step::make('Phone')->icon('heroicon-o-device-phone-mobile')->schema([
@@ -131,8 +131,8 @@ class Biodata extends Component implements HasForms
                                 DatePicker::make('expiry_date')->displayFormat('d/m/y')->minDate(now())->visible(fn ($get) => $get('payment_method') == 'card' ?  true : false)->required(fn ($get) => $get('payment_method') == 'card' ? true : false)
                             ])
                         ]),
-                ])->nextAction(fn(ActionsAction $action) => $action->label('Next step')->icon('heroicon-m-chevron-double-right')->outlined(),)
-                ->submitAction(new HtmlString('
+                ])->nextAction(fn (ActionsAction $action) => $action->label('Next step')->icon('heroicon-m-chevron-double-right')->outlined(),)
+                    ->submitAction(new HtmlString('
                 <button type="submit" wire:loading.attr="disabled" class="filament-button filament-button-size-sm inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset dark:focus:ring-offset-0 min-h-[2rem] px-3 text-sm text-white shadow focus:ring-white border-transparent bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700">
                     <svg class="animate-spin h-4 w-4 mr-1" wire:loading wire:target="create" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -159,25 +159,13 @@ class Biodata extends Component implements HasForms
 
 
             $card_service = CardService::cardStripe($new_data, $cardDate[1], substr($cardDate[0], -2));
-            dd($card_service);
             if ($card_service['status']) {
                 $manager =  Manager::create($new_data);
 
                 if ($manager) {
-                    User::find($manager->id)->update([
-                        "isVerified" => true
-                    ]);
-
-                    // Notification::make()->success()->title("Profile data updated  !")
-                    //     ->body("Biodata has been updated successfully.Use the link  below to add a property")
-                    //     ->persistent()
-                    //     ->actions([
-                    //         Action::make('create property')->color('secondary')
-                    //             ->button()->url(route('manager.resources.properties.index')),
-                    //         Action::make('close')
-                    //             ->color('secondary')
-                    //             ->close(),
-                    //     ])->send();
+                    $user  =  Auth::user();
+                    $user->is_verified = true;
+                    $user->save();
                 }
 
                 return redirect()->to('/properties');
@@ -195,20 +183,9 @@ class Biodata extends Component implements HasForms
             $manager =  Manager::create($new_data);
 
             if ($manager) {
-                User::find($manager->id)->update([
-                    "is_verified" => true
-                ]);
-
-                // Notification::make()->success()->title("Profile data updated  !")
-                //     ->body("Biodata has been updated successfully.Use the link  below to add a property")
-                //     ->persistent()
-                //     ->actions([
-                //         Action::make('create property')->color('secondary')
-                //             ->button()->url(route('manager.resources.properties.index')),
-                //         Action::make('close')
-                //             ->color('secondary')
-                //             ->close(),
-                //     ])->send();
+                $user  =  Auth::user();
+                $user->is_verified = true;
+                $user->save();
             }
 
             return redirect()->to('/properties');
