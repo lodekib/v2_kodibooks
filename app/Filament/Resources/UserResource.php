@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Mail\ClientInvoiced;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -16,11 +17,13 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Mail;
 
 class UserResource extends Resource
 {
@@ -49,7 +52,7 @@ class UserResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
+        return $table->query(User::query()->role('Manager'))
             ->columns([
                 TextColumn::make('created_at')->label('Date')->date(),
                 TextColumn::make('manager.org_brand')->label('Client Name')->size('sm')->searchable(),
@@ -61,7 +64,20 @@ class UserResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\Action::make('message')->label('Message Client')->icon('heroicon-o-chat-bubble-left-right')->action(
+                    Action::make('Invoice Client')->icon('heroicon-o-clipboard-document-list')->action(function ($record) {
+                        $manager = $record->manager()->first();
+                        if ($manager != null && !$manager->paid_subscription) {
+                            if (!$manager->is_invoiced) {
+                                Mail::to($manager->org_email)->send(new ClientInvoiced($manager));
+                                if ($manager->update(['is_invoiced' => true])) {
+                                    Notification::make()->success()->color('success')->body("Successfully invoiced the client ")->send();
+                                }
+                            } else {
+                                Notification::make()->info()->color('info')->body("Client already invoiced")->send();
+                            }
+                        }
+                    }),
+                    Action::make('message')->label('Message Client')->icon('heroicon-o-chat-bubble-left-right')->action(
                         fn ($record, array $data) => Notification::make()->title($data['message_title'])->icon(
                             function () use ($data) {
                                 $type = $data['message_type'];
