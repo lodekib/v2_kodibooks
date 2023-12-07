@@ -1,5 +1,6 @@
 <?php
 
+use Iankumu\Mpesa\Facades\Mpesa;
 use Illuminate\Support\Str;
 
 return [

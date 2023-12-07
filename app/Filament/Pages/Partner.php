@@ -40,8 +40,8 @@ class Partner extends Page implements HasForms, HasTable
                         false => 'warning',
                         true => 'info',
                     }),
-                TextColumn::make('partners.commision')->label('Commision')->formatStateUsing(fn ($state) => $state != null ? $state . '%' : '-'),
-                TextColumn::make('partners.discount')->label('Discount')->formatStateUsing(fn ($state) => $state != null ? $state . '%' : '-')
+                TextColumn::make('partner.commision')->label('Commision')->formatStateUsing(fn ($state) => $state != null ? $state . '%' : '-'),
+                TextColumn::make('partner.discount')->label('Discount')->formatStateUsing(fn ($state) => $state != null ? $state . '%' : '-')
                 // ImageColumn::make('partners.kyc')->size('sm')->state(function($record,$state){
                 // })->stacked(),
             ])->actions([
@@ -63,13 +63,13 @@ class Partner extends Page implements HasForms, HasTable
                 }),
                 ActionGroup::make([
                     Action::make('Set Discount')->icon('heroicon-o-viewfinder-circle')->color('primary')->action(function (array $data, $record) {
-                        $partner = $record->partners()->first();
+                        $partner = $record->partner()->first();
                         $partner->discount = $data['discount'];
                         $partner->save();
                         Notification::make()->success()->color('success')->body('Partner discount updated successfully !')->send();
                     })->form([TextInput::make('discount')->required()->integer()->minValue(1)->maxValue(100)]),
                     Action::make('Set Commission')->icon('heroicon-o-banknotes')->color('primary')->action(function (array $data, $record) {
-                        $partner = $record->partners()->first();
+                        $partner = $record->partner()->first();
                         $partner->commision = $data['commision'];
                         $partner->save();
                         Notification::make()->success()->color('success')->body('Partner commision updated successfully !')->send();

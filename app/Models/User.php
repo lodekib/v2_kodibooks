@@ -101,8 +101,8 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Manager::class, 'id', 'id');
     }
 
-    public function partners(): HasMany
+    public function partner(): HasOne
     {
-        return $this->hasMany(Partner::class, 'id', 'id');
+        return $this->hasOne(Partner::class, 'id', 'id');
     }
 }

@@ -12,22 +12,28 @@ class PartnerStats extends BaseWidget
     protected static ?int $sort = 1;
     protected int | string | array $columnSpan = '';
     public $code;
-
+    public $commision;
     public function mount()
     {
-        $p_code = Partner::find(auth()->id())->reg_code;
-        $this->code = $p_code;
+        $partner = Partner::find(auth()->id());
+        $this->code = $partner->reg_code;
+        $this->commision = $partner->commision;
     }
 
     protected function getStats(): array
     {
         return [
-            Stat::make('Clients Referred', number_format(User::where('code',$this->code)->count()))
+            Stat::make('Clients Referred', number_format(User::where('code', $this->code)->count()))
                 ->description('')
                 ->descriptionIcon('heroicon-m-arrow-trending-up'),
-            Stat::make('Total Amount', 'KES 0')
+            Stat::make('Commision', $this->commision . '%')
+                ->description(''),
+            Stat::make('Total Withdrawable', 'KES ' .number_format(0))
                 ->description('')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),
+                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                ->extraAttributes([
+                    'wire:click' => "@php echo 'tests' @endphp "
+                ]),
         ];
     }
 }
