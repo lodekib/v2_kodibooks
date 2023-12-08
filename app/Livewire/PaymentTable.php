@@ -49,6 +49,7 @@ class PaymentTable extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('paid_date')->datetime()->size('sm')->searchable(),
+                TextColumn::make('tenant.id_number')->label('Account')->size('sm')->searchable()->sortable()->copyable(),
                 TextColumn::make('receipt_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('reference_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->searchable()->sortable()->size('sm'),
