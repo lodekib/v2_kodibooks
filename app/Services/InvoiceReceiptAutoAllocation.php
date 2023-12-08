@@ -166,7 +166,7 @@ class InvoiceReceiptAutoAllocation
                         'tenant_name' => $pending_invoice->tenant_name,
                         'receipt_number' => $payment->receipt_number,
                         'invoice_number' => $pending_invoice->invoice_number,
-                        'amount_allocated' => $payment->balance
+                        'amount_allocated' => $payment->amount
                     ];
                     Allocation::create($auto_allocation_data);
 

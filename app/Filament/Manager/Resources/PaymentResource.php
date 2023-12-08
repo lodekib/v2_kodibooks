@@ -86,7 +86,7 @@ class PaymentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('created_at')->size('sm')->date()->searchable()->label('Date'),
+                TextColumn::make('created_at')->size('sm')->datetime()->searchable()->label('Date'),
                 TextColumn::make('tenant_name')->label('Tenant')->size('sm')->searchable()->sortable(),
                 TextColumn::make('tenant.id_number')->label('Account')->size('sm')->searchable()->sortable()->copyable(),
                 TextColumn::make('unit_name')->label('Unit')->size('sm')->searchable()->sortable(),
