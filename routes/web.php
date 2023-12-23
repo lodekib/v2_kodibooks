@@ -9,6 +9,9 @@ use App\Http\Middleware\ManagerIDMiddleware;
 use App\Livewire\ApprovalComponent;
 use Illuminate\Support\Facades\Response;
 
+Route::get('/', function () {
+    return view('welcome');
+});
 Route::middleware('auth')->group(function () {
     Route::post('/utilities/update/{tenant}', [UtilityController::class, 'updateUtility'])->name('utilities.update');
 });
@@ -21,7 +24,11 @@ Route::post('confirmation', [MpesaC2BController::class, 'confirmation'])->name('
 Route::post('/v1/mpesatest/stk/push', [MpesaSTKController::class, 'STKPush']);
 
 Route::get('manager/units/sample-csv-download', function () {
-    $headers = array('Content-Type' => 'text/csv');
+    $headers = array(
+        'Content-Type' => 'text/csv',
+        'Cache-Control' => 'no-store,no-cache,must-revalidate,max-age=0',
+        'Pragma' => 'no-cache'
+    );
     return Response::download('units_csv_template/unit.csv', 'unit.csv', $headers);
 })->name('template.unit');
 Route::get('manager/payments/sample-csv-download', function () {

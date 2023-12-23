@@ -15,7 +15,7 @@
         "bpuig/laravel-subby": "^7.0",
         "cartalyst/stripe-laravel": "^15.0",
         "egulias/email-validator": "^4.0",
-        "filament/filament": "v3.0.82",
+        "filament/filament": "v3.1.27",
         "flowframe/laravel-trend": "^0.1.5",
         "guzzlehttp/guzzle": "^7.2",
         "iankumu/mpesa": "^1.3",

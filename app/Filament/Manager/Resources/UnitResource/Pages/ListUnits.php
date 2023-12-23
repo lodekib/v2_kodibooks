@@ -2,11 +2,13 @@
 
 namespace App\Filament\Manager\Resources\UnitResource\Pages;
 
+use App\Filament\Imports\UnitImporter;
 use App\Filament\Manager\Resources\UnitResource;
 use App\Models\Property;
 use Closure;
 use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Actions\ImportAction as ActionsImportAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Resources\Pages\ListRecords;
@@ -22,7 +24,8 @@ class ListUnits extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->icon('heroicon-o-plus-circle'),
+            // ActionsImportAction::make()->label('Import Data')->color('primary')->icon('heroicon-o-cloud-arrow-down')->importer(UnitImporter::class),
             Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.unit')),
             ImportAction::make()->fields([
                 Select::make('property_name')->options(Property::pluck('property_name', 'property_name'))->required()->reactive(),
