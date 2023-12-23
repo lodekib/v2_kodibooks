@@ -32,6 +32,7 @@
         "livewire/livewire": "^3.0.10",
         "pxlrbt/filament-excel": "^2.1",
         "saade/filament-fullcalendar": "^3.0",
+        "spatie/laravel-permission": "6.1",
         "symfony/http-kernel": "*"
     },
     "require-dev": {
