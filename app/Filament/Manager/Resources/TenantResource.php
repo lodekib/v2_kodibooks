@@ -73,7 +73,7 @@ class TenantResource extends Resource
                 Section::make('')->description('Personal & housing details.')->schema([
                     TextInput::make('full_names')->required(),
                     TextInput::make('email')->required()->unique(ignoreRecord:true)->email(),
-                    TextInput::make('phone_number')->required()->integer(),
+                    TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
                     TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer(),
                     Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
                     Select::make('unit_name')->options(function (callable $get) {
@@ -210,11 +210,11 @@ class TenantResource extends Resource
                     })->visible(fn ($record) => $record->status == 'active'),
                     EditAction::make(),
                     DeleteAction::make()->action(function ($record) {
-                        $record->update(['status' => 'stale']);
                         Unit::where('unit_name', $record->unit_name)->update(['status' => 'vacant']);
-                        $record->payments->each->update(['status' => fn ($payment) => 'stale/' . $payment->status]);
-                        $record->invoices->each->update(['invoice_status' => fn ($invoice) => 'stale/' . $invoice->invoice_status]);                        
-                        $record->activeutility->delete();
+                        optional($record->payments)->each(fn($payment) => $payment->update(['status' => 'stale/'.$payment->status]));
+                        optional($record->invoices)->each(fn($invoice) => $invoice->update(['invoice_status' => 'stale/'.$invoice->invoice_status]));
+                        optional($record->activeutility)->delete();
+                        $record->update(['status' => 'stale']);
                         Notification::make()->success()->color('success')->body('Successfully deleted the tenant !')->send();
                     })
                 ])->button()->label('Actions')->color('gray')

@@ -202,7 +202,7 @@ class InvoiceTable extends Component implements HasForms, HasTable
                     ]),
                     Fieldset::make(fn ($get) => $get('invoice_type') . " Invoice")->schema([
                         TextInput::make('invoice_title')->required()->disabled()->dehydrated(),
-                        DatePicker::make('due_date')->required()->maxDate(now()),
+                        DatePicker::make('due_date')->required(),
                         TextInput::make('amount_invoiced')->label('Amount ( Ksh )')->required(),
                         DatePicker::make('from')->required(),
                         DatePicker::make('to')->required(),
