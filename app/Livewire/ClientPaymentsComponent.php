@@ -18,10 +18,16 @@ class ClientPaymentsComponent extends Component implements HasTable, HasForms
 {
 
     use InteractsWithTable, InteractsWithForms;
+    public $paybill;
+    public function mount()
+    {
+        $p = Paybill::where('manager_id', auth()->id())->get();
+        $this->paybill = $p->first()->paybill_number;
+    }
 
     public function table(Table $table): Table
     {
-        return $table->query(MpesaC2B::where('Business_Shortcode',env('MPESA_BUSINESS_SHORTCODE')))
+        return $table->query(MpesaC2B::where('Business_Shortcode', $this->paybill))
             ->columns([
                 TextColumn::make('created_at')->date()->size('sm')->searchable(),
                 TextColumn::make('FirstName')->searchable()->size('sm'),
