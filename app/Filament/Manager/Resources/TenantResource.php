@@ -74,15 +74,15 @@ class TenantResource extends Resource
                     TextInput::make('full_names')->required(),
                     TextInput::make('email')->required()->unique(ignoreRecord:true)->email(),
                     TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')->unique(ignoreRecord:true)->required(),
-                    TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer(),
-                    Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
+                    TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer()->hiddenOn('edit'),
+                    Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive()->hiddenOn('edit'),
                     Select::make('unit_name')->options(function (callable $get) {
                         return Unit::where('status', 'vacant')->where('property_name', $get('property_name'))->pluck('unit_name', 'unit_name');
                     })->required()->reactive()->afterStateUpdated(function ($set, $state) {
                         $unit = Unit::where('unit_name', $state)->get();
                         $set('rent', $unit->first()->rent);
                         $set('deposit', $unit->first()->deposit);
-                    }),
+                    })->hiddenOn('edit'),
                 ])->columns(3),
                 Section::make('')->description('Payments & invoicing.')->schema([
                     TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(10),
