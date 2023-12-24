@@ -57,16 +57,16 @@ class PayPage extends Page implements HasForms
         }
     }
 
-    public function stk_push()
-    {
-        $manager = Manager::find(auth()->id());
-        $number = $this->number != null ? $this->number  : $manager->contact_number;
-        $subscription_amount = auth()->user()->subscriptions;
-        $mpesa = Mpesa::stkpush($number, $subscription_amount->first()->price, $manager->national_id);
-        if ($mpesa->status() == 200) {
-            if ($manager->update(['paid_subscription' => true])) {
-                return redirect('properties');
-            }
-        }
-    }
+    // public function stk_push()
+    // {
+    //     $manager = Manager::find(auth()->id());
+    //     $number = $this->number != null ? $this->number  : $manager->contact_number;
+    //     $subscription_amount = auth()->user()->subscriptions;
+    //     $mpesa = Mpesa::stkpush($number, $subscription_amount->first()->price, $manager->national_id);
+    //     if ($mpesa->status() == 200) {
+    //         if ($manager->update(['paid_subscription' => true])) {
+    //             return redirect('properties');
+    //         }
+    //     }
+    // }
 }

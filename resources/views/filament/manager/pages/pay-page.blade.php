@@ -52,7 +52,7 @@
 
         </x-slot>
     </x-filament::section>
-    <div class="content-center">OR</div>
+    <!-- <div class="content-center">OR</div>
     <x-filament::section aside>
         <x-slot name="heading">
             STK Push
@@ -86,7 +86,7 @@
                 </x-filament::button>
             </form>
         </x-filament::modal>
-    </x-filament::section>
+    </x-filament::section> -->
 @endif
 @endif
 
