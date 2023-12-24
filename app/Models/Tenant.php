@@ -24,10 +24,10 @@ class Tenant extends Model
         });
     }
 
-    public function routeNotificationForAfricasTalking($notification)
-    {
-        return '254' . substr($this->phone_number, 1);
-    }
+    // public function routeNotificationForAfricasTalking($notification)
+    // {
+    //     return '254' . substr($this->phone_number, 1);
+    // }
 
     public function units(): HasMany
     {

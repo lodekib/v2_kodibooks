@@ -14,14 +14,15 @@ class ReminderNotification extends Notification
     use Queueable;
 
     public $message;
+    public $phone;
     /**
      * Create a new notification instance.
      */
-    public function __construct($message)
+    public function __construct($message,$phone)
     {
         $this->message = $message;
+        $this->phone = $phone;
     }
-
     /**
      * Get the notification's delivery channels.
      *
@@ -34,7 +35,7 @@ class ReminderNotification extends Notification
 
     public function toAfricasTalking($notifiable)
     {
-        return (new AfricasTalkingMessage())->content($this->message);
+        return (new AfricasTalkingMessage())->content($this->message)->to($this->phone);
     }
 
     /**
