@@ -20,6 +20,7 @@ use Saade\FilamentFullCalendar\Actions as Act;
 class CalendarWidget extends FullCalendarWidget
 {
     public Model | string | null $model = Reminder::class;
+    protected static bool $isLazy = false;
 
     protected function headerActions(): array
     {
@@ -57,7 +58,7 @@ class CalendarWidget extends FullCalendarWidget
                 Textarea::make('message')->required()
             ])->action(function (array $data, $record) {
                 $tenant = Tenant::find($record->tenant_id);
-                $tenant->notify(new ReminderNotification($data['message']));
+                $tenant->notify(new ReminderNotification($data['message'], $tenant->phone_number));
                 Notification::make()->success()->color('success')->body('Reminder sent successfully')->send();
             }),
             Act\EditAction::make()->label('')->icon('heroicon-o-pencil'),

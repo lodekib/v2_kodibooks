@@ -41,7 +41,7 @@ class VendorResource extends Resource
                         'telecommunication' => 'Telecommunucation'
                     ])->helperText('Area of specialization')->required(),
                     TextInput::make('contact_person')->label('Vendor name')->helperText('Name of vendor')->required(),
-                    TextInput::make('contact_number')->integer()->required(),
+                    TextInput::make('contact_number')->required(),
                     TextInput::make('email')->email()->unique()->required(),
                     Select::make('vendor_type')->options([
                         'supplier' => 'Supplier',
@@ -66,20 +66,21 @@ class VendorResource extends Resource
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('company_name')->size('sm')->sortable()->searchable(),
                 TextColumn::make('industry')->size('sm')->searchable()->sortable(),
-                TextColumn::make('contact_person')->size('sm')->searchable()->toggleable(isToggledHiddenByDefault:true),
+                TextColumn::make('contact_person')->size('sm')->searchable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('contact_number')->size('sm')->searchable()->sortable(),
                 TextColumn::make('email')->size('sm')->searchable(),
                 TextColumn::make('vendor_type')->size('sm')->searchable()->sortable(),
                 TextColumn::make('vendor_particular')->size('sm')->searchable()->sortable(),
-                TextColumn::make('payment_method')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault:true)
+                TextColumn::make('payment_method')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true)
             ])
             ->striped()
             ->filters([
                 //
             ])->headerActions([
-                ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
+                // ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
                 FilamentExportHeaderAction::make('PDF')->label('PDF')->color('gray')->outlined()->disableAdditionalColumns()
-                ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()                ])
+                    ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()
+            ])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
