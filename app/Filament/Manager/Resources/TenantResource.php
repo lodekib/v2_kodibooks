@@ -73,7 +73,7 @@ class TenantResource extends Resource
                 Section::make('')->description('Personal & housing details.')->schema([
                     TextInput::make('full_names')->required(),
                     TextInput::make('email')->required()->unique(ignoreRecord:true)->email(),
-                    TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
+                    TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')->unique(ignoreRecord:true)->required(),
                     TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer(),
                     Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
                     Select::make('unit_name')->options(function (callable $get) {
