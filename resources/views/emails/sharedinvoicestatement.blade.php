@@ -1,8 +1,8 @@
 <x-mail::message>
     # INVOICE STATEMENT
 
-    <p>Hello <strong>{{ $tenant->full_names }}</strong> , </br>
-    <p>Here is your Invoice statement for this month</p>
+    Hello {{ $tenant->full_names }} , </br>
+    Here is your Invoice statement for this month
     Thanks,<br>
     {{ config('app.name') }}
 </x-mail::message>

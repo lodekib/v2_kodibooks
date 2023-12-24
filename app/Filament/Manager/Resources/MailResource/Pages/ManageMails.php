@@ -13,7 +13,7 @@ class ManageMails extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->action(function (array $data) {
+            Actions\CreateAction::make()->label('Add Mail Configuration')->icon('heroicon-o-plus-circle')->action(function (array $data) {
                 $smtp_host_prefix = 'smtp.';
                 $domain = explode('@', $data['smtp_username'])[1];
                 if (strpos($data['smtp_username'], '@') !== false) {

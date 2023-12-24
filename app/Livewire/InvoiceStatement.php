@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Barryvdh\DomPDF\PDF;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 
 class InvoiceStatement extends Component
@@ -62,9 +63,9 @@ class InvoiceStatement extends Component
         $rate = Utility::where('property_name', $property->property_name)->where('utility_name', 'Water')->get('amount')->first();
         $balance = Statement::where('tenant_name', $record->full_names)
             ->selectRaw('SUM(debit) - SUM(credit) as balance')->where('created_at', '<', $startOfMonth)->first()->balance;
-        $consumption_total = ($water_readings->first()->current_reading - $water_readings->first()->previous_reading) * $rate->amount;
+        $consumption_total = $water_readings->isNotEmpty() ? ($water_readings->first()->current_reading - $water_readings->first()->previous_reading) * $rate->amount : 0;
         $total_overdue = $balance + $consumption_total + $total_balances;
-
+     
 
         $pdf = FacadePdf::loadView('pdfs.i-statement',  [
             'tenant' => $record->full_names,
@@ -72,7 +73,8 @@ class InvoiceStatement extends Component
             'water_readings' => $water_readings->first(),
             'rate' => $rate,
             'balance' => $balance,
-            'total_overdue' => $total_overdue
+            'total_overdue' => $total_overdue,
+            'total_balances' => $total_balances
         ]);
 
         return $pdf->output();
@@ -82,10 +84,18 @@ class InvoiceStatement extends Component
     {
         $validated = $this->email != null ? $this->validate(['email' => 'email']) : null;
         $mail = $this->email != null ? $this->email : $this->record->email;
-        InvoiceStatement::share($this->record);
         $mail_config = ModelsMail::withoutGlobalScope(new ManagerScope())->where('manager_id', $this->record->manager_id)->first();
-        $mail_config->mailer()->to($mail)->send(new ShareInvoiceStatement($this->record));
-        Notification::make()->success()->color('success')->body('Invoice statement shared successfully !')->send();
+        if ($mail_config === null) {
+            Notification::make()->warning()->color('warning')
+                ->title('Configuration Error !')->body('Please set up your email before proceeding.')
+                ->actions([
+                    Action::make('Setup Mail')->button()->color('primary')->icon('heroicon-o-cog-8-tooth')->url(route('filament.manager.resources.mails.index'))
+                ])->seconds(4)->send();
+        } else {
+            InvoiceStatement::share($this->record);
+            $mail_config->mailer()->to($mail)->send(new ShareInvoiceStatement($this->record));
+            Notification::make()->success()->color('success')->body('Invoice statement shared successfully !')->send();
+        }
     }
 
     public function render()
