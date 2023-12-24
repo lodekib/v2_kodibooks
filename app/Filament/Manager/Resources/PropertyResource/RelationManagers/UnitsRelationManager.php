@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class UnitsRelationManager extends RelationManager
 {
     protected static string $relationship = 'units';
+    protected static bool $isLazy = false;
 
     public function isReadOnly(): bool
     {
