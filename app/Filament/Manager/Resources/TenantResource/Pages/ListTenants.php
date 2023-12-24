@@ -23,7 +23,7 @@ class ListTenants extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->icon('heroicon-o-plus-circle'),
             Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.tenant')),
             ImportAction::make()->uniqueField('id_number')->fields([
                 ImportField::make('full_names')->required(),
