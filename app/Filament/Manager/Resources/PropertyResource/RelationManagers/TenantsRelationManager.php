@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TenantsRelationManager extends RelationManager
 {
     protected static string $relationship = 'tenants';
+    protected static bool $isLazy = false;
 
     public function isReadOnly(): bool
     {

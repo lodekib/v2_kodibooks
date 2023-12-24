@@ -42,6 +42,7 @@ class PropertyImporter extends Importer
 
         return new Property();
     }
+    
 
     public static function getCompletedNotificationBody(Import $import): string
     {

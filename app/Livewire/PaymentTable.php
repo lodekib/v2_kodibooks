@@ -80,7 +80,7 @@ class PaymentTable extends Component implements HasForms, HasTable
                             );
                     })
             ])->headerActions([
-                CreateAction::make()->label('Add a payment')
+                CreateAction::make()->label('Add a payment')->icon('heroicon-o-plus-circle')
                     ->form([
                         Fieldset::make()->schema([
                             Select::make('unit_name')->options($this->record->units()->pluck('unit_name', 'unit_name'))->afterStateUpdated(function ($state, Set $set) {
