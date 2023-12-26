@@ -6,6 +6,7 @@ use App\Models\Property;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Forms\Components\Select;
 
 class PropertyImporter extends Importer
 {
@@ -32,6 +33,13 @@ class PropertyImporter extends Importer
                 ->rules(['required', 'max:20']),
         ];
     }
+
+    // public static function getOptionsFormComponents(): array
+    // {
+    //     return [
+    //         Select::make('sample')->options(Property::pluck('property_name','property_name'))
+    //     ];
+    // } 
 
     public function resolveRecord(): ?Property
     {

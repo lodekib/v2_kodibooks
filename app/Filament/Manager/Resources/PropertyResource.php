@@ -77,12 +77,12 @@ class PropertyResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('No')->rowIndex(),
-                TextColumn::make('property_name')->size('sm')->sortable()->searchable(),
-                TextColumn::make('property_size')->size('sm')->suffix(' sq. m'),
-                TextColumn::make('property_cost')->size('sm')->money('kes'),
-                TextColumn::make('number_of_units')->size('sm')->formatStateUsing(fn ($record) => $record->units->count()),
-                TextColumn::make('property_status')->color(fn ($state) => $state == 'good' ? 'primary' : 'danger')->searchable()->badge(),
-                TextColumn::make('property_location')->size('sm')->searchable()->sortable(),
+                TextColumn::make('property_name')->label('Name')->size('sm')->sortable()->searchable(),
+                TextColumn::make('property_size')->label('Size')->size('sm')->suffix(' sq. m'),
+                TextColumn::make('property_cost')->label('Cost')->size('sm')->money('kes'),
+                TextColumn::make('number_of_units')->label('No. Units')->size('sm')->state(fn($record) => $record->units->count()),
+                TextColumn::make('property_status')->label('status')->color(fn ($state) => $state == 'good' ? 'primary' : 'danger')->searchable()->badge(),
+                TextColumn::make('property_location')->label('Location')->size('sm')->searchable()->sortable(),
             ])
             ->striped()
             ->filters([
