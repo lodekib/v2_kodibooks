@@ -4,6 +4,7 @@ namespace App\Filament\Manager\Resources\PropertyResource\Pages;
 
 use App\Filament\Imports\PropertyImporter;
 use App\Filament\Manager\Resources\PropertyResource;
+use App\Models\Property;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction as ActionsImportAction;
@@ -20,7 +21,8 @@ class ListProperties extends ListRecords
         return [
             Actions\CreateAction::make()->icon('heroicon-o-plus-circle'),
             // Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.property')),
-            ActionsImportAction::make()->label('Import Data')->importer(PropertyImporter::class)->color('primary')->icon('heroicon-o-cloud-arrow-down'),
+            ActionsImportAction::make()->label('Import Data')->importer(PropertyImporter::class)
+            ->color('primary')->icon('heroicon-o-cloud-arrow-down')
             // ImportAction::make()->uniqueField('property_name')->fields([
             //     ImportField::make('property_name')->required(),
             //     ImportField::make('number_of_units')->required(),
