@@ -64,7 +64,7 @@ class UnitsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->action(function (array $data) {
+                Tables\Actions\CreateAction::make()->icon('heroicon-o-plus-circle')->action(function (array $data) {
                     $unit_data = array_merge(
                         $data,
                         [

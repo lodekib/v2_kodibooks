@@ -38,8 +38,8 @@ class TenantsRelationManager extends RelationManager
             ->schema([
                 Fieldset::make()->schema([
                     TextInput::make('full_names')->required()->maxLength(255),
-                    TextInput::make('email')->required()->unique(),
-                    TextInput::make('phone_number')->required()->integer(),
+                    TextInput::make('email')->required()->unique(ignoreRecord:true),
+                    TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')->unique(ignoreRecord:true),
                     TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer(),
                     Select::make('unit_name')->options(function () {
                         return Unit::where('status', 'vacant')->where('property_name', $this->getOwnerRecord()->property_name)->pluck('unit_name', 'unit_name');
@@ -89,7 +89,7 @@ class TenantsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->action(function (array $data) {
+                Tables\Actions\CreateAction::make()->icon('heroicon-o-plus-circle')->action(function (array $data) {
                     $unit = Unit::where('unit_name', $data['unit_name'])->first();
                     $tenant_data = array_merge(
                         $data,

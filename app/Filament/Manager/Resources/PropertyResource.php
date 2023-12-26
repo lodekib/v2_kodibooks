@@ -157,23 +157,19 @@ class PropertyResource extends Resource
                 Section::make()
                     ->schema([
                         Split::make([
-                            Grid::make(2)
-     
-     
-     
+                            Grid::make(4)
                             ->schema([
                                     Group::make([
                                         TextEntry::make('property_name'),
-                                        TextEntry::make('property_location'),
                                     ]),
                                     Group::make([
-                                        TextEntry::make('number_of_units'),
+                                       TextEntry::make('property_location') 
+                                    ]),
+                                    Group::make([
                                         TextEntry::make('property_status')->badge()
                                     ]),
+                                    ImageEntry::make('property_image')->grow(false)
                                 ]),
-                            ImageEntry::make('property_image')
-                                ->hiddenLabel()
-                                ->grow(false),
                         ])->from('lg'),
                     ])->collapsible(),
             ]);
