@@ -90,7 +90,7 @@ class InvoiceStatement extends Component
                 ->title('Configuration Error !')->body('Please set up your email before proceeding.')
                 ->actions([
                     Action::make('Setup Mail')->button()->color('primary')->icon('heroicon-o-cog-8-tooth')->url(route('filament.manager.resources.mails.index'))
-                ])->seconds(4)->send();
+                ])->persistent()->send();
         } else {
             InvoiceStatement::share($this->record);
             $mail_config->mailer()->to($mail)->send(new ShareInvoiceStatement($this->record));
