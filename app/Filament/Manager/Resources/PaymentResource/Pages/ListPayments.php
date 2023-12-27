@@ -21,7 +21,7 @@ class ListPayments extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Record Payment')->icon('heroicon-s-credit-card'),
+            Actions\CreateAction::make()->label('Record Payment')->icon('heroicon-o-plus-circle'),
             Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.payment')),
             ImportAction::make()->uniqueField('receipt_number')->fields([
                 ImportField::make('property_name')->required()->rules('exists:properties,property_name'),
