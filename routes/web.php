@@ -8,6 +8,7 @@ use App\Http\Controllers\UtilityController;
 use App\Http\Middleware\ManagerIDMiddleware;
 use App\Livewire\ApprovalComponent;
 use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,8 +27,6 @@ Route::post('/v1/mpesatest/stk/push', [MpesaSTKController::class, 'STKPush']);
 Route::get('manager/units/sample-csv-download', function () {
     $headers = array(
         'Content-Type' => 'text/csv',
-        'Cache-Control' => 'no-store,no-cache,must-revalidate,max-age=0',
-        'Pragma' => 'no-cache'
     );
     return Response::download('units_csv_template/unit.csv', 'unit.csv', $headers);
 })->name('template.unit');
@@ -39,7 +38,7 @@ Route::get('manager/invoices/sample-csv-download', function () {
     $headers =  array('Content-Type' => 'text/csv');
     return Response::download('invoices_csv_template/invoice.csv', 'invoice.csv', $headers);
 })->name('template.invoice');
-Route::get('manager/tenants/sample-csv-download', function () {
+Route::get('manager/template/sample-csv-download', function () {
     $headers = array('Content-Type' => 'text/csv');
     return Response::download('tenants_csv_template/tenant.csv', 'tenant.csv', $headers);
 })->name('template.tenant');
