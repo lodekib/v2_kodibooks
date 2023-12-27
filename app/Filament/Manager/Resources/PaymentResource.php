@@ -162,7 +162,7 @@ class PaymentResource extends Resource
                             $tenant = Tenant::find($record->tenant_id);
                             return response()->streamDownload(function () use ($record,$tenant) {
                                 echo Pdf::loadHtml(
-                                    Blade::render('pdfs/payment', ['record' => $record,'tenant' => $tenant])
+                                    Blade::render('pdfs/receipt', ['record' => $record,'tenant' => $tenant])
                                 )->stream();
                             }, $record->property_name . '-' . $record->tenant_name . '.pdf');
                         }),
