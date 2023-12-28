@@ -1,3 +1,3 @@
-full_names,email,phone_number,id_number,property_name,unit_name,arrears,surplus,rent,deposit,entry_date
-Taylor Otwell,otwell@gmail.com,7857847867,76847674,Demakyd Property,AOY1627,0,0,17500,11000,2023-08-31
-Caleb Porzio,porzio@gmail.com,7859674857,657465793,Demakyd Property,QT677,0,0,22300,22300,2023-09-08
+full_names,email,phone_number,id_number,property_name,unit_name,entry_date
+Taylor Otwell,otwell@gmail.com,7857847867,76847674,Demakyd Property,YP01,2023-08-31
+Caleb Porzio,porzio@gmail.com,7859674857,657465793,Demakyd Property,YP02,2023-09-08
