@@ -38,11 +38,11 @@ Route::get('manager/invoices/sample-csv-download', function () {
     $headers =  array('Content-Type' => 'text/csv');
     return Response::download('invoices_csv_template/invoice.csv', 'invoice.csv', $headers);
 })->name('template.invoice');
-Route::get('manager/template/sample-csv-download', function () {
+Route::get('manager/ttemplate/sample-csv-download', function () {
     $headers = array('Content-Type' => 'text/csv');
     return Response::download('tenants_csv_template/tenant.csv', 'tenant.csv', $headers);
 })->name('template.tenant');
-Route::get('manager/properties/sample-csv-download', function () {
+Route::get('manager/ptemplate/sample-csv-download', function () {
     $headers = array('Content-Type' => 'text/csv');
     return Response::download('properties_csv_template/property.csv', 'property.csv', $headers);
 })->name('template.property');
