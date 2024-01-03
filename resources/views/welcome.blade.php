@@ -1369,9 +1369,9 @@
             background-image: linear-gradient(to right, var(--tw-gradient-stops));
         }
 
-        .bg-\[url\(\.\.\/img\/dots\.svg\)\] {
+        /* .bg-\[url\(\.\.\/img\/dots\.svg\)\] {
             background-image: url(https://d2n6cmh8j179w8.cloudfront.net/9f5a9986-56bd-4cd9-9709-7cadd1f5c199/build/assets/dots-6b14a7af.svg);
-        }
+        } */
 
         .from-gray-800 {
             --tw-gradient-from: #262c41;

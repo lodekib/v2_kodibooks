@@ -214,7 +214,11 @@ class InvoiceTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
-                    DeleteAction::make()
+                    DeleteAction::make()->action(function ($record) {
+                        optional($record->statement)->delete();
+                        $record->update(['invoice_status' => 'stale/' . $record->invoice_status]);
+                        Notification::make()->color('primary')->success()->title('Success !')->body('Invoice deleted successfully .')->send();
+                    })
                 ])
             ])
             ->bulkActions([
