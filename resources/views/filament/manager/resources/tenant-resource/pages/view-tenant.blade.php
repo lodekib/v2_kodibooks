@@ -15,10 +15,24 @@
         <x-slot name="label">
             Quick Actions
         </x-slot>
-
-        <x-filament::button wire:click="refund" wire:confirm="Please confirm this action ."  icon="heroicon-s-minus" icon-position="after" outlined >
-            Refund Deposit
-        </x-filament::button></x-filament::fieldset>
+        <x-filament::modal slide-over width="3xl" icon="heroicon-o-user-minus">
+            <x-slot :name="$this->record->is_refunded ? '' : 'trigger'">
+                <x-filament::button outlined icon="heroicon-o-minus-circle">
+                    Vacate & Refund
+                </x-filament::button>
+            </x-slot>
+            <x-slot name="heading">
+                Tenant Vacation
+            </x-slot>
+            <x-slot name="description">
+                Capture the deductables incurred by the tenant , refund the deposit and vacate.
+            </x-slot>
+            @livewire('refund-component',['record' => $this->record])
+            <x-slot name="footer">
+                Kodibooks
+            </x-slot>
+        </x-filament::modal>
+    </x-filament::fieldset>
 
     <div x-data="{ activeTab: 'Invoice Statement' }">
         <x-filament::tabs label="tenant info tabs">

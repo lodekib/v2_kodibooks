@@ -80,11 +80,11 @@ class InvoiceResource extends Resource
             ->columns([
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->label('Date')->datetime()->size('sm'),
-                TextColumn::make('property_name')->label('Property')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault:true),
+                TextColumn::make('property_name')->label('Property')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('tenant_name')->label('Tenant')->size('sm')->searchable()->sortable(),
                 TextColumn::make('unit_name')->label('Unit')->size('sm')->sortable()->searchable(),
                 TextColumn::make('invoice_number')->label('INV')->size('sm')->searchable()->sortable(),
-                TextColumn::make('invoice_type')->label('Type')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault:true),
+                TextColumn::make('invoice_type')->label('Type')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('invoice_status')->label('Status')->color(fn (string $state): string => match ($state) {
                     'pending' => 'warning',
                     'partially paid' => 'gray',
@@ -113,14 +113,14 @@ class InvoiceResource extends Resource
             ])->headerActions([
                 ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
                 FilamentExportHeaderAction::make('PDF')->label('PDF')->color('gray')->outlined()->disableAdditionalColumns()
-                ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()               // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
-                ])
+                    ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()               // FilamentExportHeaderAction::make('Generate Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns()
+            ])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make()->action(function ($record) {
+                        optional($record->statement)->delete();
                         $record->update(['invoice_status' => 'stale/' . $record->invoice_status]);
-                        // Statement::where('reference', $record->invoice_number)->delete();
                         Notification::make()->success()->color('success')->body('Invoice deleted successfully')->send();
                     })
                 ])->button()->label('Actions')->color('gray')
