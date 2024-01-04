@@ -2824,7 +2824,7 @@
     <div class="mx-auto max-w-7xl px-6 pt-6 pb-12 text-center opacity-75">
         Copyright © Kodibooks - 2024
     </div>
-
+<!-- 
     <script type="text/javascript">
         ! function(e, t, n) {
             function a() {
@@ -2842,7 +2842,7 @@
                 }, n.readyQueue = [], "complete" === t.readyState) return a();
             e.attachEvent ? e.attachEvent("onload", a) : e.addEventListener("load", a, !1)
         }(window, document, window.Beacon || function() {});
-    </script>
+    </script> -->
     <script type="text/javascript">
         window.Beacon('init', '88508242-7b51-46dc-80df-9a3633f4f2ca')
     </script>
