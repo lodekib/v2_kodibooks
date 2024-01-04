@@ -34,7 +34,7 @@ class SubscriptionMiddleware
                     subscription payment')->seconds(4)->send();
                     }
                 }
-                return redirect('pay-page');
+                return redirect('/manager/pay-page');
             }
         }
         return $next($request);
