@@ -2325,8 +2325,7 @@
             <a class="font-bold" href="/manager/login">
                 Sign in
             </a>
-            <a href="/manager/register" class="border-cyan-600 text-cyan-600 hidden rounded-md border px-8 py-3 text-center font-bold md:inline-block">Get
-                Started</a>
+            <a href="/partner/login" class="border-cyan-600 text-cyan-600 hidden rounded-md border px-8 py-3 text-center font-bold md:inline-block">Partnership</a>
         </div>
     </div>
 
@@ -2345,7 +2344,7 @@
                 </p>
 
                 <div class="mt-5 flex flex-col gap-5 sm:mt-10 sm:flex-row sm:items-center">
-                    <a href="/manager/register" class="inline-block w-full px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center sm:w-auto">Get Started</a>
+                    <a href="/manager/login" class="inline-block w-full px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center sm:w-auto">Get Started</a>
                     <a href="#" class="inline-block w-full px-14 py-4 rounded-md bg-purple-50 border border-purple-200 font-bold text-center sm:w-auto">Explore</a>
                 </div>
             </div>
@@ -2353,18 +2352,18 @@
     </div>
 
     <!-- Features Section 1 -->
-    <div class="max-w-7xl mx-auto px-6 mt-10 sm:py-3">
+    <div class="max-w-7xl mx-auto  sm:py-3">
         <!-- Features Section 1 Heading -->
-        <h2 class="text-4xl font-bold sm:text-5xl lg:text-6xl">On-demand.<br><span class="text-cyan-600">Auto books.</span></h2>
+        <h2 class="text-4xl font-bold sm:text-5xl lg:text-6xl" style="text-align: center;">On-demand.<br><span class="text-cyan-600">Auto books.</span></h2>
 
-        <p class="mt-5 text-xl max-w-xl">
+        <p class="mt-5 text-xl" style="text-align: center;">
             You have to see it to believe it. Watch your web application and workers scale within seconds based on demand.
         </p>
 
         <div class="mt-10 grid gap-5 sm:grid-cols-2 sm:gap-y-12">
             <!-- Databases -->
             <div class="overflow-hidden flex flex-col gap-6 rounded-md p-6 lg:flex-row lg:items-start lg:py-10 lg:pr-24" style="background-image: linear-gradient(79.74deg, #F1EEFF 8.07%, rgba(241, 238, 255, 0) 100%);">
-                <img class="-mt-8 shrink-0 lg:mt-0 lg:-ml-12" width="177" height="170" src="#">
+                <img class="-mt-8 shrink-0 lg:mt-0" width="100" height="100" src="assets/auto.png">
 
                 <div>
                     <h2 class="text-2xl font-bold">Auto Allocations</h2>
@@ -2377,7 +2376,7 @@
 
             <!-- Caches -->
             <div class="overflow-hidden flex flex-col gap-6 rounded-md p-6 lg:flex-row lg:items-start lg:py-10 lg:pr-24" style="background-image: linear-gradient(79.74deg, #F1EEFF 8.07%, rgba(241, 238, 255, 0) 100%);">
-                <img class="-mt-8 shrink-0 lg:mt-0 lg:-ml-12" width="175" height="131" src="#">
+                <img class="-mt-8 shrink-0 lg:mt-0 " width="100" height="100" src="assets/pay.png">
 
                 <div>
                     <h2 class="text-2xl font-bold">Instant Payments</h2>
@@ -2490,7 +2489,7 @@
                     <h2 class="mt-3 text-2xl font-bold">Infinite Deployments</h2>
 
                     <p class="mt-4">
-                        Vapor will manage as many projects and deployments as you can throw at it. Bring it on.
+                        Vapor will manage as many imgprojects and deployments as you can throw at it. Bring it on.
                     </p>
                 </div> -->
 
@@ -2539,7 +2538,7 @@
 
             <div class="flex items-center gap-x-6 mt-8">
                 <a href="/features/painless-deployments" class="inline-block w-full px-14 py-4 rounded-md bg-purple-50 border border-purple-200 font-bold text-center sm:w-auto">Learn more</a>
-                <a href="/partner/register" class="font-bold">Partner</a>
+                <a href="/partner/login" class="font-bold">Partner</a>
             </div>
         </div>
 
@@ -2564,10 +2563,36 @@
         </div>
     </div>
 
+    <div class="max-w-7xl mx-auto px-6 py-8 sm:py-16 md:py-24 grid gap-12 lg:grid-cols-2">
+        <!-- PARTNERSHIP AREA -->
+        <div>
+            <div class="max-w-2xl">
+                <div>
+                    <div class="relative mx-auto w-full rounded-lg lg:max-w-md">
+                            <img class="w-full" src="assets/partner.svg" alt="">
+                            <span class="absolute inset-0 w-full h-full flex items-center justify-center" aria-hidden="true">
+                            </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2 class="text-4xl font-bold max-w-xl sm:text-5xl">Partner With Us.</h2>
+
+            <p class="mt-4 text-xl max-w-xl">
+            Our innovative product promises to revolutionize the market, providing a unique solution that meets the evolving needs of consumers. Collaborate with us to tap into a dynamic market, enjoy attractive incentives, and be part of a winning team driving success. 
+            </p>
+
+            <div class="flex items-center gap-x-6 mt-8">
+                <a href="/partner/login" class="inline-block text-white w-full px-14 py-4 rounded-md bg-cyan-600 border border-purple-200 font-bold text-center sm:w-auto">Partner With Us.</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Pricing Table -->
-    <div class="max-w-7xl mx-auto px-6 py-16 lg:relative lg:pt-40 lg:pb-32">
+    <div class="max-w-7xl mx-auto lg:relative lg:pt-10 lg:pb-32">
         <div class="max-w-2xl">
-            <h2 class="text-4xl font-bold ">
+            <h2 class="text-4xl font-bold">
                 Simple, fixed pricing.<br> <span class="text-cyan-600">Freedom of management.</span>
             </h2>
 
@@ -2616,7 +2641,7 @@
                     <div class="mt-2 border-t border-[#DDD8FF]"></div>
 
                     <div class="mt-2">
-                        <a href="/register" class="inline-block px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center">Get Started</a>
+                        <a href="/login" class="inline-block px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center">Get Started</a>
                     </div>
                 </div>
             </div>
@@ -2660,7 +2685,7 @@
                     <div class="mt-2 border-t border-[#DDD8FF]"></div>
 
                     <div class="mt-2">
-                        <a href="/manager/register" class="inline-block px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center">Get Started</a>
+                        <a href="/manager/login" class="inline-block px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center">Get Started</a>
                     </div>
                 </div>
             </div>
@@ -2703,11 +2728,11 @@
                     <div class="mt-2 border-t border-[#DDD8FF]"></div>
 
                     <div class="mt-2">
-                        <a href="/manager/register" class="inline-block px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center">Get Started</a>
+                        <a href="/manager/login" class="inline-block px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center">Get Started</a>
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col justify-between backdrop-blur-md bg-cyan-600 rounded-lg p-10 w-full" style="background-image: linear-gradient(79.74deg, rgba(241, 238, 255, 0.9) 8.07%, rgba(241, 238, 255, 0) 100%);">
+            <div class="flex flex-col justify-between backdrop-blur-md  rounded-lg p-10 w-full" style="background-image: linear-gradient(79.74deg, rgba(241, 238, 255, 0.9) 8.07%, rgba(241, 238, 255, 0) 100%);">
                 <div>
                     <div class="flex items-center justify-between gap-20">
                         <div>
@@ -2746,7 +2771,7 @@
                     <div class="mt-2 border-t border-[#DDD8FF]"></div>
 
                     <div class="mt-2">
-                        <a href="/manager/register" class="inline-block px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center">Get Started</a>
+                        <a href="/manager/login" class="inline-block px-14 py-4 rounded-md bg-cyan-600 border border-transparent text-white font-bold text-center">Get Started</a>
                     </div>
                 </div>
             </div>
@@ -2755,15 +2780,26 @@
 
     <!-- Links -->
     <footer class="mt-10 md:mt-10 lg:mt-22">
-        <div class="relative mx-auto grid max-w-7xl gap-12 px-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div class="relative  mx-auto grid max-w-7xl gap-12 px-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             <div>
                 <a href="/">
-                    <img src="assets/header.png">
+                    <img src="assets/header.png" style="margin-top:20px">
                     <span class="sr-only">Kodibooks</span>
                 </a>
             </div>
+            <div>
+                <a href="#">
+                    <img src="assets/saf.png">
+                    <span class="sr-only">Safaricom</span>
+                </a>
+            </div>
+            <div>
+                <a href="/">
+                    <img src="assets/at.png">
+                    <span class="sr-only">Africas Talking</span>
+                </a>
+            </div>
 
-            <!-- Partners -->
             <div class="md:col-start-3 lg:col-start-5">
                 <h4 class="font-bold">Partners</h4>
                 <ul class="mt-4 space-y-1">
@@ -2786,7 +2822,7 @@
 
     <!-- Copyright -->
     <div class="mx-auto max-w-7xl px-6 pt-6 pb-12 text-center opacity-75">
-        Copyright © Kodibooks - 2023
+        Copyright © Kodibooks - 2024
     </div>
 
     <script type="text/javascript">
