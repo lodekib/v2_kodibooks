@@ -52,41 +52,6 @@
 
         </x-slot>
     </x-filament::section>
-    <!-- <div class="content-center">OR</div>
-    <x-filament::section aside>
-        <x-slot name="heading">
-            STK Push
-        </x-slot>
-        <x-slot name="description">
-            <ul class="list-disc">
-                <li>Ensure your Mpesa balance is enough to pay the subscription amount above.</li>
-                <li>Press <strong>Make payment</strong> and enter your <strong>PIN</strong> </li>
-                <li>The active subscription amount will be deducted on successful transaction.</li>
-            </ul>
-        </x-slot>
-        <x-filament::modal>
-            <x-slot name="heading">
-                STK Push
-            </x-slot>
-            <x-slot name="description">
-                You can edit the number to use a different phone number.
-            </x-slot>
-            <x-slot name="trigger">
-                <x-filament::button outlined>
-                    STK Push
-                </x-filament::button>
-            </x-slot>
-            <form wire:submit="stk_push">
-                <x-filament::input.wrapper>
-                    <x-filament::input type="text" wire:model="number" value="{{$the_manager->contact_number}}" placeholder="Use another number" />
-                </x-filament::input.wrapper>
-                <br>
-                <x-filament::button outlined type="submit" wire:click="stk_push" icon="heroicon-m-chevron-right" icon-position="after">
-                    Make Payment
-                </x-filament::button>
-            </form>
-        </x-filament::modal>
-    </x-filament::section> -->
 @endif
 @endif
 
