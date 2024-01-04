@@ -50,7 +50,7 @@ class PayPage extends Page implements HasForms
                 Notification::make()->danger()->color('danger')->body('Please pay the full subscription amount')->send();
             } else if ($is_paid->first()->Amount >= $subscription_amount->first()->price) {
                 $manager->update(['paid_subscription' => true, 'is_invoiced' => false]);
-                return redirect('properties');
+                return redirect('/manager/properties');
             }
         } else {
             Notification::make()->danger()->color('danger')->body('No such payment has been received !')->send();

@@ -66,7 +66,7 @@ class Biodata extends Component implements HasForms
                             ])->columns(4),
                         ])->afterValidation(function (Get $get) {
                             $otp = (new Otp())->generate($get('contact_number'), 6, 2);
-                            Auth::user()->notify(new PhoneVerifyNotification('254' . substr($get('contact_number'), 1), $otp->token));
+                            Auth::user()->notify(new PhoneVerifyNotification('254' . substr($get('contact_number'), 1), 'Here is your Kodibooks One Time Code '.$otp->token));
                             Cache::put('phone', $get('contact_number'), now()->addMinutes(5));
                             Notification::make()->success()->body('Check your phone for an otp token.The otp expires in 2 minutes.')->seconds(2)->send();
                         }),
