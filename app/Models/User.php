@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,10 +14,11 @@ use Illuminate\Support\Facades\Auth;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Illuminate\Support\Facades\Storage;
 use Bpuig\Subby\Traits\HasSubscriptions;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser,MustVerifyEmail
 {
     use HasApiTokens,
         HasFactory,
