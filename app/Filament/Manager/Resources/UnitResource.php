@@ -9,10 +9,13 @@ use App\Filament\Manager\Resources\UnitResource\RelationManagers;
 use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
+use App\Models\Unittype;
 use Closure;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -59,7 +62,17 @@ class UnitResource extends Resource
                         };
                     },
                 ]),
-                Select::make('unit_type')->options(['bedsitter' => 'Bedsitter', 'one_bedroom' => 'One Bedroom', 'two_bedroom' => 'Two Bedroom',])->required(),
+                Select::make('unit_type')->options(Unittype::pluck('unit_type', 'unit_type'))->required()->suffixAction(
+                    Action::make('unit_type')->icon('heroicon-o-plus-circle')->action(function (array $data) {
+                        foreach($data['unit_type'] as $unittype){        
+                            Unittype::create(['unit_type' => $unittype['unit_type']]);
+                        }
+                    })->form([
+                        Repeater::make('unit_type')->schema([
+                            TextInput::make('unit_type')->required()->autocapitalize('words')
+                        ])->collapsible()->minItems(1)
+                    ])
+                ),
                 TextInput::make('unit_size')->integer()->minValue(1)->required()->prefix('sq . m')->required(),
                 TextInput::make('rent')->prefix('Ksh')->required()->integer()->minValue(1),
                 TextInput::make('deposit')->prefix('Ksh')->required()->lte('rent')->integer()->minValue(1),
@@ -85,8 +98,8 @@ class UnitResource extends Resource
             ])->headerActions([
                 ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
                 FilamentExportHeaderAction::make('PDF')->label('PDF')->color('gray')->outlined()->disableAdditionalColumns()
-                ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()
-            ],position:HeaderActionsPosition::Bottom)
+                    ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()
+            ], position: HeaderActionsPosition::Bottom)
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
@@ -94,7 +107,7 @@ class UnitResource extends Resource
                         if ($record->status == 'vacant') {
                             $record->delete();
                         }
-                    })->visible(fn($record) => $record->status == 'vacant' ? true : false)
+                    })->visible(fn ($record) => $record->status == 'vacant' ? true : false)
                 ])->button()->label('Actions')->color('gray')
             ])
             ->bulkActions([
