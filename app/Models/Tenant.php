@@ -24,6 +24,10 @@ class Tenant extends Model
         });
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
     // public function routeNotificationForAfricasTalking($notification)
     // {
     //     return '254' . substr($this->phone_number, 1);

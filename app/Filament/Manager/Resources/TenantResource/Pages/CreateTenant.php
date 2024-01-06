@@ -34,6 +34,7 @@ class CreateTenant extends CreateRecord
             $data,
             [
                 'property_id' => $unit->first()->property_id,
+                'slug' => substr(md5(uniqid(rand(), true)), 0, 6),
                 'balance' => intval($data['rent']) + intval($data['deposit'])
             ]
         );
