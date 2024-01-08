@@ -59,7 +59,7 @@
 
     <div class="container">
         <div class="header">
-            <img src='assets/header.png' alt="Logo" class="logo">
+            <img src="{{ asset('assets/header.png') }}" alt="Logo" class="logo">
             <h2>Payment Receipt</h2>
             <h4>{{ $tenant->full_names }}</h4>
             <h5>{{ $tenant->id_number }} </h5>

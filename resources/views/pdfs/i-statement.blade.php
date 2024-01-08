@@ -61,7 +61,7 @@
 
     <div class="container">
         <div class="header">
-            <img src='assets/header.png' alt="Logo" class="logo">
+            <img src="{{ asset('assets/header.png') }}" alt="Logo" class="logo">
             <h1>Invoice Statement</h1>
         </div>
 

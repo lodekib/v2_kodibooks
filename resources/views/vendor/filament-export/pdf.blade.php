@@ -80,10 +80,10 @@
         @endforeach
     </table>
     <header>
-        <img src="assets/header.png" height="100%" width="50%" />
+        <img src="{{ asset('assets/header.png') }}" height="100%" width="50%" />
     </header>
     <footer>
-        <img src="assets/footer.png" width="100%" height="50px" />
+        <img src="{{ asset('assets/footer.png') }}" width="100%" height="50px" />
     </footer>
 </body>
 
