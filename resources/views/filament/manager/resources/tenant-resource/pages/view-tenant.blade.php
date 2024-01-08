@@ -18,7 +18,7 @@
         <x-filament::modal slide-over width="3xl" icon="heroicon-o-user-minus">
             <x-slot :name="$this->record->is_refunded ? '' : 'trigger'">
                 <x-filament::button outlined icon="heroicon-o-minus-circle">
-                    Vacate & Refund
+                    Refund
                 </x-filament::button>
             </x-slot>
             <x-slot name="heading">
