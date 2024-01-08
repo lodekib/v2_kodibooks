@@ -6,9 +6,12 @@ use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Manager\Resources\VendorResource\Pages;
 use App\Filament\Manager\Resources\VendorResource\RelationManagers;
 use App\Models\Vendor;
+use App\Models\Vendorindustry;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -35,11 +38,18 @@ class VendorResource extends Resource
             ->schema([
                 Fieldset::make()->schema([
                     TextInput::make('company_name')->required()->unique(),
-                    Select::make('industry')->options([
-                        'plumbing' => 'Plumbing',
-                        'electrical' => 'Electrical',
-                        'telecommunication' => 'Telecommunucation'
-                    ])->helperText('Area of specialization')->required(),
+                    Select::make('industry')->options(Vendorindustry::pluck('industry', 'industry'))->helperText('Area of specialization')->required()
+                        ->suffixAction(
+                            Action::make('industry')->icon('heroicon-o-plus-circle')->action(function (array $data) {
+                                foreach ($data['industry'] as $vendorindustry) {
+                                    Vendorindustry::create(['industry' => $vendorindustry['industry']]);
+                                }
+                            })->form([
+                                Repeater::make('industry')->schema([
+                                    TextInput::make('industry')->required()->autocapitalize('words')
+                                ])->collapsible()->minItems(1)
+                            ])
+                        ),
                     TextInput::make('contact_person')->label('Vendor name')->helperText('Name of vendor')->required(),
                     TextInput::make('contact_number')->required(),
                     TextInput::make('email')->email()->unique()->required(),
