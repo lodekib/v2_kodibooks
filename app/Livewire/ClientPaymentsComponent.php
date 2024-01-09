@@ -6,6 +6,7 @@ use App\Models\MpesaC2B;
 use App\Models\Paybill;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -21,8 +22,12 @@ class ClientPaymentsComponent extends Component implements HasTable, HasForms
     public $paybill;
     public function mount()
     {
-        $p = Paybill::where('manager_id', auth()->id())->get();
-        $this->paybill = $p->first()->paybill_number;
+        $p = Paybill::get();
+        if($p->isNotEmpty()){
+            $this->paybill = $p->first()->paybill_number;
+        }else{
+            Notification::make()->danger()->body('Please notify Admin to add your paybill details')->persistent()->send();
+        }
     }
 
     public function table(Table $table): Table
