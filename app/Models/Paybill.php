@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Paybill extends Model
 {
-    use HasFactory,HasManager;
+    use HasFactory;
 
     protected $guarded = [];
 
