@@ -28,7 +28,7 @@ class PartnerStats extends BaseWidget
                 ->descriptionIcon('heroicon-m-arrow-trending-up'),
             Stat::make('Commision', $this->commision . '%')
                 ->description(''),
-            Stat::make('Total Withdrawable', 'KES ' .number_format(0))
+            Stat::make('Total Withdrawable', 'KES ' . number_format(0))
                 ->description('')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->extraAttributes([
