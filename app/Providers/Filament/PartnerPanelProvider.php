@@ -3,7 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Partner\Pages\PartnerDashboard;
-use App\Http\PartnerAuth\Register;
+use App\Http\PartnerAuth\PartnerRegister;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -29,7 +29,7 @@ class PartnerPanelProvider extends PanelProvider
             ->path('partner')->topNavigation()
             ->colors([
                 'primary' => Color::hex('#4ade80'),
-            ])->login()->registration(action:Register::class)
+            ])->login()->emailVerification()->registration(action:PartnerRegister::class)
             ->discoverResources(in: app_path('Filament/Partner/Resources'), for: 'App\\Filament\\Partner\\Resources')
             ->discoverPages(in: app_path('Filament/Partner/Pages'), for: 'App\\Filament\\Partner\\Pages')
             ->pages([

@@ -34,7 +34,7 @@ class WaterBillComponent extends Component implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
-        return $table->query(Invoice::query()->where('invoice_type', 'Water'))
+        return $table->query(Invoice::query()->where('invoice_type', 'Water'))->poll('2s')
             ->columns([
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('due_date')->datetime()->size('sm'),

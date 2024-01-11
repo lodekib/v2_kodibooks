@@ -21,7 +21,7 @@ class ReferralWidget extends Widget
         $partner = Partner::find(auth()->id())->reg_code;
         if ($partner != null) {
             $this->hasCode = true;
-            $this->generatedCode = env('APP_URL'). '/register?referral_code=' . $partner;
+            $this->generatedCode = env('APP_URL'). '/manager/register?referral_code=' . $partner;
         } else { 
             $this->hasCode = false;
         }
