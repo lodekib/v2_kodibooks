@@ -19,7 +19,7 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
                 auth()->logout();
                 return redirect()->route('filament.partner.auth.login')->with('status', 'Please wait till your account is Approved !');
             } else {
-                return redirect()->route('filament.partner.pages.dashboard');
+                return redirect()->route('filament.partner.pages.partner-dashboard');
             }
         } else {
             if ($user->hasRole('Manager')) {
