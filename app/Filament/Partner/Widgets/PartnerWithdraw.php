@@ -27,6 +27,6 @@ class PartnerWithdraw extends Widget
         $refferals = User::where('code',$this->partner->reg_code)->count();
         
 
-        Mpesa::b2c($this->phone, 'BusinessPayment',);
+        Mpesa::validated_b2c($this->phone, 'BusinessPayment',1,'Referral payment',36628994);
     }
 }
