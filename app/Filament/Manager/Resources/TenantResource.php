@@ -73,8 +73,8 @@ class TenantResource extends Resource
             ->schema([
                 Section::make('')->description('Personal & housing details.')->schema([
                     TextInput::make('full_names')->required(),
-                    TextInput::make('email')->required()->unique(ignoreRecord:true)->email(),
-                    TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')->unique(ignoreRecord:true)->required(),
+                    TextInput::make('email')->required()->unique(ignoreRecord: true)->email(),
+                    TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')->unique(ignoreRecord: true)->required(),
                     TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer()->hiddenOn('edit'),
                     Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive()->hiddenOn('edit'),
                     Select::make('unit_name')->options(function (callable $get) {
@@ -114,7 +114,7 @@ class TenantResource extends Resource
                 TextColumn::make('status')->colors([
                     'success' => static fn ($state): bool => $state === 'active',
                     'warning' => static fn ($state): bool => $state === 'inactive',
-                ])->badge()->toggleable(isToggledHiddenByDefault:true),
+                ])->badge()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->striped()
             ->filters([
@@ -131,8 +131,8 @@ class TenantResource extends Resource
             ])->headerActions([
                 ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
                 FilamentExportHeaderAction::make('PDF')->label('PDF')->color('gray')->outlined()->disableAdditionalColumns()
-                ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()
-                ])
+                    ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()
+            ])
             ->actions([
                 ActionGroup::make([
                     ViewAction::make()->label('View Tenant'),
@@ -212,8 +212,8 @@ class TenantResource extends Resource
                     EditAction::make(),
                     DeleteAction::make()->action(function ($record) {
                         Unit::where('unit_name', $record->unit_name)->update(['status' => 'vacant']);
-                        optional($record->payments)->each(fn($payment) => $payment->update(['status' => 'stale/'.$payment->status]));
-                        optional($record->invoices)->each(fn($invoice) => $invoice->update(['invoice_status' => 'stale/'.$invoice->invoice_status]));
+                        optional($record->payments)->each(fn ($payment) => $payment->update(['status' => 'stale/' . $payment->status]));
+                        optional($record->invoices)->each(fn ($invoice) => $invoice->update(['invoice_status' => 'stale/' . $invoice->invoice_status]));
                         optional($record->activeutility)->delete();
                         $record->update(['status' => 'stale']);
                         Notification::make()->success()->color('success')->body('Successfully deleted the tenant !')->send();
@@ -223,7 +223,8 @@ class TenantResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     BulkAction::make('Invoice Rent')->icon('heroicon-o-ticket')->action(function (Collection $records, array $data) {
-                        $records->each(function (Tenant $record) use ($data) {
+                        $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', auth()->id())->first();
+                        $records->each(function (Tenant $record) use ($data,$mail_config) {
                             $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
                             $new_data = array_merge(
                                 $data,
@@ -234,7 +235,6 @@ class TenantResource extends Resource
                                     'quantity' => 1
                                 ]
                             );
-                            $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
                             $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
