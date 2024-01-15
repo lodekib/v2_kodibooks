@@ -26,7 +26,7 @@ class PartnerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('partner')
-            ->path('partner')->topNavigation()
+            ->path('partner')->topNavigation()->favicon(asset('assets/kodibooks.png'))
             ->colors([
                 'primary' => Color::hex('#4ade80'),
             ])->login()->emailVerification()->registration(action:PartnerRegister::class)
