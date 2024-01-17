@@ -75,7 +75,7 @@ class TenantResource extends Resource
                     TextInput::make('full_names')->required(),
                     TextInput::make('email')->required()->unique(ignoreRecord: true)->email(),
                     TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')->unique(ignoreRecord: true)->required(),
-                    TextInput::make('id_number')->required()->unique(ignoreRecord: true)->integer()->hiddenOn('edit'),
+                    TextInput::make('id_number')->required()->integer(),
                     Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive()->hiddenOn('edit'),
                     Select::make('unit_name')->options(function (callable $get) {
                         return Unit::where('status', 'vacant')->where('property_name', $get('property_name'))->pluck('unit_name', 'unit_name');
@@ -222,54 +222,60 @@ class TenantResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    BulkAction::make('Invoice Rent')->icon('heroicon-o-ticket')->action(function (Collection $records, array $data) {
-                        $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', auth()->id())->first();
-                        $records->each(function (Tenant $record) use ($data,$mail_config) {
-                            $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
-                            $new_data = array_merge(
-                                $data,
-                                [
-                                    'invoice_title' => 'Rent Invoice',
-                                    'invoice_number' => $invoice_number,
-                                    'amount' => $record->rent,
-                                    'quantity' => 1
-                                ]
-                            );
-                            $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
-                            $final_data = [
-                                'tenant_id' => $record->id,
-                                'national_id' => $record->id_number,
-                                'invoice_number' => $invoice_number,
-                                'invoice_type' => 'Rent',
-                                'invoice_status' => 'pending',
-                                'due_date' => $data['due_date'],
-                                'from' => $data['from'],
-                                'to' => $data['to'],
-                                'tenant_name' => $record->full_names,
-                                'property_name' => $record->property_name,
-                                'unit_name' => $record->unit_name,
-                                'invoice_description' => $data['invoice_details'],
-                                'amount_invoiced' =>  $record->rent,
-                                'balance' => $record->rent
-                            ];
-                            $final_invoice =  Invoice::create($final_data);
-                            $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
-                            $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
+                    BulkAction::make('Invoice Rent')->icon('heroicon-o-ticket')->action(
+                        function (Collection $records, array $data) {
+                          //  $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', auth()->id())->first();
+                            // $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
 
-                            $statement_data = [
-                                'tenant_id' => $record->id,
-                                'tenant_name' => $record->full_names,
-                                'description' => 'Rent Invoice',
-                                'reference' => $final_invoice->invoice_number,
-                                'debit' => $final_invoice->balance,
-                                'credit' => 0,
-                                'balance' => $total_debit - ($total_credit - $final_invoice->balance),
-                                'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
-                            ];
-                            $statement = Statement::create($statement_data);
-                            InvoiceReceiptAutoAllocation::handleNewInvoice($record, $final_invoice);
-                        });
-                    })->form([
+
+                            $records->each(function (Tenant $record) use ($data) {
+                                $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
+                                $new_data = array_merge(
+                                    $data,
+                                    [
+                                        'invoice_title' => 'Rent Invoice',
+                                        'invoice_number' => $invoice_number,
+                                        'amount' => $record->rent,
+                                        'quantity' => 1
+                                    ]
+                                );
+                                $final_data = [
+                                    'tenant_id' => $record->id,
+                                    'national_id' => $record->id_number,
+                                    'invoice_number' => $invoice_number,
+                                    'invoice_type' => 'Rent',
+                                    'invoice_status' => 'pending',
+                                    'due_date' => $data['due_date'],
+                                    'from' => $data['from'],
+                                    'to' => $data['to'],
+                                    'tenant_name' => $record->full_names,
+                                    'property_name' => $record->property_name,
+                                    'unit_name' => $record->unit_name,
+                                    'invoice_description' => $data['invoice_details'],
+                                    'amount_invoiced' =>  $record->rent,
+                                    'balance' => $record->rent
+                                ];
+                                $final_invoice =  Invoice::create($final_data);
+                                $total_debit = Statement::where('tenant_name', $record->full_names)->sum('debit');
+                                $total_credit = Statement::where('tenant_name', $record->full_names)->sum('credit');
+
+                                $statement_data = [
+                                    'tenant_id' => $record->id,
+                                    'tenant_name' => $record->full_names,
+                                    'description' => 'Rent Invoice',
+                                    'reference' => $final_invoice->invoice_number,
+                                    'debit' => $final_invoice->balance,
+                                    'credit' => 0,
+                                    'balance' => $total_debit - ($total_credit - $final_invoice->balance),
+                                    'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
+                                ];
+                                $statement = Statement::create($statement_data);
+                                InvoiceReceiptAutoAllocation::handleNewInvoice($record, $final_invoice);
+                            });
+
+                            Notification::make()->success()->color('success')->title('Success')->body('Successfully Invoiced the tenant(s) .')->send();
+                        }
+                    )->form([
                         Fieldset::make("Rent Invoice")->schema([
                             DatePicker::make('due_date')->required(),
                             DatePicker::make('from')->required(),
@@ -301,8 +307,8 @@ class TenantResource extends Resource
                                 'amount' => $amount,
                                 'quantity' => $quantity
                             ]);
-                            $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
-                            $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
+                            // $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', $record->manager_id)->first();
+                            // $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
                                 'national_id' => $record->id_number,
@@ -359,9 +365,9 @@ class TenantResource extends Resource
                                     'quantity' => $quantity
                                 ]
                             );
-                            $mail_config = Mailconfig::where('manager_id', auth()->id());
-                            $get_mail_config = Mailconfig::find($mail_config->first()->id);
-                            $get_mail_config->mailer()->to($record)->send(new InvoiceSent($record, $new_data));
+                            // $mail_config = Mailconfig::where('manager_id', auth()->id());
+                            // $get_mail_config = Mailconfig::find($mail_config->first()->id);
+                            // $get_mail_config->mailer()->to($record)->send(new InvoiceSent($record, $new_data));
                             $final_data = [
                                 'tenant_id' => $record->id,
                                 'national_id' => $record->id_number,
