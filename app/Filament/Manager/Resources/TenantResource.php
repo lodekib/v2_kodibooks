@@ -227,7 +227,6 @@ class TenantResource extends Resource
                           //  $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', auth()->id())->first();
                             // $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
 
-
                             $records->each(function (Tenant $record) use ($data) {
                                 $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
                                 $new_data = array_merge(
@@ -270,7 +269,7 @@ class TenantResource extends Resource
                                     'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
                                 ];
                                 $statement = Statement::create($statement_data);
-                                InvoiceReceiptAutoAllocation::handleNewInvoice($record, $final_invoice);
+                                InvoiceReceiptAutoAllocation::handleNewInvoice($final_invoice);
                             });
 
                             Notification::make()->success()->color('success')->title('Success')->body('Successfully Invoiced the tenant(s) .')->send();
@@ -340,7 +339,7 @@ class TenantResource extends Resource
                                 'cummulative_balance' => $total_debit - ($total_credit - $final_invoice->balance)
                             ];
                             $statement = Statement::create($statement_data);
-                            InvoiceReceiptAutoAllocation::handleNewInvoice($record, $final_invoice);
+                            InvoiceReceiptAutoAllocation::handleNewInvoice($final_invoice);
                         });
                     })->visible(fn ($livewire) => $livewire->tableFilters['Utility']['value'] != null ? true : false)->form(function ($livewire) {
                         return [
