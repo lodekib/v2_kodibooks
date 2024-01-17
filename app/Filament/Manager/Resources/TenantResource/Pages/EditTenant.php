@@ -6,6 +6,7 @@ use App\Filament\Manager\Resources\TenantResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
 class EditTenant extends EditRecord
 {
@@ -27,6 +28,5 @@ class EditTenant extends EditRecord
     {
         return [];
     }
-    
 
 }
