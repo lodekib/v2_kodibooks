@@ -47,6 +47,7 @@ use Filament\Infolists\Components\Section as InfoSection;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
@@ -118,6 +119,7 @@ class TenantResource extends Resource
             ])
             ->striped()
             ->filters([
+                Filter::make('Arrears')->query(fn(Builder $query) :Builder => $query->where('balance','>',0) ),
                 SelectFilter::make('Utility')->options(Utility::pluck('utility_name', 'utility_name'))->query(function (Builder $query, array $data): Builder {
                     $utility = $data['value'];
                     if ($utility != null) {
