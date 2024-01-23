@@ -18,6 +18,7 @@ class InvoiceReceiptAutoAllocation
         $payments = Payment::where('tenant_name', $invoice->tenant_name)
             ->where('status', '!=', 'fully allocated')->withoutGlobalScopes([ManagerScope::class])
             ->oldest()->get();
+            
 
         if ($payments->isNotEmpty()) {
             foreach ($payments as $payment) {
