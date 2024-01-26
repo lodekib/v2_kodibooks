@@ -12,6 +12,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -47,7 +49,7 @@ class KnowledgeResource extends Resource
             ->columns([
                 TextColumn::make('category')->size('sm')->searchable()->sortable(),
                 TextColumn::make('title')->size('sm')->searchable()->wrap(),
-                TextColumn::make('media.file_name')->label('Video(s)')->searchable()
+                TextColumn::make('media.file_name')->label('Video(s)')->searchable()->wrap()
             ])
             ->filters([
                 //
@@ -74,7 +76,9 @@ class KnowledgeResource extends Resource
         return [
             'index' => Pages\ListKnowledge::route('/'),
             'create' => Pages\CreateKnowledge::route('/create'),
-            'edit' => Pages\EditKnowledge::route('/{record}/edit'),
+            'view' => Pages\ViewKnowledge::route('/{record}'),
+            // 'edit' => Pages\EditKnowledge::route('/{record}/edit'),
         ];
     }
+
 }

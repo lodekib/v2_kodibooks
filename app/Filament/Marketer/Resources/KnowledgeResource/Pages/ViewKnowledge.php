@@ -5,15 +5,10 @@ namespace App\Filament\Marketer\Resources\KnowledgeResource\Pages;
 use App\Filament\Marketer\Resources\KnowledgeResource;
 use App\Models\Knowledgebase;
 use Filament\Actions;
-use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\ViewRecord;
 
-class CreateKnowledge extends CreateRecord
+class ViewKnowledge extends ViewRecord
 {
     protected static string $resource = KnowledgeResource::class;
-
-    protected function handleRecordCreation(array $data): Model
-    {
-        return  $this->getModel()::create($data);
-    }
+    protected static string $view = 'filament.marketer.resources.knowledge-resource.pages.view-knowledge';
 }
