@@ -5,8 +5,11 @@ namespace App\Filament\Marketer\Resources;
 use App\Filament\Marketer\Resources\KnowledgeResource\Pages;
 use App\Filament\Marketer\Resources\KnowledgeResource\RelationManagers;
 use App\Models\Knowledgebase;
+use App\Models\Knowledgecategory;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -14,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -33,10 +37,18 @@ class KnowledgeResource extends Resource
         return $form
             ->schema([
                 Section::make()->schema([
-                    Select::make('category')->options([
-                        'News' => 'News', 'Assets' => 'Assets',
-                        'Invoices' => 'Invoices', 'Authentication' => 'Authentication', 'Payments' => 'Payments'
-                    ])->required(),
+                    Select::make('category')->options(Knowledgecategory::pluck('category', 'category'))->required()->suffixAction(
+                        Action::make('category')->icon('heroicon-o-plus-circle')->action(function (array $data) {
+                            foreach ($data['category'] as $datum) {
+                                Knowledgecategory::create($datum);
+                            }
+                            Notification::make()->success()->color('success')->title('Success')->body('Video category(s) added successfully !')->send();
+                        })->form([
+                            Repeater::make('category')->schema([
+                                TextInput::make('category')->required()
+                            ])->collapsible()->maxItems(3)->maxWidth('80px')
+                        ])
+                    ),
                     TextInput::make('title')->required(),
                     SpatieMediaLibraryFileUpload::make('attachment')->required()->multiple()
                 ])
@@ -80,5 +92,4 @@ class KnowledgeResource extends Resource
             // 'edit' => Pages\EditKnowledge::route('/{record}/edit'),
         ];
     }
-
 }
