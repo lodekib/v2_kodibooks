@@ -32,7 +32,7 @@ class ReferralWidget extends Widget
     {
         $code = substr(uniqid(), 0, 6);
         $partner = Partner::find(auth()->id())->update(['reg_code' => $code]);
-        $this->generatedCode = env('APP_URL') . '/register?referral_code=' . $code;
+        $this->generatedCode = env('APP_URL') . '/manager/register?referral_code=' . $code;
         if ($partner) {
             Notification::make()->success()->color('success')->body('Referral link generated successfully')->send();
         }

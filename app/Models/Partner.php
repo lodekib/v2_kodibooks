@@ -20,4 +20,11 @@ class Partner extends Model
     {
         return $this->belongsTo(User::class, 'id', 'id');
     }
+
+    public function watchedVideos()
+    {
+        return $this->belongsToMany(Knowledgebase::class)->withPivot('watched');
+    }
+
+    
 }

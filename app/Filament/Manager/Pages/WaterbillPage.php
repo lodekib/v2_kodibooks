@@ -152,7 +152,7 @@ class WaterbillPage extends Page implements HasForms, HasTable
                 })->form([
                     Fieldset::make('')->schema(
                         [
-                            Select::make('tenant_name')->options(fn () =>  ActiveUtility::whereJsonContains('active_utilities','LIKE', '%water%')->pluck('tenant_name', 'tenant_name'))->required()->reactive(),
+                            Select::make('tenant_name')->options(fn () =>  ActiveUtility::whereJsonContains('active_utilities', 'Water')->orWhereJsonContains('active_utilities','water')->pluck('tenant_name', 'tenant_name'))->required()->reactive(),
                             Select::make('unit_name')->options(fn (Get $get) => $get('tenant_name') != null ? Tenant::where('full_names', $get('tenant_name'))->pluck('unit_name', 'unit_name') : [])->required()
                                 ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                     $tenant_name = $get('tenant_name');

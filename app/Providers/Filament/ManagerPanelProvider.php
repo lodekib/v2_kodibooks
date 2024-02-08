@@ -45,6 +45,7 @@ use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class ManagerPanelProvider extends PanelProvider
 {
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -79,7 +80,7 @@ class ManagerPanelProvider extends PanelProvider
                 Authenticate::class,
             ])->userMenuItems([
                 'Client Area' => MenuItem::make()->label('Client Area')->icon('heroicon-s-user-group')->url(fn (): string => ClientArea::getUrl()),
-                'Profile' => MenuItem::make()->label('Profile')->icon('heroicon-s-cog')->url(fn (): string => MyProfilePage::getUrl())
+                'Profile' => MenuItem::make()->label('Profile')->icon('heroicon-s-cog')->url(fn (): string => MyProfilePage::getUrl()),
             ])
             ->navigationGroups([
                 NavigationGroup::make()

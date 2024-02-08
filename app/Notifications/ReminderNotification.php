@@ -18,7 +18,7 @@ class ReminderNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct($message,$phone)
+    public function __construct($message, $phone)
     {
         $this->message = $message;
         $this->phone = $phone;
@@ -35,7 +35,9 @@ class ReminderNotification extends Notification
 
     public function toAfricasTalking($notifiable)
     {
-        return (new AfricasTalkingMessage())->content($this->message)->to($this->phone);
+        $sms = auth()->user()->sms;
+        $response =  $sms != null ? (new AfricasTalkingMessage())->content($this->message)->to($this->phone)->from($sms->at_from) : (new AfricasTalkingMessage())->content($this->message)->to($this->phone);
+        return $response;
     }
 
     /**

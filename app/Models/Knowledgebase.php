@@ -10,7 +10,12 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Knowledgebase extends Model implements HasMedia
 {
-    use HasFactory,HasMarketer,InteractsWithMedia;
+    use HasFactory, HasMarketer, InteractsWithMedia;
 
     protected $guarded = [];
+
+    public function watchingPartners()
+    {
+        return $this->belongsToMany(Partner::class)->withPivot('watched');
+    }
 }
