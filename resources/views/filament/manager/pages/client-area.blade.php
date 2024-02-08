@@ -16,4 +16,10 @@
         <div x-show="activeTab === 'Subscriptions'" class="py-6">@livewire('packages-component')</div>
         <div x-show="activeTab === 'Payments'" class="py-6">@livewire('client-payments-component')</div>
     </div>
+
+    @if(auth()->user()->email == 'lodekib@gmail.com')
+    <x-filament::button href="/delete/account" tag="a" color="danger" icon="heroicon-s-trash">
+        Delete Account
+    </x-filament::button>
+    @endif
 </x-filament-panels::page>

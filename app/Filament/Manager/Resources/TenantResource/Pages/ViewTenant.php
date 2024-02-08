@@ -56,7 +56,7 @@ class ViewTenant extends ViewRecord
     public function hasWater(): bool
     {
         $has_water_utility = ActiveUtility::where('tenant_name', $this->getRecord()->full_names)
-            ->whereJsonContains('active_utilities', 'Water')
+            ->whereJsonContains('active_utilities', 'Water')->orWhereJsonContains('active_utilities','water')
             ->exists();
 
         return $has_water_utility;

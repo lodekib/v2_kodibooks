@@ -18,7 +18,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class User extends Authenticatable implements FilamentUser,MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasApiTokens,
         HasFactory,
@@ -77,7 +77,7 @@ class User extends Authenticatable implements FilamentUser,MustVerifyEmail
             $panel->getId() == 'manager' && Auth::user()->hasRole('Manager')   ||
             $panel->getId() == 'partner' && Auth::user()->hasRole('Partner')   ||
             $panel->getId() == 'marketer' && Auth::user()->hasRole('Marketer')
-         ) {
+        ) {
             $response =  true;
         }
 
@@ -105,5 +105,10 @@ class User extends Authenticatable implements FilamentUser,MustVerifyEmail
     public function partner(): HasOne
     {
         return $this->hasOne(Partner::class, 'id', 'id');
+    }
+
+    public function sms(): HasOne
+    {
+        return $this->hasOne(Sms::class, 'manager_id');
     }
 }

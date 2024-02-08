@@ -4,6 +4,7 @@ namespace App\Filament\Partner\Pages;
 
 use App\Models\Knowledgebase;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 
 class Knowledge extends Page
 {
@@ -14,6 +15,9 @@ class Knowledge extends Page
 
     public function mount()
     {
-        $this->record = Knowledgebase::with('media')->get();
+        $partner = Auth::user();
+        $this->record = Knowledgebase::with(['watchingPartners' => function ($query) use ($partner) {
+            $query->where('partner_id', $partner->id);
+        }, 'media'])->get();
     }
 }

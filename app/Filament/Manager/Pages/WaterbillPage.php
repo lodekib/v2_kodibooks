@@ -52,11 +52,11 @@ class WaterbillPage extends Page implements HasForms, HasTable
                 TextColumn::make('previous_reading')->label('Prev (m3)')->size('sm')->formatStateUsing(fn ($state) => number_format($state, 2)),
                 TextColumn::make('current_reading')->label('Curr (m3)')->size('sm')->formatStateUsing(fn ($state) => number_format($state, 2)),
                 TextColumn::make('updated_at')->label('Rate')->formatStateUsing(function ($record) {
-                    $amount = Utility::where('property_name', $record->property_name)->where('utility_name', 'Water')->pluck('amount');
+                    $amount = Utility::where('property_name', $record->property_name)->where('utility_name','LIKE','%water%')->pluck('amount');
                     return 'KES ' . number_format($amount[0], 2);
                 }),
                 TextColumn::make('id')->label('Total')->formatStateUsing(function ($record) {
-                    $amount = Utility::where('property_name', $record->property_name)->where('utility_name', 'Water')->pluck('amount');
+                    $amount = Utility::where('property_name', $record->property_name)->where('utility_name','LIKE', '%water%')->pluck('amount');
                     $quantity  = $record->current_reading - $record->previous_reading;
                     return 'KES ' . number_format($amount[0] * $quantity, 2);
                 }),
@@ -84,7 +84,7 @@ class WaterbillPage extends Page implements HasForms, HasTable
                             ->where('unit_name', $data['unit_name'])
                             ->where('tenant_name', $data['tenant_name'])->get();
                         $quantity = $tenant_water->first()->current_reading - $tenant_water->first()->previous_reading;
-                        $get_amount = Utility::where('property_name', $tenant->property_name)->where('utility_name', 'Water')->get('amount');
+                        $get_amount = Utility::where('property_name', $tenant->property_name)->where('utility_name','LIKE', '%water%')->get('amount');
                         $amount = $get_amount->first()->amount;
                         $total_amount = $amount * $quantity;
                         $new_data = array_merge(
@@ -152,7 +152,7 @@ class WaterbillPage extends Page implements HasForms, HasTable
                 })->form([
                     Fieldset::make('')->schema(
                         [
-                            Select::make('tenant_name')->options(fn () =>  ActiveUtility::whereJsonContains('active_utilities', 'Water')->pluck('tenant_name', 'tenant_name'))->required()->reactive(),
+                            Select::make('tenant_name')->options(fn () =>  ActiveUtility::whereJsonContains('active_utilities', 'Water')->orWhereJsonContains('active_utilities','water')->pluck('tenant_name', 'tenant_name'))->required()->reactive(),
                             Select::make('unit_name')->options(fn (Get $get) => $get('tenant_name') != null ? Tenant::where('full_names', $get('tenant_name'))->pluck('unit_name', 'unit_name') : [])->required()
                                 ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                     $tenant_name = $get('tenant_name');
