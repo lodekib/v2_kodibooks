@@ -36,7 +36,6 @@ class CreatePayment extends CreateRecord
             ->first();
         // $total_debit = $debit_credit->total_debit;
         // $total_credit = $debit_credit->total_credit;
-
         $payment_data = array_merge(
             $data,
             [
@@ -64,8 +63,9 @@ class CreatePayment extends CreateRecord
             ];
             Statement::create($statement_data);
             InvoiceReceiptAutoAllocation::handleNewReceipt($tenant->first()->full_names, $payment);
+            $bal = Statement::where('tenant_name', $tenant->first()->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance;
+            $tenant->first()->update(['balance' => $bal]);
         }
-
         return $payment;
     }
 }

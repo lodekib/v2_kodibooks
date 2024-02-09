@@ -30,8 +30,9 @@ class CreateInvoice extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $invoice_number = strtoupper(substr($data['property_name'], 0, 3)) . "-" . time();
-        $tenant = Tenant::where('unit_name', $data['unit_name'])->get(['full_names', 'id', 'id_number'])->first();
+        $tenant = Tenant::where('unit_name', $data['unit_name'])->get(['full_names', 'id', 'id_number','balance'])->first();
         //TODO::WE HAVE A PROBLEM WITH MULTI UNITS
+
         $invoice_data = array_merge($data, [
             'invoice_number' => $invoice_number,
             'tenant_id' => $tenant->id,
@@ -59,6 +60,8 @@ class CreateInvoice extends CreateRecord
             ];
             Statement::create($statement_data);
             InvoiceReceiptAutoAllocation::handleNewInvoice($invoice);
+            $bal = Statement::where('tenant_name', $tenant->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance;
+            $tenant->update(['balance' => $bal]);
         }
         return $invoice;
     }

@@ -27,7 +27,7 @@ class Arrears extends Page implements HasForms,HasTable
 
     public function table(Table $table): Table
     {
-        return $table->query(Tenant::query())->columns([
+        return $table->query(Tenant::query()->where('balance','>',0))->columns([
             TextColumn::make('No')->rowIndex(),
             TextColumn::make('id_number')->size('sm')->searchable()->sortable()->copyable()->copyMessage('ID number copied'),
             TextColumn::make('phone_number')->size('sm')->searchable()->sortable()->copyable()->copyMessage('Phone number copied '),

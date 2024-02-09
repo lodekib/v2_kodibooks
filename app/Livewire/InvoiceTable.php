@@ -153,6 +153,8 @@ class InvoiceTable extends Component implements HasForms, HasTable
                         Statement::create($statement_data);
                         //Allocation has been done, then save the statement
                         InvoiceReceiptAutoAllocation::handleNewInvoice($final_invoice);
+                        $bal = Statement::where('tenant_name', $this->record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance;
+                        $this->record->update(['balance' => $bal]);
                     }
                 })->form([
                     Section::make()->schema([

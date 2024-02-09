@@ -60,7 +60,7 @@ class PaymentTable extends Component implements HasForms, HasTable
                     'fully allocated' => 'gray',
                     'partially allocated' => 'warning'
                 }),
-                TextColumn::make('balance')->size('sm')->sortable()->money('kes')->summarize(Sum::make()->label('Total Balance')->money('kes'))->money('kes')->toggleable(isToggledHiddenByDefault:true),
+                TextColumn::make('balance')->size('sm')->sortable()->money('kes')->summarize(Sum::make()->label('Total Balance')->money('kes'))->money('kes')->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Filter::make('created_at')
@@ -134,9 +134,9 @@ class PaymentTable extends Component implements HasForms, HasTable
                                 ];
 
                                 $statement = Statement::create($statement_data);
-
                                 InvoiceReceiptAutoAllocation::handleNewReceipt($this->record->full_names, $receipt, $statement);
-
+                                $bal = Statement::where('tenant_name', $this->record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance;
+                                $this->record->update(['balance' => $bal]);
                                 Notification::make()->success()->color('success')->body("Payment added successfully !")->send();
                             } else {
                                 Notification::make()->warning()->color('warning')->body('Unable to add payment !')->send();
