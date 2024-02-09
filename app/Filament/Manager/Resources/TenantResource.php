@@ -102,6 +102,7 @@ class TenantResource extends Resource
             ->columns([
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('id_number')->size('sm')->searchable()->sortable()->copyable()->copyMessage('ID number copied'),
+                TextColumn::make('phone_number')->size('sm')->searchable()->sortable()->copyable()->copyMessage('Phone number copied '),
                 TextColumn::make('full_names')->size('sm')->searchable()->sortable(),
                 TextColumn::make('email')->size('sm')->sortable()->searchable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
