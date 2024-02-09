@@ -32,6 +32,8 @@ class AdminPanelProvider extends PanelProvider
             ->login()->passwordReset()->emailVerification()->registration()
             ->colors([
                 'primary' => Color::hex('#4ade80'),
+            ])->resources([
+                config('filament-logger.activity_resource')
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

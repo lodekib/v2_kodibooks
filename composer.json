@@ -33,7 +33,8 @@
         "livewire/livewire": "^3.0.10",
         "pxlrbt/filament-excel": "^2.1",
         "saade/filament-fullcalendar": "^3.0",
-        "symfony/http-kernel": "*"
+        "symfony/http-kernel": "*",
+        "z3d0x/filament-logger": "^0.6.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
