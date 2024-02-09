@@ -5,9 +5,12 @@ namespace App\Livewire;
 use App\Models\Statement;
 use App\Models\Tenant;
 use App\Models\Utility;
+use App\Notifications\ReminderNotification;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\Summarizers\Sum;
@@ -47,12 +50,17 @@ class BulkTenant extends Component implements HasForms, HasTable
             ])->badge()->toggleable(isToggledHiddenByDefault: true),
         ])->striped()
             ->bulkActions([
-                BulkAction::make('Bulk SMS')->label('Send Bulk SMS')->requiresConfirmation()->action(function (Collection $records) {
-                    dd($records->first()->phone_number);
-                })
+                BulkAction::make('Bulk SMS')->label('Send Bulk SMS')->icon('heroicon-s-chat-bubble-left-right')->action(function (Collection $records, $data) {
+                    $records->each(function ($record) use ($data) {
+                        $record->notify(new ReminderNotification($data['message'], $record->phone_number));
+                    });
+                    Notification::make()->success()->color('success')->title('Success')->body('Messages sent successfully !')->send();
+                })->form([
+                    Textarea::make('message')->label('The message to send')->required()
+                ])
             ])
             ->filters([
-                Filter::make('Arrears')->query(fn (Builder $query): Builder => $query->where('balance', '>', 0)),
+                Filter::make('Arrears')->indicator('With balances')->query(fn (Builder $query): Builder => $query->where('balance', '>', 0))->default(),
                 SelectFilter::make('Utility')->options(Utility::pluck('utility_name', 'utility_name'))->query(function (Builder $query, array $data): Builder {
                     $utility = $data['value'];
                     if ($utility != null) {
