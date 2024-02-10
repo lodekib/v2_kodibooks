@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->topNavigation()
+            ->favicon(asset('assets/kodibooks.png'))
             ->login()->passwordReset()->emailVerification()->registration()
             ->colors([
                 'primary' => Color::hex('#4ade80'),

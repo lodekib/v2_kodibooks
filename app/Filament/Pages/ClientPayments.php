@@ -20,7 +20,7 @@ class ClientPayments extends Page implements HasTable
     {
         return $table->query(MpesaC2B::query())
             ->columns([
-                TextColumn::make('created_at')->size('sm')
+                TextColumn::make('created_at')->size('sm')->searchable()->sortable()
             ]);
     }
 }
