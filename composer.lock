@@ -4333,6 +4333,7 @@
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
                 "source": "https://github.com/thephpleague/flysystem/tree/3.23.0"
+
             },
             "funding": [
                 {
@@ -4393,6 +4394,7 @@
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem-local/issues",
                 "source": "https://github.com/thephpleague/flysystem-local/tree/3.23.0"
+
             },
             "funding": [
                 {
