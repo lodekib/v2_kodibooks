@@ -77,7 +77,7 @@ class UserResource extends Resource
                             }
                         }
                     }),
-                    Action::make('message')->label('Message Client')->icon('heroicon-o-chat-bubble-left-right')->action(
+                    Action::make('message')->label('Send Notification')->icon('heroicon-o-chat-bubble-left-right')->action(
                         fn ($record, array $data) => Notification::make()->title($data['message_title'])->icon(
                             function () use ($data) {
                                 $type = $data['message_type'];
@@ -127,7 +127,7 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'view' => Pages\ViewUsers::route('/{record}')
         ];
     }
 }
