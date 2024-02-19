@@ -41,7 +41,6 @@ class UtilityController extends Controller
                     array_push($final_utils, $value);
                 }
 
-
                 $activeUtils = ActiveUtility::find($hasUtilities->first()->id)->update([
                     'active_utilities' => $final_utils
                 ]);
