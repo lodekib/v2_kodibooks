@@ -9,7 +9,7 @@ class Reminders extends Page
 {
 
 
-    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static ?string $navigationIcon = 'heroicon-s-clock';
 
     protected static string $view = 'filament.manager.pages.reminders';
     protected function getHeaderWidgets(): array

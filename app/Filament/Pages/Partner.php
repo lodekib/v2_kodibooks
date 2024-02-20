@@ -24,6 +24,7 @@ class Partner extends Page implements HasForms, HasTable
 
     use InteractsWithForms, InteractsWithTable;
     protected static ?string $navigationIcon = 'heroicon-o-link';
+    protected static ?string $navigationLabel = 'Partners';
     protected static string $view = 'filament.pages.partner';
 
     function table(Table $table): Table
@@ -40,6 +41,7 @@ class Partner extends Page implements HasForms, HasTable
                         false => 'warning',
                         true => 'info',
                     }),
+                TextColumn::make('kyc')->label('Support documents')->size('sm')->searchable()->default('No attachments'),
                 TextColumn::make('partner.commision')->label('Commision')->formatStateUsing(fn ($state) => $state != null ? $state . '%' : '-'),
                 TextColumn::make('partner.discount')->label('Discount')->formatStateUsing(fn ($state) => $state != null ? $state . '%' : '-')
                 // ImageColumn::make('partners.kyc')->size('sm')->state(function($record,$state){
