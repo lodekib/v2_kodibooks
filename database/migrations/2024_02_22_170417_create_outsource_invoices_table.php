@@ -11,14 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('watervends', function (Blueprint $table) {
+        Schema::create('outsource_invoices', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('manager_id');
-            $table->string('name');
+            $table->unsignedBigInteger('watervend_id');
+            $table->string('vend_name');
             $table->string('national_number');
-            $table->string('phone_number');
-            $table->string('email');
-            $table->string('rate');
+            $table->string('invoice_number');
+            $table->string('invoice_type');
+            $table->string('invoice_description');
+            $table->string('amount_invoiced');
+            $table->string('balance');
+            $table->string('invoice_status')->default('unpaid');
             $table->timestamps();
         });
     }
@@ -28,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('watervends');
+        Schema::dropIfExists('outsource_invoices');
     }
 };

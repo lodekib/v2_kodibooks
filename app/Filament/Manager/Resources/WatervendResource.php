@@ -4,6 +4,9 @@ namespace App\Filament\Manager\Resources;
 
 use App\Filament\Manager\Resources\WatervendResource\Pages;
 use App\Filament\Manager\Resources\WatervendResource\RelationManagers;
+use App\Filament\Manager\Resources\WatervendResource\RelationManagers\OutsourcewatersRelationManager;
+use App\Models\OutsourceInvoice;
+use App\Models\Outsourcewater;
 use App\Models\Waterbill;
 use App\Models\Watervend;
 use Filament\Forms;
@@ -37,6 +40,7 @@ class WatervendResource extends Resource
                     TextInput::make('national_number')->required(),
                     TextInput::make('email')->required()->email(),
                     TextInput::make('phone_number')->tel()->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')->unique(ignoreRecord: true)->required(),
+                    TextInput::make('rate')->label('Rate ( Ksh )')->required()->integer()
                 ])
             ]);
     }
@@ -49,7 +53,8 @@ class WatervendResource extends Resource
                 TextColumn::make('name')->size('sm')->searchable()->sortable(),
                 TextColumn::make('national_number')->label('Identity Number')->searchable()->sortable()->copyable(),
                 TextColumn::make('phone_number')->size('sm')->copyable()->searchable(),
-                TextColumn::make('email')->size('sm')->sortable()->searchable()
+                TextColumn::make('email')->size('sm')->sortable()->searchable(),
+                TextColumn::make('rate')->size('sm')->money('kes')->searchable()
             ])
             ->filters([
                 //
@@ -59,17 +64,27 @@ class WatervendResource extends Resource
                     Action::make('Record Water Reading')->icon('heroicon-o-beaker')
                         ->action(function (Watervend $record, array $data) {
                             $new_data = [
-                                'tenant_id' => $record->id,
-                                'tenant_name' => $record->name,
-                                'property_name' => 'outsourced',
-                                'unit_name' => 'Outsourced',
+                                'watervend_id' => $record->id,
+                                'vend_name' => $record->name,
                                 'previous_reading' => $data['previous_reading'],
                                 'current_reading' => $data['current_reading'],
                                 'date_added' => $data['date_added']
-
                             ];
 
-                            if (Waterbill::create($new_data)) {
+                            if (Outsourcewater::create($new_data)) {
+                                $invoice_number = strtoupper(substr($record->name, 0, 3)) . "-" . time();
+                                $amount_invoiced = ($data['current_reading'] - $data['previous_reading']) * $data['rate'];
+                                $invoice_data = [
+                                    'watervend_id' => $record->id,
+                                    'vend_name' => $record->name,
+                                    'national_number' => $record->national_number,
+                                    'invoice_number' => $invoice_number,
+                                    'invoice_type' => 'Outsourced Water',
+                                    'invoice_description' => 'Payment Invoice',
+                                    'amount_invoiced' => $amount_invoiced,
+                                    'balance' => $amount_invoiced
+                                ];
+                                OutsourceInvoice::create($invoice_data);
                                 Notification::make()->success()->body('Water bill added successfully !')->send();
                             } else {
                                 Notification::make()->warning()->body('Unable to add water bill')->send();
@@ -94,11 +109,12 @@ class WatervendResource extends Resource
                                             return $tenant_exists->last() + 1;
                                         }
                                     }),
+                                    TextInput::make('rate')->label('Rate (ksh)')->disabled()->dehydrated()->default($record->rate),
                                     DatePicker::make('date_added')->label('Date')->required()
                                 ];
                             })->columns(3)
                         ]),
-                        EditAction::make(),
+                    EditAction::make(),
                 ])->button(),
 
             ])
@@ -111,9 +127,7 @@ class WatervendResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -121,7 +135,7 @@ class WatervendResource extends Resource
         return [
             'index' => Pages\ListWatervends::route('/'),
             'create' => Pages\CreateWatervend::route('/create'),
-            'edit' => Pages\EditWatervend::route('/{record}/edit'),
+            'view' => Pages\ViewWatervend::route('/{record}')
         ];
     }
 }

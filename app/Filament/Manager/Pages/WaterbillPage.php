@@ -47,29 +47,17 @@ class WaterbillPage extends Page implements HasForms, HasTable
             ->columns([
                 TextColumn::make('date_added')->label('Date')->date()->size('sm'),
                 TextColumn::make('tenant_name')->label('Tenant')->size('sm')->searchable()->sortable(),
-                TextColumn::make('property_name')->label('Property')->size('sm')->sortable()->searchable()->badge(fn ($record) => $record->property_name == 'outsourced')->color(fn ($record) => $record->property_name == 'outsourced' ? 'danger' : ''),
-                TextColumn::make('unit_name')->label('Unit')->size('sm')->sortable()->searchable()->formatStateUsing(fn ($state) => $state == 'outsourced' ? '-' : $state),
+               
                 TextColumn::make('previous_reading')->label('Prev (m3)')->size('sm')->formatStateUsing(fn ($state) => number_format($state, 2)),
                 TextColumn::make('current_reading')->label('Curr (m3)')->size('sm')->formatStateUsing(fn ($state) => number_format($state, 2)),
                 TextColumn::make('updated_at')->label('Rate')->formatStateUsing(function ($record) {
-                    if ($record->property_name == 'Outsourced') {
-                        $amount = Utility::where('property_name', 'Outsourced')->where('utility_name', 'LIKE', '%water%')->pluck('amount');
-                        return 'KES ' . number_format($amount[0], 2);
-                    } else {
                         $amount = Utility::where('property_name', $record->property_name)->where('utility_name', 'LIKE', '%water%')->pluck('amount');
-                        return 'KES ' . number_format($amount[0], 2);
-                    }
+                        return 'KES ' . number_format($amount[0], 2);    
                 }),
                 TextColumn::make('id')->label('Total')->formatStateUsing(function ($record) {
-                    if ($record->property_name == 'Outsourced') {
-                        $amount = Utility::where('property_name', 'Outsourced')->where('utility_name', 'LIKE', '%water%')->pluck('amount');
-                        $quantity  = $record->current_reading - $record->previous_reading;
-                        return 'KES ' . number_format($amount[0] * $quantity, 2);
-                    } else {
                         $amount = Utility::where('property_name', $record->property_name)->where('utility_name', 'LIKE', '%water%')->pluck('amount');
                         $quantity  = $record->current_reading - $record->previous_reading;
                         return 'KES ' . number_format($amount[0] * $quantity, 2);
-                    }
                 }),
             ])->actions([
                 ActionGroup::make([

@@ -36,7 +36,7 @@ class UtilityResource extends Resource
         return $form
             ->schema([
                 Repeater::make('utilities')->schema([
-                    Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name')->prepend('Outsourced','Outsourced'))->required()->reactive(),
+                    Select::make('property_name')->options(Property::all()->pluck('property_name', 'property_name'))->required()->reactive(),
                     Radio::make('utility_type')->options(['fixed' => 'Fixed', 'custom' => 'Custom'])->required(),
                     TextInput::make('utility_name')->label('Utility')->required()->autocapitalize('words'),
                     TextInput::make('amount')->required()->label('Amount (Ksh)')->integer()->minValue(5),

@@ -5,16 +5,16 @@ namespace App\Models;
 use App\Traits\HasManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Watervend extends Model
+class Outsourcewater extends Model
 {
     use HasFactory,HasManager;
 
     protected $guarded = [];
 
-    public function outsourcewaters(): HasMany
+    public function watervend(): BelongsTo
     {
-        return $this->hasMany(Outsourcewater::class);
+        return $this->belongsTo(Watervend::class);
     }
 }

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('watervends', function (Blueprint $table) {
+        Schema::create('outsourcewaters', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('manager_id');
-            $table->string('name');
-            $table->string('national_number');
-            $table->string('phone_number');
-            $table->string('email');
-            $table->string('rate');
+            $table->unsignedBigInteger('watervend_id');
+            $table->string('vend_name');
+            $table->float('previous_reading');
+            $table->float('current_reading');
+            $table->date('date_added');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('watervends');
+        Schema::dropIfExists('outsourcewaters');
     }
 };
