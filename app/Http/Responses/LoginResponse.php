@@ -31,6 +31,8 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
                 return redirect()->route('filament.admin.pages.dashboard');
             }else if ($user->hasRole('Marketer')) {
                 return redirect()->route('filament.marketer.pages.dashboard');
+            }else if($user->hasRole('Caretaker')){
+                return redirect()->route('filament.manager.pages.manager-dashboard');
             }
         }
 
