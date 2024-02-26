@@ -2,6 +2,7 @@
 
 namespace App\Models\Scopes;
 
+use App\Models\Caretaker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -16,7 +17,8 @@ class ManagerScope implements Scope
     {
         if(Auth::user()->hasRole('Manager')){
             $builder->where('manager_id',Auth::id());
+        }else if(Auth::user()->hasRole('Caretaker')){
+            $builder->where('manager_id',Caretaker::find(Auth::id())->manager_id);
         }
-        //TODO:: CHECK FOR THE CARETAKER
     }
 }

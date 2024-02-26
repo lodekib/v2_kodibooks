@@ -74,7 +74,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
         if (
             $panel->getId() == 'admin' && Auth::user()->hasRole('Super Admin') ||
-            $panel->getId() == 'manager' && Auth::user()->hasRole('Manager')   ||
+            $panel->getId() == 'manager' && (Auth::user()->hasRole('Manager') || Auth::user()->hasRole('Caretaker') )  ||
             $panel->getId() == 'partner' && Auth::user()->hasRole('Partner')   ||
             $panel->getId() == 'marketer' && Auth::user()->hasRole('Marketer')
         ) {

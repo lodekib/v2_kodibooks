@@ -10,6 +10,7 @@ use App\Filament\Manager\Widgets\IncomeChart;
 use App\Filament\Manager\Widgets\LatestPayments;
 use App\Filament\Manager\Widgets\PendingInvoices;
 use App\Filament\Manager\Widgets\StatsOverview;
+use App\Filament\Resources\UserResource;
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\PaymentMiddleware;
 use App\Http\Middleware\SubscriptionMiddleware;
