@@ -13,7 +13,7 @@ class PaymentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Payment');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -21,7 +21,7 @@ class PaymentPolicy
      */
     public function view(User $user, Payment $payment): bool
     {
-        return $user->can('view Payment');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -29,7 +29,7 @@ class PaymentPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create Payment');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class PaymentPolicy
      */
     public function update(User $user, Payment $payment): bool
     {
-        return $user->can('update Payment');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class PaymentPolicy
      */
     public function delete(User $user, Payment $payment): bool
     {
-        return $user->can('delete Payment');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -53,7 +53,7 @@ class PaymentPolicy
      */
     public function restore(User $user, Payment $payment): bool
     {
-        return $user->can('restore Payment');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -61,6 +61,6 @@ class PaymentPolicy
      */
     public function forceDelete(User $user, Payment $payment): bool
     {
-        return $user->can('force-delete Payment');
+        return $user->hasRole('Manager');
     }
 }

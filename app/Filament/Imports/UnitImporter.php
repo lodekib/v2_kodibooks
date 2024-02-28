@@ -2,10 +2,12 @@
 
 namespace App\Filament\Imports;
 
+use App\Models\Property;
 use App\Models\Unit;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Forms\Components\Select;
 
 class UnitImporter extends Importer
 {
@@ -14,47 +16,38 @@ class UnitImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('property')
-                ->rules(['required']),
-            ImportColumn::make('tenant')
-                ->relationship(),
-            ImportColumn::make('property_name')
-                ->requiredMapping()
-                ->rules(['required', 'max:255']),
             ImportColumn::make('unit_name')
-                ->requiredMapping()
                 ->rules(['required', 'max:20']),
             ImportColumn::make('unit_size')
                 ->numeric()
                 ->rules(['integer']),
             ImportColumn::make('unit_type')
-                ->requiredMapping()
                 ->rules(['required', 'max:255']),
             ImportColumn::make('rent')
-                ->requiredMapping()
                 ->numeric()
                 ->rules(['required', 'integer']),
             ImportColumn::make('deposit')
-                ->requiredMapping()
                 ->numeric()
                 ->rules(['required', 'integer']),
             ImportColumn::make('unit_condition')
-                ->requiredMapping()
                 ->rules(['required', 'max:20']),
             ImportColumn::make('status')
-                ->requiredMapping()
                 ->rules(['required', 'max:20']),
+        ];
+    }
+
+    public static function getOptionsFormComponents(): array
+    {
+        return [
+            Select::make('property_name')->required()->options(Property::pluck('property_name', 'property_name'))
         ];
     }
 
     public function resolveRecord(): ?Unit
     {
-        // return Unit::firstOrNew([
-        //     // Update existing records, matching them by `$this->data['column_name']`
-        //     'email' => $this->data['email'],
-        // ]);
-
-        return new Unit();
+        $id = Property::where('property_name',$this->options['property_name'])->value('id');
+        $this->data = array_merge($this->data, ['property_name' => $this->options['property_name'],'property_id' => $id]);
+        return Unit::create($this->data);
     }
 
     public static function getCompletedNotificationBody(Import $import): string

@@ -50,7 +50,7 @@ class ManagerPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('manager')
+            ->id('manager')->spa()
             ->path('manager')->sidebarCollapsibleOnDesktop()
             ->collapsedSidebarWidth('80px')->sidebarWidth('220px')
             ->login()->passwordReset()->registration()->emailVerification()

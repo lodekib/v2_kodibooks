@@ -13,7 +13,7 @@ class TenantPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Tenant');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -21,7 +21,7 @@ class TenantPolicy
      */
     public function view(User $user, Tenant $tenant): bool
     {
-        return $user->can('view Tenant');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -29,7 +29,7 @@ class TenantPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create Tenant');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class TenantPolicy
      */
     public function update(User $user, Tenant $tenant): bool
     {
-        return $user->can('update Tenant');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class TenantPolicy
      */
     public function delete(User $user, Tenant $tenant): bool
     {
-        return $user->can('delete Tenant');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -61,6 +61,6 @@ class TenantPolicy
      */
     public function forceDelete(User $user, Tenant $tenant): bool
     {
-        return $user->can('force-delete Tenant');
+        return $user->hasRole('Manager');
     }
 }

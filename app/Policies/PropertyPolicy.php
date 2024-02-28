@@ -13,7 +13,7 @@ class PropertyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Property');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -21,7 +21,7 @@ class PropertyPolicy
      */
     public function view(User $user, Property $property): bool
     {
-        return $user->can('view Property');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -29,7 +29,7 @@ class PropertyPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create Property');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class PropertyPolicy
      */
     public function update(User $user, Property $property): bool
     {
-        return $user->can('update Property');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class PropertyPolicy
      */
     public function delete(User $user, Property $property): bool
     {
-        return $user->can('delete Property');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -53,7 +53,7 @@ class PropertyPolicy
      */
     public function restore(User $user, Property $property): bool
     {
-        return $user->can('restore Property');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -61,6 +61,6 @@ class PropertyPolicy
      */
     public function forceDelete(User $user, Property $property): bool
     {
-        return $user->can('force-delete Property');
+        return $user->hasRole('Manager');
     }
 }
