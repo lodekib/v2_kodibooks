@@ -20,20 +20,20 @@ class ListProperties extends ListRecords
     {
         return [
             Actions\CreateAction::make()->icon('heroicon-o-plus-circle'),
-            Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.property')),
-            // ActionsImportAction::make()->label('Import Data')->importer(PropertyImporter::class)
-            // ->color('primary')->icon('heroicon-o-cloud-arrow-down')
-            ImportAction::make()->uniqueField('property_name')->fields([
-                ImportField::make('property_name')->required(),
-                ImportField::make('property_size'),
-                ImportField::make('property_cost'),
-                ImportField::make('property_location')->required()
-            ], columns: 2)->icon('heroicon-o-arrow-down-tray')->mutateBeforeCreate(function ($row) {
-                $row['property_status'] = 'good';
-                return $row;
-            })->handleRecordCreation(function ($data) {
-                return $this->getModel()::create($data);
-            }),
+            // Action::make('Sample template')->icon('heroicon-o-arrow-down-circle')->url(route('template.property')),
+            ActionsImportAction::make()->label('Import Data')->importer(PropertyImporter::class)
+            ->color('primary')->icon('heroicon-o-cloud-arrow-down'),
+            // ImportAction::make()->uniqueField('property_name')->fields([
+            //     ImportField::make('property_name')->required(),
+            //     ImportField::make('property_size'),
+            //     ImportField::make('property_cost'),
+            //     ImportField::make('property_location')->required()
+            // ], columns: 2)->icon('heroicon-o-arrow-down-tray')->mutateBeforeCreate(function ($row) {
+            //     $row['property_status'] = 'good';
+            //     return $row;
+            // })->handleRecordCreation(function ($data) {
+            //     return $this->getModel()::create($data);
+            // }),
         ];
     }
 }

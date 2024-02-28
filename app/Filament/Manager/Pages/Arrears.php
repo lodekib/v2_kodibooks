@@ -35,7 +35,6 @@ class Arrears extends Page implements HasForms,HasTable
             TextColumn::make('email')->size('sm')->sortable()->searchable()->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('property_name')->size('sm')->searchable()->sortable(),
             TextColumn::make('units.unit_name')->size('sm')->searchable()->sortable()->badge()->color('gray')->inline()->separator(','),
-            TextColumn::make('rent')->size('sm')->money('kes'),
             TextColumn::make('balance')->size('sm')->formatStateUsing(
                 fn ($record) =>
                 __('KES ' . number_format(Statement::where('tenant_name', $record->full_names)->selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance, 2, '.', ','))

@@ -34,6 +34,6 @@ class LatestPayments extends BaseWidget
                     'success' => static fn ($state): bool => $state === 'fully allocated',
                 ])->size('sm')->searchable()->sortable(),
                 TextColumn::make('balance')->money('kes'),
-            ]);
+            ])->deferLoading()->searchDebounce('1s');
     }
 }

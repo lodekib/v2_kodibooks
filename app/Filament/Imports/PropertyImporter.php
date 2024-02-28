@@ -34,12 +34,7 @@ class PropertyImporter extends Importer
         ];
     }
 
-    // public static function getOptionsFormComponents(): array
-    // {
-    //     return [
-    //         Select::make('sample')->options(Property::pluck('property_name','property_name'))
-    //     ];
-    // } 
+
 
     public function resolveRecord(): ?Property
     {

@@ -13,7 +13,7 @@ class UnittypePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Unittype');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -21,7 +21,7 @@ class UnittypePolicy
      */
     public function view(User $user, Unittype $unittype): bool
     {
-        return $user->can('view Unittype');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class UnittypePolicy
      */
     public function update(User $user, Unittype $unittype): bool
     {
-        return $user->can('update Unittype');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class UnittypePolicy
      */
     public function delete(User $user, Unittype $unittype): bool
     {
-        return $user->can('delete Unittype');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -53,7 +53,7 @@ class UnittypePolicy
      */
     public function restore(User $user, Unittype $unittype): bool
     {
-        return $user->can('restore Unittype');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -61,6 +61,6 @@ class UnittypePolicy
      */
     public function forceDelete(User $user, Unittype $unittype): bool
     {
-        return $user->can('force-delete Unittype');
+        return $user->hasRole('Manager');
     }
 }

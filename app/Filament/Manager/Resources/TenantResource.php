@@ -117,7 +117,7 @@ class TenantResource extends Resource
                     'success' => static fn ($state): bool => $state === 'active',
                     'warning' => static fn ($state): bool => $state === 'inactive',
                 ])->badge()->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->deferLoading()->searchDebounce('0ms')
             ->striped()
             ->filters([
                 Filter::make('Arrears')->query(fn(Builder $query) :Builder => $query->where('balance','>',0) ),

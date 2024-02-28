@@ -13,7 +13,7 @@ class InvoicePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Invoice');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -21,7 +21,7 @@ class InvoicePolicy
      */
     public function view(User $user, Invoice $invoice): bool
     {
-        return $user->can('view Invoice');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -29,7 +29,7 @@ class InvoicePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create Invoice');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class InvoicePolicy
      */
     public function update(User $user, Invoice $invoice): bool
     {
-        return $user->can('update Invoice');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class InvoicePolicy
      */
     public function delete(User $user, Invoice $invoice): bool
     {
-        return $user->can('delete Invoice');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -53,7 +53,7 @@ class InvoicePolicy
      */
     public function restore(User $user, Invoice $invoice): bool
     {
-        return $user->can('restore Invoice');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -61,6 +61,6 @@ class InvoicePolicy
      */
     public function forceDelete(User $user, Invoice $invoice): bool
     {
-        return $user->can('force-delete Invoice');
+        return $user->hasRole('Manager');
     }
 }
