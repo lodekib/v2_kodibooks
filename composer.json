@@ -35,6 +35,8 @@
         "saade/filament-fullcalendar": "^3.0",
         "symfony/http-kernel": "*",
         "z3d0x/filament-logger": "^0.6.3"
+        "spatie/laravel-permission": "6.1",
+        "symfony/http-kernel": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
