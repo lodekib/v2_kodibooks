@@ -31,8 +31,6 @@ class UnitImporter extends Importer
                 ->rules(['required', 'integer']),
             ImportColumn::make('unit_condition')
                 ->rules(['required', 'max:20']),
-            ImportColumn::make('status')
-                ->rules(['required', 'max:20']),
         ];
     }
 
@@ -46,7 +44,7 @@ class UnitImporter extends Importer
     public function resolveRecord(): ?Unit
     {
         $id = Property::where('property_name',$this->options['property_name'])->value('id');
-        $this->data = array_merge($this->data, ['property_name' => $this->options['property_name'],'property_id' => $id]);
+        $this->data = array_merge($this->data, ['property_name' => $this->options['property_name'],'property_id' => $id,'status' => 'vacant']);
         return Unit::create($this->data);
     }
 

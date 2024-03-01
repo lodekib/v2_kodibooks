@@ -15,6 +15,5 @@ class VerifyCsrfToken extends Middleware
         'validation',
         'confirmation',
         'results',
-        'register-urls'
     ];
 }
