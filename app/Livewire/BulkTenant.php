@@ -31,7 +31,7 @@ class BulkTenant extends Component implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
-        return $table->query(Tenant::query())->poll('2s')->columns([
+        return $table->query(Tenant::query())->columns([
             TextColumn::make('No')->rowIndex(),
             TextColumn::make('id_number')->size('sm')->searchable()->sortable()->copyable()->copyMessage('ID number copied'),
             TextColumn::make('full_names')->size('sm')->searchable()->sortable(),
@@ -52,7 +52,7 @@ class BulkTenant extends Component implements HasForms, HasTable
             ->bulkActions([
                 BulkAction::make('Bulk SMS')->label('Send Bulk SMS')->icon('heroicon-s-chat-bubble-left-right')->action(function (Collection $records, $data) {
                     $records->each(function ($record) use ($data) {
-                        $record->notify(new ReminderNotification($data['message'], $record->phone_number));
+                        $record->notify(new ReminderNotification('Dear '.$record->full_names.', '.$data['message'], $record->phone_number));
                     });
                     Notification::make()->success()->color('success')->title('Success')->body('Messages sent successfully !')->send();
                 })->form([
@@ -60,7 +60,7 @@ class BulkTenant extends Component implements HasForms, HasTable
                 ])
             ])
             ->filters([
-                Filter::make('Arrears')->indicator('With balances')->query(fn (Builder $query): Builder => $query->where('balance', '>', 0))->default(),
+                Filter::make('Arrears')->indicator('With balances')->query(fn (Builder $query): Builder => $query->where('balance', '>', 0)),
                 SelectFilter::make('Utility')->options(Utility::pluck('utility_name', 'utility_name'))->query(function (Builder $query, array $data): Builder {
                     $utility = $data['value'];
                     if ($utility != null) {
