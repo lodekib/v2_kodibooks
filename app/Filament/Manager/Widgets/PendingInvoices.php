@@ -37,7 +37,7 @@ class PendingInvoices extends BaseWidget
                 })->searchable()->sortable(),
                 TextColumn::make('amount_invoiced')->size('sm')->money('kes')->summarize(Sum::make()->label('Total Invoiced')->money('kes')),
                 TextColumn::make('balance')->size('sm')->money('kes')
-            ])->deferLoading()->searchDebounce('0ms')->filters([
+            ])->searchDebounce('0ms')->filters([
                 SelectFilter::make('Due Days')->options([
                     '1-7' => '1 - 7 days',
                     '8-14' => '8 - 14 days',

@@ -17,8 +17,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class StatsOverview extends BaseWidget
 {
 
-    protected static bool $isLazy = false;
-    protected static ?string $pollingInterval = '2s';
+    protected static bool $isLazy = true;
 
     protected function getStats(): array
     {
@@ -35,7 +34,7 @@ class StatsOverview extends BaseWidget
             ->description(' This month ')->url(route('filament.manager.resources.expenses.index'))
             ->chart(Expense::where('amount', '!=', null)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->pluck('amount')->toArray())
             ->color('gray'),
-        Stat::make('Arrears', 'KSH. ' . number_format(Statement::selectRaw('SUM(debit) - SUM(credit) as balance')->first()->balance))
+        Stat::make('Arrears', 'KSH. ' . number_format(Invoice::sum('balance')))
             ->description(' This month of ' . Carbon::now()->format('F'))
             ->chart(Invoice::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->pluck('balance')->toArray())
             ->color('danger')->url(route('filament.manager.resources.tenants.index')),

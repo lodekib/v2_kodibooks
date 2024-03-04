@@ -12,12 +12,10 @@ class IncomeChart extends ApexChartWidget
 {
 
     protected static string $chartId = 'incomeChart';
-    protected static ?string $pollingInterval = '2s';
     protected static bool $isLazy = false;
     protected static ?string $heading = 'IncomeChart';
     public ?string $filter = 'week';
     protected static ?int $sort = 3;
-    protected static bool $deferLoading = true;
     protected static ?int $contentHeight = 260; //px
 
 
