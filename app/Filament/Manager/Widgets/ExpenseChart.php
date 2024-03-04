@@ -11,12 +11,10 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class ExpenseChart extends ApexChartWidget
 {
 
-    protected static ?string $pollingInterval = '2s';
     protected static ?int $sort = 4;
     protected static string $chartId = 'expenses';
     protected static ?string $heading = 'Expenses ';
     protected static bool $isLazy = false;
-    protected static bool $deferLoading = true;
     protected static ?int $contentHeight = 260; //px
 
 
