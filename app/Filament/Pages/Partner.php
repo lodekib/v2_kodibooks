@@ -31,6 +31,7 @@ class Partner extends Page implements HasForms, HasTable
     {
         return $table->query(User::query()->role('Partner'))
             ->columns([
+                TextColumn::make('created_at')->label('Date')->size('sm')->searchable(),
                 TextColumn::make('name')->label('Partner name')->size('sm')->searchable(),
                 TextColumn::make('email')->size('sm')->searchable()->sortable(),
                 TextColumn::make('is_verified')->label('Status')->badge()->formatStateUsing(fn ($state) => $state == 0 ? 'pending approval' : 'Approved')

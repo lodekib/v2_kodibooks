@@ -24,7 +24,7 @@ class MarketerPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('marketer')
+            ->id('marketer')->spa()
             ->path('marketer')->sidebarWidth('220px')->topNavigation()
             ->colors([
                 'primary' => Color::hex('#4ade80'),

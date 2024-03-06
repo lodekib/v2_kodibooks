@@ -12,6 +12,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class PendingInvoices extends BaseWidget
@@ -19,6 +21,11 @@ class PendingInvoices extends BaseWidget
 
     protected static ?int $sort = 5;
     protected  int|string|array $columnSpan  = 'full';
+
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->fastPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+    }
     public function table(Table $table): Table
     {
         return $table

@@ -231,7 +231,7 @@ class TenantResource extends Resource
                             // $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
 
                             $records->each(function (Tenant $record) use ($data) {
-                                $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
+                                $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . (time() + 5);
                                 $new_data = array_merge(
                                     $data,
                                     [

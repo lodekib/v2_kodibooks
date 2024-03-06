@@ -92,9 +92,9 @@ class PaymentResource extends Resource
                 TextColumn::make('tenant.phone_number')->label('Phone')->searchable()->sortable()->copyable(),
                 TextColumn::make('unit_name')->label('Unit')->size('sm')->searchable()->sortable(),
                 TextColumn::make('receipt_number')->label('Receipt')->size('sm')->sortable()->searchable(),
-                TextColumn::make('mode_of_payment')->label('Mode')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault:true),
+                TextColumn::make('mode_of_payment')->label('Mode')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('amount')->money('kes')->searchable(),
-                TextColumn::make('balance')->money('kes')->searchable()->toggleable(isToggledHiddenByDefault:true),
+                TextColumn::make('balance')->money('kes')->searchable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
                     'unallocated' => 'success',
                     'fully allocated' => 'gray',
@@ -132,7 +132,7 @@ class PaymentResource extends Resource
                             'unit_name' => $tenant->unit_name,
                             'tenant_name' => $tenant->full_names
                         ]);
-
+dd($update);
                         if ($update) {
                             $statement_data = [
                                 'tenant_id' => $tenant->id,
@@ -161,9 +161,9 @@ class PaymentResource extends Resource
                         ->icon('heroicon-s-arrow-down-tray')
                         ->action(function (Model $record) {
                             $tenant = Tenant::find($record->tenant_id);
-                            return response()->streamDownload(function () use ($record,$tenant) {
+                            return response()->streamDownload(function () use ($record, $tenant) {
                                 echo Pdf::loadHtml(
-                                    Blade::render('pdfs/receipt', ['record' => $record,'tenant' => $tenant])
+                                    Blade::render('pdfs/receipt', ['record' => $record, 'tenant' => $tenant])
                                 )->stream();
                             }, $record->property_name . '-' . $record->tenant_name . '.pdf');
                         }),
@@ -175,7 +175,8 @@ class PaymentResource extends Resource
             ])->headerActions([
                 ExportAction::make()->outlined()->label('EXCEL')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->askForWriterType()->except(['No'])]),
                 FilamentExportHeaderAction::make('PDF')->label('PDF')->color('gray')->outlined()->disableAdditionalColumns()
-                ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()            ])
+                    ->disableCsv()->disableXlsx()->defaultFormat('pdf')->disableFilterColumns()->disablePreview()
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
             ])

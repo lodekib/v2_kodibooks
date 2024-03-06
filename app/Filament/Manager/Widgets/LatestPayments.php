@@ -3,10 +3,14 @@
 namespace App\Filament\Manager\Widgets;
 
 use App\Models\Payment;
+use App\Models\Scopes\ManagerScope;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class LatestPayments extends BaseWidget
 
@@ -15,10 +19,14 @@ class LatestPayments extends BaseWidget
     protected static bool $isLazy = false;
     protected int | string | array $columnSpan = 'full';
     
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->fastPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+    }
     public function table(Table $table): Table
     {
 
-        return $table->poll('2s')->groups(['mode_of_payment'])
+        return $table->groups(['mode_of_payment'])
             ->query(
                 Payment::latest()->withoutGlobalScopes([ManagerScope::class])
             )
