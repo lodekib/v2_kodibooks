@@ -11,6 +11,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Konnco\FilamentImport\Actions\ImportAction;
 use Konnco\FilamentImport\Actions\ImportField;
@@ -21,6 +23,12 @@ class ArchivedPayments extends Page implements HasForms, HasTable
     // protected static ?string $navigationIcon = 'heroicon-s-document-minus';
     protected static ?string $navigationGroup = 'Archives';
     protected static string $view = 'filament.manager.pages.archived-payments';
+
+protected function paginateTableQuery(Builder $query): Paginator
+{
+    return $query->fastPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+
+}
 
     public function table(Table $table): Table
     {

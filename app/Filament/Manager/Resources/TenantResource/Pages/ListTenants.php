@@ -7,6 +7,7 @@ use App\Filament\Manager\Resources\TenantResource;
 use App\Models\Property;
 use App\Models\Unit;
 use Carbon\Carbon;
+use Closure;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction as ActionsImportAction;
@@ -14,6 +15,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\ListRecords\Tab as ListRecordsTab;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Konnco\FilamentImport\Actions\ImportAction;
 use Konnco\FilamentImport\Actions\ImportField;
@@ -22,6 +24,11 @@ class ListTenants extends ListRecords
 {
     protected static string $resource = TenantResource::class;
 
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->fastPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+
+    }
 
     protected function getHeaderActions(): array
     {

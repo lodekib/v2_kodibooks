@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('admin')->spa()
             ->topNavigation()
             ->favicon(asset('assets/kodibooks.png'))
             ->login()->passwordReset()->emailVerification()->registration()

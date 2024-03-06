@@ -14,6 +14,8 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class Arrears extends Page implements HasForms,HasTable
@@ -24,6 +26,11 @@ class Arrears extends Page implements HasForms,HasTable
     protected static ?int $navigationSort = 2;
     protected static string $view = 'filament.manager.pages.arrears';
 
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->fastPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+
+    }
 
     public function table(Table $table): Table
     {

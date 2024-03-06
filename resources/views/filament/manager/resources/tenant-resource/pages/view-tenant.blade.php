@@ -65,6 +65,7 @@
         </x-filament::tabs>
 
         <div x-show="activeTab === 'Units'" class="py-6">
+            {{$this->hasCombinedRelationManagerTabsWithContent()}}
             @if (count($relationManagers))
             <x-filament-panels::resources.relation-managers :active-locale="isset($activeLocale) ? $activeLocale : null" :active-manager="$activeRelationManager" :content-tab-label="$this->getContentTabLabel()" :managers="$relationManagers" :owner-record="$record" :page-class="static::class">
                 @if ($this->hasCombinedRelationManagerTabsWithContent())

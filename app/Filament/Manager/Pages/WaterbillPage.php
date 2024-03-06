@@ -30,6 +30,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class WaterbillPage extends Page implements HasForms, HasTable
 {
@@ -40,6 +43,12 @@ class WaterbillPage extends Page implements HasForms, HasTable
     protected static string $view = 'filament.manager.pages.waterbill-page';
     protected static ?string $navigationLabel = 'Water bills';
 
+
+    protected function paginateTableQuery(Builder $query): Paginator|CursorPaginator
+    {
+        return $query->fastPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+
+    }
 
     public function table(Table $table): Table
     {
@@ -165,7 +174,7 @@ class WaterbillPage extends Page implements HasForms, HasTable
                                         }
                                     }
                                 })->reactive(),
-                            TextInput::make('previous_reading')->label('Previous reading ( m3 )')->disabled()->dehydrated()->default(function ($state, Get $get, Set $set) {
+                            TextInput::make('previous_reading')->label('Previous reading ( m3 )')->default(function ($state, Get $get, Set $set) {
                                 $tenant_name = $get('tenant_name');
                                 $unit_name = $get('unit_name');
                                 if ($tenant_name != null && $unit_name != null) {

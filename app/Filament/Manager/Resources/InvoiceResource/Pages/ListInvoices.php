@@ -12,6 +12,9 @@ use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction as ActionsImportAction;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Model;
 use Konnco\FilamentImport\Actions\ImportAction;
 use Konnco\FilamentImport\Actions\ImportField;
@@ -22,6 +25,11 @@ class ListInvoices extends ListRecords
 {
   protected static string $resource = InvoiceResource::class;
 
+  protected function paginateTableQuery(Builder $query): Paginator|CursorPaginator
+  {
+    return $query->fastPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+
+  }
   protected function getHeaderActions(): array
   {
     return [

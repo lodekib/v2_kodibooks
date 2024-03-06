@@ -10,6 +10,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class StaleInvoices extends Page implements HasForms, HasTable
@@ -19,6 +21,13 @@ class StaleInvoices extends Page implements HasForms, HasTable
     // protected static ?string $navigationIcon = 'heroicon-s-archive-box';
     protected static ?string $navigationGroup = 'Archives';
     protected static string $view = 'filament.manager.pages.stale-invoices';
+
+
+protected function paginateTableQuery(Builder $query): Paginator|CursorPaginator
+{
+    return $query->fastPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+
+}
 
     public function table(Table $table): Table
     {
