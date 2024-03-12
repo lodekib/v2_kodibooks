@@ -13,7 +13,7 @@ class StatementPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Statement');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -21,7 +21,7 @@ class StatementPolicy
      */
     public function view(User $user, Statement $statement): bool
     {
-        return $user->can('view Statement');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -29,7 +29,7 @@ class StatementPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create Statement');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class StatementPolicy
      */
     public function update(User $user, Statement $statement): bool
     {
-        return $user->can('update Statement');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class StatementPolicy
      */
     public function delete(User $user, Statement $statement): bool
     {
-        return $user->can('delete Statement');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -53,7 +53,7 @@ class StatementPolicy
      */
     public function restore(User $user, Statement $statement): bool
     {
-        return $user->can('restore Statement');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -61,6 +61,6 @@ class StatementPolicy
      */
     public function forceDelete(User $user, Statement $statement): bool
     {
-        return $user->can('force-delete Statement');
+        return $user->hasRole('Manager');
     }
 }

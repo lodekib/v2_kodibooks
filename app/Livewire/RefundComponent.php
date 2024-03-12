@@ -41,7 +41,7 @@ class RefundComponent extends Component implements HasForms
     {
         return [
             Wizard::make()->schema([
-                Step::make('')->description('Dedudctables')->icon('heroicon-o-question-mark-circle')->schema([
+                Step::make('')->description('Deductables')->icon('heroicon-o-question-mark-circle')->schema([
                     Radio::make('status')->required()->boolean()->inline()->reactive()->default(true),
                     Repeater::make('deductables')->schema([
                         Section::make()->schema([

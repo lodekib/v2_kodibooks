@@ -58,4 +58,9 @@ class Tenant extends Model
     {
         return $this->hasMany(Refund::class);
     }
+
+    public function statements(): HasMany
+    {
+        return $this->hasMany(Statement::class);
+    }
 }

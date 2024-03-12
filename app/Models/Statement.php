@@ -59,4 +59,9 @@ class Statement extends Model
             return  null;
         }
     }
+
+    public function  tenant() : BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
 }
