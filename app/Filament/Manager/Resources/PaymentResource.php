@@ -34,6 +34,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
@@ -91,7 +92,7 @@ class PaymentResource extends Resource
                 TextColumn::make('national_id')->label('Account')->size('sm')->searchable()->sortable()->copyable(),
                 TextColumn::make('tenant.phone_number')->label('Phone')->searchable()->sortable()->copyable(),
                 TextColumn::make('unit_name')->label('Unit')->size('sm')->searchable()->sortable(),
-                TextColumn::make('receipt_number')->label('Receipt')->size('sm')->sortable()->searchable(),
+                TextColumn::make('receipt_number')->label('Receipt')->size('sm')->sortable()->searchable()->copyable(),
                 TextColumn::make('mode_of_payment')->label('Mode')->size('sm')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('amount')->money('kes')->searchable(),
                 TextColumn::make('balance')->money('kes')->searchable()->toggleable(isToggledHiddenByDefault: true),
@@ -123,17 +124,11 @@ class PaymentResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\Action::make('Update Payment')->icon('heroicon-o-pencil-square')->action(function (array $data, $record) {
                         $tenant = Tenant::where('id_number', $data['account'])->first();
-                        $total_debit = Statement::where('tenant_name', $tenant->full_names)->sum('debit');
-                        $total_credit = Statement::where('tenant_name', $tenant->full_names)->sum('credit');
-
-                        $update = $record->update([
-                            'tenant_id' => $tenant->id,
-                            'property_name' => $tenant->property_name,
-                            'unit_name' => $tenant->unit_name,
-                            'tenant_name' => $tenant->full_names
-                        ]);
-dd($update);
-                        if ($update) {
+                        if (is_null($tenant)) {
+                            Notification::make()->danger()->color('danger')->title('No record !')->body('No tenant with the ID number exists')->send();
+                        } else {
+                            $total_debit = Statement::where('tenant_name', $tenant->full_names)->sum('debit');
+                            $total_credit = Statement::where('tenant_name', $tenant->full_names)->sum('credit');
                             $statement_data = [
                                 'tenant_id' => $tenant->id,
                                 'tenant_name' => $tenant->full_names,
@@ -144,12 +139,24 @@ dd($update);
                                 'balance' => $total_debit - ($total_credit + $record->balance),
                                 'cummulative_balance' => $total_debit - ($total_credit + $record->balance),
                                 's_balance' => $total_debit - ($total_credit + $record->balance),
-
                             ];
-                            $statement = Statement::create($statement_data);
-                            InvoiceReceiptAutoAllocation::handleNewReceipt($tenant->full_names, $record);
+                            try {
+                                $statement = Statement::create($statement_data);
+                                InvoiceReceiptAutoAllocation::handleNewReceipt($tenant->full_names, $record);
+
+                            } catch (\Illuminate\Database\QueryException $e) {
+                                Log::error('Error creating statement:', ['error' => $e->getMessage()]);
+                            }
+
+
+                        $record->update([
+                                'tenant_id' => $tenant->id,
+                                'property_name' => $tenant->property_name,
+                                'unit_name' => $tenant->unit_name,
+                                'tenant_name' => $tenant->full_names
+                            ]);
                         }
-                    })->form([
+                    })->visible(fn ($record) => empty($record->unit_name))->form([
                         Fieldset::make()->schema([
                             TextInput::make('account')->default(fn ($record) => $record->national_id),
                             TextInput::make('reference number')->default(fn ($record) => $record->reference_number)->disabled()->dehydrated(),

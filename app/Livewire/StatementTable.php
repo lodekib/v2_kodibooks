@@ -26,24 +26,25 @@ class StatementTable extends Component implements HasForms, HasTable
 
     public $record;
 
+
     public function table(Table $table): Table
     {
         return $table
-            ->query(Statement::where('tenant_name', $this->record->full_names)->oldest())->poll('2s')
+            ->query(Statement::where('tenant_id', $this->record->id)->oldest())
             ->columns([
                 TextColumn::make('No')->rowIndex(),
                 TextColumn::make('created_at')->size('sm')->datetime()->label('Date'),
                 TextColumn::make('reference')->sortable()->searchable()->size('sm'),
                 TextColumn::make('description')->searchable()->size('sm'),
-                TextColumn::make('debit')->size('sm')->money('kes')->formatStateUsing(fn($state) => $state == 0 ? '-' :'KES ' .number_format($state,2)),
-                TextColumn::make('credit')->size('sm')->formatStateUsing(fn($state) => $state == 0 ? '-' :'KES ' .number_format($state,2)),
+                TextColumn::make('debit')->size('sm')->money('kes')->formatStateUsing(fn ($state) => $state == 0 ? '-' : 'KES ' . number_format($state, 2)),
+                TextColumn::make('credit')->size('sm')->formatStateUsing(fn ($state) => $state == 0 ? '-' : 'KES ' . number_format($state, 2)),
                 TextColumn::make('s_balance')->label('Balance')->size('sm')->money('kes'),
             ])
             ->filters([
                 // ...
             ])->headerActions([
-                    // FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns(),
-                    ExportAction::make()->outlined()->label('Excel')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])])
+                // FilamentExportHeaderAction::make('Reports')->color('gray')->icon('heroicon-o-clipboard-document')->disableAdditionalColumns(),
+                ExportAction::make()->outlined()->label('Excel')->color('gray')->exports([ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export')->except(['No'])])
             ])
             ->actions([
                 // ...

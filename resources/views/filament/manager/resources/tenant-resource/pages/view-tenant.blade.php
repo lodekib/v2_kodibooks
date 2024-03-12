@@ -65,20 +65,7 @@
         </x-filament::tabs>
 
         <div x-show="activeTab === 'Units'" class="py-6">
-            {{$this->hasCombinedRelationManagerTabsWithContent()}}
-            @if (count($relationManagers))
-            <x-filament-panels::resources.relation-managers :active-locale="isset($activeLocale) ? $activeLocale : null" :active-manager="$activeRelationManager" :content-tab-label="$this->getContentTabLabel()" :managers="$relationManagers" :owner-record="$record" :page-class="static::class">
-                @if ($this->hasCombinedRelationManagerTabsWithContent())
-                <x-slot name="content">
-                    @if ($this->hasInfolist())
-                    {{ $this->infolist }}
-                    @else
-                    {{ $this->form }}
-                    @endif
-                </x-slot>
-                @endif
-            </x-filament-panels::resources.relation-managers>
-            @endif
+          @livewire('units-tenant-component',['record' => $this->record])
         </div>
         <div x-show="activeTab === 'Invoice Statement'" class="py-6">@livewire('invoice-statement',['record' => $this->record]) </div>
         <div x-show="activeTab === 'Invoices'" class="py-6">@livewire('invoice-table',['record' => $this->record])</div>
