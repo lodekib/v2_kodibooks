@@ -13,7 +13,7 @@ class UtilityPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Utility');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -21,7 +21,7 @@ class UtilityPolicy
      */
     public function view(User $user, Utility $utility): bool
     {
-        return $user->can('view Utility');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -29,7 +29,7 @@ class UtilityPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create Utility');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class UtilityPolicy
      */
     public function update(User $user, Utility $utility): bool
     {
-        return $user->can('update Utility');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class UtilityPolicy
      */
     public function delete(User $user, Utility $utility): bool
     {
-        return $user->can('delete Utility');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -53,7 +53,7 @@ class UtilityPolicy
      */
     public function restore(User $user, Utility $utility): bool
     {
-        return $user->can('restore Utility');
+        return $user->hasRole('Manager');
     }
 
     /**
@@ -61,6 +61,6 @@ class UtilityPolicy
      */
     public function forceDelete(User $user, Utility $utility): bool
     {
-        return $user->can('force-delete Utility');
+        return $user->hasRole('Manager');
     }
 }

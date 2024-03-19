@@ -28,6 +28,7 @@ class ScheduleResource extends Resource
     protected static ?string $navigationGroup = 'Invoices';
     // protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $modelLabel = 'Schedule Invoice';
+    protected static ?string $recordTitleAttribute = 'invoice_type';
 
     public static function form(Form $form): Form
     {

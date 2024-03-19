@@ -31,6 +31,7 @@ class WatervendResource extends Resource
     protected static ?int $navigationSort = 2;
     protected static ?string $navigationLabel =  'Water Vend';
     protected static ?string $navigationGroup = 'Utilities';
+    protected static ?string $recordTitleAttribute = 'name';
     public static function form(Form $form): Form
     {
         return $form
