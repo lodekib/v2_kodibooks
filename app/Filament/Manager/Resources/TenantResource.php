@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Mail as Mailconfig;
 use App\Models\Scopes\ManagerScope;
+use Carbon\Carbon;
 use Filament\Forms\Components\Section;
 use Filament\Infolists\Components\Section as InfoSection;
 use Filament\Support\Enums\FontWeight;
@@ -117,10 +118,10 @@ class TenantResource extends Resource
                     'success' => static fn ($state): bool => $state === 'active',
                     'warning' => static fn ($state): bool => $state === 'inactive',
                 ])->badge()->toggleable(isToggledHiddenByDefault: true),
-            ])->searchDebounce('0ms')
+            ])->searchOnBlur()
             ->striped()
             ->filters([
-                Filter::make('Arrears')->query(fn(Builder $query) :Builder => $query->where('balance','>',0) ),
+                Filter::make('Arrears')->query(fn (Builder $query): Builder => $query->where('balance', '>', 0)),
                 SelectFilter::make('Utility')->options(Utility::pluck('utility_name', 'utility_name'))->query(function (Builder $query, array $data): Builder {
                     $utility = $data['value'];
                     if ($utility != null) {
@@ -227,11 +228,14 @@ class TenantResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     BulkAction::make('Invoice Rent')->icon('heroicon-o-ticket')->action(
                         function (Collection $records, array $data) {
-                          //  $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', auth()->id())->first();
+                            //  $mail_config = Mailconfig::withoutGlobalScope(new ManagerScope())->where('manager_id', auth()->id())->first();
                             // $mail_config->mailer()->to($record->email)->send(new InvoiceSent($record, $new_data));
 
                             $records->each(function (Tenant $record) use ($data) {
-                                $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . (time() + 5);
+                                $prefix = Carbon::now()->format('Ym') . substr($record->property_name, 0, 3);
+                                $counter = Invoice::where('invoice_number', 'like', $prefix . '%')->count() + 1;
+                                $invoice_number = $prefix . str_pad($counter, 4, '0', STR_PAD_LEFT);
+                                // $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . (time() + 5);
                                 $new_data = array_merge(
                                     $data,
                                     [
@@ -287,7 +291,10 @@ class TenantResource extends Resource
                     ]),
                     BulkAction::make('Utility Invoice')->icon('heroicon-o-funnel')->action(function (Collection $records, array $data, $livewire) {
                         $records->each(function (Tenant $record) use ($data, $livewire) {
-                            $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
+                            $prefix = Carbon::now()->format('Ym') . substr($record->property_name, 0, 3);
+                            $counter = Invoice::where('invoice_number', 'like', $prefix . '%')->count() + 1;
+                            $invoice_number = $prefix . str_pad($counter, 4, '0', STR_PAD_LEFT);
+                            // $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
 
                             if ($livewire->tableFilters['Utility']['value'] == 'Water') {
                                 $tenant_water = Waterbill::where('property_name', $record->property_name)
@@ -356,7 +363,10 @@ class TenantResource extends Resource
                     }),
                     BulkAction::make('Standard Invoice')->icon('heroicon-o-document-text')->deselectRecordsAfterCompletion()->action(function (Collection $records, array $data) {
                         $records->each(function (Tenant $record) use ($data) {
-                            $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
+                            $prefix = Carbon::now()->format('Ym') . substr($record->property_name, 0, 3);
+                            $counter = Invoice::where('invoice_number', 'like', $prefix . '%')->count() + 1;
+                            $invoice_number = $prefix . str_pad($counter, 4, '0', STR_PAD_LEFT);
+                            // $invoice_number = strtoupper(substr($record->property_name, 0, 3)) . "-" . time();
                             $amount = $data['amount_invoiced'];
                             $quantity = 1;
                             $new_data = array_merge(
@@ -410,6 +420,27 @@ class TenantResource extends Resource
                             Textarea::make('invoice_details')->label('Note to tenant')->rows(2)->required()
                         ])
                     ]),
+                    BulkAction::make('Activate Water Utility')->icon('heroicon-o-funnel')->action(function (Collection $records) {
+                        $records->each(function (Tenant $record) {
+                            if ($record->property->utilities->where('utility_name', 'Water')->isNotEmpty()) {
+                                $activeUtilities = ActiveUtility::where('tenant_id', $record->id)->first();
+                                if ($activeUtilities != null) {
+                                    $arra =  $activeUtilities->active_utilities;
+                                    $arra[] = 'Water';
+                                    $activeUtilities->active_utilities = $arra;
+                                    $activeUtilities->save();
+                                } else {
+                                    ActiveUtility::create([
+                                        'tenant_id' => $record->id,
+                                        'tenant_name' => $record->full_names,
+                                        'property_name' => $record->property_name,
+                                        'active_utilities' => ['Water']
+                                    ]);
+                                }
+                            }
+                        });
+                        Notification::make()->success()->color('success')->title('Activation Successful !')->body('Water utility activated successfully on the tenants .')->send();
+                    })
                     // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])

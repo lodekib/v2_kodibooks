@@ -23,6 +23,7 @@ class SmsResource extends Resource
     protected static ?string $model = Sms::class;
     protected static ?string $pluralModelLabel = 'Configure SMS';
     protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $recordTitleAttribute = 'at_username';
     public static function form(Form $form): Form
     {
         return $form
